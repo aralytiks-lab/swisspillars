@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SwissPillars — Your Family's Financial Compass</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:    #D4192C;
+      --navy:   #1A3C5E;
+      --light:  #EAF1F8;
+      --gray:   #F5F5F5;
+      --border: #DDE3EA;
+      --text:   #1A2733;
+      --muted:  #5A6978;
+      --white:  #FFFFFF;
+      --green:  #2E7D32;
+      --radius: 12px;
+      --shadow: 0 2px 16px rgba(26,60,94,.10);
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; }
+
+    header {
+      background: var(--white);
+      border-bottom: 3px solid var(--red);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: var(--navy); text-decoration: none; }
+    .logo-cross { width: 28px; height: 28px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .logo-cross::before { content: "+"; color: white; font-size: 1.4rem; font-weight: 900; line-height: 1; }
+    .lang-bar { display: flex; gap: 6px; }
+    .lang-btn { padding: 4px 10px; border: 1px solid var(--border); background: var(--white); border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: var(--muted); transition: all .15s; }
+    .lang-btn:hover, .lang-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+    main { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero-badge { display: inline-block; background: var(--light); color: var(--navy); font-size: 0.78rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px; }
+    .hero h1 { font-size: 2rem; font-weight: 800; color: var(--navy); line-height: 1.2; margin-bottom: 12px; }
+    .hero h1 span { color: var(--red); }
+    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+    .steps { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+    .step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--border); color: var(--muted); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .step-dot.active { background: var(--navy); color: white; }
+    .step-dot.done   { background: var(--green); color: white; }
+    .step-line { width: 60px; height: 2px; background: var(--border); transition: background .2s; }
+    .step-line.done { background: var(--green); }
+
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; margin-bottom: 24px; }
+    .card h2 { font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .card-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+
+    .event-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 14px; }
+    .event-card { border: 2px solid var(--border); border-radius: 10px; padding: 18px 14px; cursor: pointer; transition: all .18s; text-align: center; background: var(--white); }
+    .event-card:hover { border-color: var(--navy); background: var(--light); transform: translateY(-2px); }
+    .event-card.selected { border-color: var(--navy); background: var(--light); }
+    .event-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .event-name { font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+    .event-sub  { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    select, input[type="number"] { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: var(--text); background: var(--white); appearance: none; outline: none; transition: border-color .15s; }
+    select:focus, input:focus { border-color: var(--navy); }
+
+    .btn-row { display: flex; gap: 12px; margin-top: 28px; justify-content: flex-end; }
+    .btn { padding: 12px 28px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
+    .btn-primary { background: var(--navy); color: white; }
+    .btn-primary:hover { background: #243f5e; transform: translateY(-1px); }
+    .btn-secondary { background: var(--gray); color: var(--navy); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+
+    .result-header { background: var(--navy); color: white; border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; }
+    .result-header h2 { font-size: 1.4rem; margin-bottom: 6px; }
+    .result-header p  { opacity: 0.8; font-size: 0.9rem; }
+
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
+    .result-pill { background: var(--white); border-radius: 10px; padding: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--navy); }
+    .result-pill.warn { border-left-color: #E65100; }
+    .result-pill.ok   { border-left-color: var(--green); }
+    .pill-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .pill-value { font-size: 1.3rem; font-weight: 800; color: var(--navy); margin: 6px 0 2px; }
+    .pill-sub   { font-size: 0.78rem; color: var(--muted); }
+
+    .checklist { list-style: none; }
+    .checklist li { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--light); color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .check-text strong { display: block; font-size: 0.88rem; color: var(--navy); }
+    .check-text span   { font-size: 0.8rem; color: var(--muted); }
+
+    .disclaimer { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 8px; padding: 14px 18px; font-size: 0.8rem; color: #5D4037; margin-top: 20px; line-height: 1.6; }
+
+    .hidden { display: none !important; }
+
+    footer { text-align: center; padding: 32px 20px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px; background: var(--white); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">
+    <div class="logo-cross"></div>
+    SwissPillars
+  </a>
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" onclick="setLang('rm')">RM</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="steps">
+    <div class="step-dot active" id="dot1">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dot3">3</div>
+  </div>
+
+  <!-- SCREEN 1: Event picker -->
+  <div id="screen1">
+    <div class="hero">
+      <div class="hero-badge">🇨🇭 Free &middot; Anonymous &middot; Switzerland</div>
+      <h1>What life event are you<br><span>planning for?</span></h1>
+      <p data-i18n="hero_sub">Understand the financial &amp; legal impact of major life events in Switzerland — in minutes, for free.</p>
+    </div>
+    <div class="card">
+      <h2 data-i18n="pick_event">Select a life event</h2>
+      <p class="card-sub" data-i18n="pick_event_sub">We'll walk you through exactly what changes for your family.</p>
+      <div class="event-grid">
+        <div class="event-card" onclick="selectEvent('death')"       id="ev-death">      <span class="event-icon">&#9899;</span><div class="event-name" data-i18n="ev_death">Death of spouse</div>      <div class="event-sub">AHV, BVG, pension</div></div>
+        <div class="event-card" onclick="selectEvent('disability')"  id="ev-disability"> <span class="event-icon">&#9855;</span><div class="event-name" data-i18n="ev_disability">Disability</div>       <div class="event-sub">IV, BVG, UVG</div></div>
+        <div class="event-card" onclick="selectEvent('baby')"        id="ev-baby">       <span class="event-icon">&#128118;</span><div class="event-name" data-i18n="ev_baby">New baby</div>           <div class="event-sub">Maternity, Familienzulagen</div></div>
+        <div class="event-card" onclick="selectEvent('divorce')"     id="ev-divorce">    <span class="event-icon">&#128148;</span><div class="event-name" data-i18n="ev_divorce">Divorce</div>          <div class="event-sub">BVG split, alimony</div></div>
+        <div class="event-card" onclick="selectEvent('retirement')"  id="ev-retirement"> <span class="event-icon">&#127958;</span><div class="event-name" data-i18n="ev_retirement">Retirement</div>    <div class="event-sub">AHV, Pillar 2 &amp; 3a</div></div>
+        <div class="event-card" onclick="selectEvent('jobloss')"     id="ev-jobloss">    <span class="event-icon">&#128201;</span><div class="event-name" data-i18n="ev_jobloss">Job loss</div>        <div class="event-sub">ALV, RAV, budget</div></div>
+        <div class="event-card" onclick="selectEvent('marriage')"    id="ev-marriage">   <span class="event-icon">&#128146;</span><div class="event-name" data-i18n="ev_marriage">Marriage</div>        <div class="event-sub">Tax, AHV cap, Pillar 2</div></div>
+        <div class="event-card" onclick="selectEvent('inheritance')" id="ev-inheritance"><span class="event-icon">&#127963;</span><div class="event-name" data-i18n="ev_inheritance">Inheritance</div>  <div class="event-sub">ZGB, cantonal tax</div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToStep2()" id="btn-next1" style="opacity:.4;cursor:default" disabled>Next: Your family profile &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Family profile -->
+  <div id="screen2" class="hidden">
+    <div class="card">
+      <h2 data-i18n="family_title">Your family profile</h2>
+      <p class="card-sub" data-i18n="family_sub">We use this to personalise your results. Nothing is stored or sent anywhere.</p>
+      <div class="form-row">
+        <div>
+          <label data-i18n="lbl_canton">Your canton</label>
+          <select id="canton">
+            <option value="">— select —</option>
+            <option value="ZH">Zurich (ZH)</option><option value="BE">Bern (BE)</option>
+            <option value="GE">Geneva (GE)</option><option value="VD">Vaud (VD)</option>
+            <option value="AG">Aargau (AG)</option><option value="BS">Basel-Stadt (BS)</option>
+            <option value="BL">Basel-Landschaft (BL)</option><option value="LU">Luzern (LU)</option>
+            <option value="SG">St. Gallen (SG)</option><option value="TI">Ticino (TI)</option>
+            <option value="VS">Valais (VS)</option><option value="FR">Fribourg (FR)</option>
+            <option value="ZG">Zug (ZG)</option><option value="SO">Solothurn (SO)</option>
+            <option value="GR">Graubuenden (GR)</option><option value="TG">Thurgau (TG)</option>
+            <option value="SZ">Schwyz (SZ)</option><option value="NE">Neuchatel (NE)</option>
+            <option value="UR">Uri (UR)</option><option value="OW">Obwalden (OW)</option>
+            <option value="NW">Nidwalden (NW)</option><option value="GL">Glarus (GL)</option>
+            <option value="SH">Schaffhausen (SH)</option><option value="AR">Appenzell AR</option>
+            <option value="AI">Appenzell AI</option><option value="JU">Jura (JU)</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n="lbl_status">Marital status</label>
+          <select id="marital">
+            <option value="">— select —</option>
+            <option value="married">Married</option>
+            <option value="single">Single</option>
+            <option value="divorced">Divorced</option>
+            <option value="widowed">Widowed</option>
+            <option value="partner">Registered partnership</option>
+            <option value="cohabiting">Cohabiting (unmarried)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label data-i18n="lbl_age">Your age</label>
+          <input type="number" id="age" min="18" max="90" placeholder="e.g. 38" />
+        </div>
+        <div>
+          <label data-i18n="lbl_children">Number of children</label>
+          <input type="number" id="children" min="0" max="10" placeholder="e.g. 2" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label data-i18n="lbl_income">Gross annual income (CHF)</label>
+          <select id="income">
+            <option value="">— select range —</option>
+            <option value="40000">Under CHF 50,000</option>
+            <option value="70000">CHF 50,000 – 90,000</option>
+            <option value="110000">CHF 90,000 – 130,000</option>
+            <option value="160000">CHF 130,000 – 200,000</option>
+            <option value="220000">Over CHF 200,000</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n="lbl_employ">Employment type</label>
+          <select id="employ">
+            <option value="">— select —</option>
+            <option value="employee">Employee</option>
+            <option value="self">Self-employed</option>
+            <option value="notworking">Not currently working</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToStep1()">&larr; Back</button>
+        <button class="btn btn-primary"   onclick="goToStep3()">See my results &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Results -->
+  <div id="screen3" class="hidden">
+    <div class="result-header">
+      <div style="font-size:.8rem;opacity:.7;margin-bottom:6px;" id="res-tag"></div>
+      <h2 id="res-title">Your personalised analysis</h2>
+      <p id="res-subtitle"></p>
+    </div>
+    <div class="result-grid" id="res-pills"></div>
+    <div class="card">
+      <h2 data-i18n="checklist_title">Your action checklist</h2>
+      <p class="card-sub" data-i18n="checklist_sub">What to do, and when.</p>
+      <ul class="checklist" id="res-checklist"></ul>
+    </div>
+    <div class="card">
+      <h2 data-i18n="links_title">Official Swiss resources</h2>
+      <p class="card-sub" data-i18n="links_sub">Verified government and authority links.</p>
+      <div id="res-links" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> SwissPillars provides information only, not financial or legal advice. All figures are estimates based on 2025 Swiss regulations. Please consult a qualified advisor before making any decisions. No data you enter is stored or transmitted anywhere.
+    </div>
+    <div class="btn-row" style="justify-content:flex-start;margin-top:24px;">
+      <button class="btn btn-secondary" onclick="goToStep1()">&larr; Start over</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  SwissPillars &mdash; Free, anonymous, Swiss family financial planning &mdash; MVP v0.1 &mdash; March 2026<br>
+  Not financial advice. Data sources: BSV, AHV-IV.ch, SVA Zurich, SECO, admin.ch
+</footer>
+
+<script>
+const i18n = {
+  en: { hero_sub:"Understand the financial & legal impact of major life events in Switzerland.", pick_event:"Select a life event", pick_event_sub:"We'll walk you through what changes for your family.", ev_death:"Death of spouse", ev_disability:"Disability", ev_baby:"New baby", ev_divorce:"Divorce", ev_retirement:"Retirement", ev_jobloss:"Job loss", ev_marriage:"Marriage", ev_inheritance:"Inheritance", family_title:"Your family profile", family_sub:"Nothing is stored or sent anywhere.", lbl_canton:"Your canton", lbl_status:"Marital status", lbl_age:"Your age", lbl_children:"Children", lbl_income:"Gross annual income (CHF)", lbl_employ:"Employment type", checklist_title:"Your action checklist", checklist_sub:"What to do, and when.", links_title:"Official Swiss resources", links_sub:"Verified government links." },
+  de: { hero_sub:"Verstehen Sie die finanziellen Auswirkungen wichtiger Lebensereignisse in der Schweiz.", pick_event:"Lebensereignis wählen", pick_event_sub:"Wir zeigen, was sich für Ihre Familie ändert.", ev_death:"Tod des Ehepartners", ev_disability:"Invalidität", ev_baby:"Neues Baby", ev_divorce:"Scheidung", ev_retirement:"Pensionierung", ev_jobloss:"Jobverlust", ev_marriage:"Heirat", ev_inheritance:"Erbschaft", family_title:"Ihr Familienprofil", family_sub:"Keine Daten werden gespeichert oder übertragen.", lbl_canton:"Ihr Kanton", lbl_status:"Zivilstand", lbl_age:"Ihr Alter", lbl_children:"Kinder", lbl_income:"Bruttojahreseinkommen (CHF)", lbl_employ:"Beschäftigungsart", checklist_title:"Ihre Checkliste", checklist_sub:"Was zu tun ist und wann.", links_title:"Offizielle Schweizer Quellen", links_sub:"Geprüfte Behördenlinks." },
+  fr: { hero_sub:"Comprenez l'impact financier des grands événements de la vie en Suisse.", pick_event:"Choisissez un événement de vie", pick_event_sub:"Nous vous guidons sur ce qui change pour votre famille.", ev_death:"Décès du conjoint", ev_disability:"Invalidité", ev_baby:"Naissance", ev_divorce:"Divorce", ev_retirement:"Retraite", ev_jobloss:"Perte d'emploi", ev_marriage:"Mariage", ev_inheritance:"Héritage", family_title:"Votre profil familial", family_sub:"Aucune donnée n'est stockée ou transmise.", lbl_canton:"Votre canton", lbl_status:"État civil", lbl_age:"Votre âge", lbl_children:"Enfants", lbl_income:"Revenu annuel brut (CHF)", lbl_employ:"Type d'emploi", checklist_title:"Votre liste d'actions", checklist_sub:"Quoi faire et quand.", links_title:"Ressources officielles suisses", links_sub:"Liens gouvernementaux vérifiés." },
+  it: { hero_sub:"Capisci l'impatto finanziario dei grandi eventi della vita in Svizzera.", pick_event:"Seleziona un evento della vita", pick_event_sub:"Ti guidiamo su cosa cambia per la tua famiglia.", ev_death:"Decesso del coniuge", ev_disability:"Invalidità", ev_baby:"Nuovo bambino", ev_divorce:"Divorzio", ev_retirement:"Pensionamento", ev_jobloss:"Perdita di lavoro", ev_marriage:"Matrimonio", ev_inheritance:"Eredità", family_title:"Il tuo profilo familiare", family_sub:"Nessun dato viene memorizzato o trasmesso.", lbl_canton:"Il tuo cantone", lbl_status:"Stato civile", lbl_age:"La tua età", lbl_children:"Figli", lbl_income:"Reddito annuo lordo (CHF)", lbl_employ:"Tipo di impiego", checklist_title:"La tua lista di azioni", checklist_sub:"Cosa fare e quando.", links_title:"Risorse ufficiali svizzere", links_sub:"Link governativi verificati." },
+  rm: { hero_sub:"Chapir l'effect finanzial da gronds eveniments da vita en Svizra.", pick_event:"Tscherna in eveniment da vita", pick_event_sub:"Nus ta mussan tgei che sa mida per tia famiglia.", ev_death:"Mort dal consort", ev_disability:"Invaliditad", ev_baby:"In uffant nov", ev_divorce:"Divorzi", ev_retirement:"Pensiun", ev_jobloss:"Pers da lavur", ev_marriage:"Maridaglia", ev_inheritance:"Ierta", family_title:"Tiu profil da famiglia", family_sub:"Naginas datas vegnan memorisadas.", lbl_canton:"Tiu chantun", lbl_status:"Stadi civil", lbl_age:"Tia vegliadetgna", lbl_children:"Uffants", lbl_income:"Salari annual brud (CHF)", lbl_employ:"Tip d'occupaziun", checklist_title:"Tia glista d'acziuns", checklist_sub:"Tgei far ed il cura.", links_title:"Resursas ufizialas svizras", links_sub:"Links guvernamentals verifitgads." }
+};
+
+let currentLang = 'en';
+let selectedEvent = null;
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  const t = i18n[lang] || i18n.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+}
+
+function selectEvent(ev) {
+  selectedEvent = ev;
+  document.querySelectorAll('.event-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('ev-'+ev).classList.add('selected');
+  const btn = document.getElementById('btn-next1');
+  btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+}
+
+function goToStep1() { show('screen1'); hide('screen2'); hide('screen3'); setDots(1); }
+function goToStep2() { if(!selectedEvent) return; hide('screen1'); show('screen2'); hide('screen3'); setDots(2); scroll(0,0); }
+function goToStep3() { hide('screen1'); hide('screen2'); show('screen3'); setDots(3); buildResults(); scroll(0,0); }
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+function setDots(step) {
+  for(let i=1;i<=3;i++){const d=document.getElementById('dot'+i);d.classList.remove('active','done');if(i<step)d.classList.add('done');else if(i===step)d.classList.add('active');}
+  for(let i=1;i<=2;i++){document.getElementById('line'+i).classList.toggle('done',i<step);}
+}
+
+const eventData = {
+  death:{
+    title:"Death of spouse — what changes",subtitle:"AHV survivor pension, Pillar 2 death benefit, tax change",
+    pills:[{label:"AHV widow/widower pension (max)",value:"CHF 2,016/mo",sub:"2025 — with children or age 45+",cls:""},{label:"AHV orphan pension (per child)",value:"CHF 1,008/mo",sub:"Until age 18 (25 if in education)",cls:"ok"},{label:"Pillar 2 survivor pension",value:"~60% of BVG",sub:"Of projected retirement pension",cls:"warn"}],
+    checks:[{icon:"1",title:"Register death at Zivilstandsamt",sub:"Within 2 days"},{icon:"2",title:"Apply for AHV survivor pension",sub:"Contact SVA — your cantonal AHV office"},{icon:"3",title:"Notify pension fund (BVG)",sub:"Request survivor pension — within 1 month"},{icon:"4",title:"Change tax filing to individual",sub:"Notify cantonal tax authority"},{icon:"5",title:"Request Pillar 3a payout",sub:"Contact bank or insurance company"}],
+    links:[{label:"AHV-IV.ch — Survivor pensions",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Survivors-pensions"},{label:"BSV — AHV amounts 2025",url:"https://www.bsv.admin.ch/de/leistungen-ahv-detail"},{label:"SVA Zurich",url:"https://www.svazurich.ch"}]
+  },
+  baby:{
+    title:"New baby — what changes",subtitle:"Maternity pay, Familienzulagen, health insurance, tax",
+    pills:[{label:"Maternity pay (EO)",value:"80% salary",sub:"14 weeks / 98 days",cls:"ok"},{label:"Familienzulage ZH (0–12 yrs)",value:"CHF 215/mo",sub:"Per child, from birth — 2025 rate",cls:"ok"},{label:"Paternity leave (EO)",value:"80% salary",sub:"10 working days",cls:""}],
+    checks:[{icon:"1",title:"Register birth at Zivilstandsamt",sub:"Within 3 days"},{icon:"2",title:"Apply for Familienzulagen via employer",sub:"Familienausgleichskasse (FAK)"},{icon:"3",title:"Add child to KVG health insurance",sub:"Within 3 months of birth"},{icon:"4",title:"Claim maternity EO compensation",sub:"Via employer to AHV office"},{icon:"5",title:"Update tax return",sub:"New child deductions apply immediately"}],
+    links:[{label:"AHV-IV — Maternity compensation",url:"https://www.ahv-iv.ch/en/Social-insurances/Income-compensation-allowances-EO/Maternity"},{label:"SVA ZH — Familienzulagen",url:"https://svazurich.ch/unsere-produkte/weitere-produkte/weitere-leistungen/familienzulagen/sinn-und-zweck.html"},{label:"KT Zurich — Family allowances",url:"https://www.zh.ch/de/soziales/familienzulagen.html"}]
+  },
+  jobloss:{
+    title:"Job loss — what changes",subtitle:"ALV unemployment insurance, RAV registration, budget impact",
+    pills:[{label:"ALV payout — with children",value:"80% salary",sub:"Insured salary capped CHF 148,200/yr",cls:"ok"},{label:"ALV payout — no children",value:"70% salary",sub:"Standard rate",cls:"warn"},{label:"Register with RAV",value:"Day 1",sub:"Every day of delay = lost benefit",cls:""}],
+    checks:[{icon:"1",title:"Register at RAV immediately",sub:"Do not wait — go on your first day unemployed"},{icon:"2",title:"Register with Arbeitslosenkasse",sub:"Cantonal unemployment insurance fund"},{icon:"3",title:"Document job search actively",sub:"Must apply for jobs to keep benefits"},{icon:"4",title:"Check health insurance subsidy",sub:"Praemienverbilligung may apply"},{icon:"5",title:"Do not withdraw Pillar 2",sub:"Assets go to Freizuegigkeitskonto — leave them"}],
+    links:[{label:"SECO — arbeit.swiss (register here)",url:"https://www.arbeit.swiss/secoalv/en/home.html"},{label:"ALV FAQ — arbeit.swiss",url:"https://www.arbeit.swiss/secoalv/en/home/menue/stellensuchende/arbeitslos-was-tun-/faq_arbeitslosenentschaedigung.html"},{label:"Freizuegigkeitsstiftung",url:"https://www.sfbvg.ch/en"}]
+  },
+  divorce:{
+    title:"Divorce — what changes",subtitle:"Pillar 2 split, AHV splitting, alimony, tax filing change",
+    pills:[{label:"Pillar 2 split",value:"50 / 50",sub:"Mandatory equal split — Art. 122 ZGB",cls:"warn"},{label:"AHV contributions",value:"Split equally",sub:"For years of marriage",cls:""},{label:"Tax filing",value:"Individual",sub:"No longer joint — often higher tax",cls:"warn"}],
+    checks:[{icon:"1",title:"Consult a divorce lawyer or mediator",sub:"Understand your entitlements first"},{icon:"2",title:"Request Pillar 2 statements from both funds",sub:"Required for court BVG calculation"},{icon:"3",title:"File divorce proceedings at Zivilgericht",sub:"Court issues BVG split order"},{icon:"4",title:"Notify AHV of contribution splitting",sub:"SVA — Rentensplitting"},{icon:"5",title:"Update Pillar 3a beneficiaries",sub:"Ex-spouse may still be listed"}],
+    links:[{label:"BJ.admin.ch — Divorce law",url:"https://www.bj.admin.ch/bj/en/home/gesellschaft/zivilrecht.html"},{label:"AHV-IV — Pension splitting",url:"https://www.ahv-iv.ch/en"},{label:"Beobachter — Scheidung guide",url:"https://www.beobachter.ch/recht/familienrecht/scheidung"}]
+  },
+  retirement:{
+    title:"Retirement — what changes",subtitle:"AHV pension, 13th AHV (new Dec 2026), Pillar 2, Pillar 3a",
+    pills:[{label:"Max AHV pension (single) 2025",value:"CHF 2,520/mo",sub:"+ 13th pension in December 2026",cls:"ok"},{label:"Married couple AHV cap",value:"CHF 3,780/mo",sub:"150% of max — Heiratsstrafe",cls:"warn"},{label:"Pillar 3a limit 2025",value:"CHF 7,258/yr",sub:"Fully tax deductible",cls:""}],
+    checks:[{icon:"1",title:"Request AHV pension estimate",sub:"Free — contact SVA or ahv-iv.ch"},{icon:"2",title:"Decide: Pillar 2 annuity or lump sum?",sub:"Irrevocable decision — get independent advice"},{icon:"3",title:"Stagger Pillar 3a withdrawals over 5 years",sub:"Major tax saving — do not withdraw all at once"},{icon:"4",title:"Calculate early retirement cost",sub:"AHV reduced 6.8% per year brought forward"},{icon:"5",title:"Note 13th AHV payment — December 2026",sub:"First ever payment — approved March 2024 referendum"}],
+    links:[{label:"AHV-IV — Retirement pensions",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Old-age-pensions"},{label:"SVA Zurich — Pension calculation",url:"https://www.svazurich.ch"},{label:"VZ — Pillar 2 guide",url:"https://www.vermoegenszentrum.ch/wissen/pensionierung.html"}]
+  },
+  disability:{
+    title:"Disability — what changes",subtitle:"IV pension, BVG disability pension, UVG, income gap",
+    pills:[{label:"IV full pension (2025)",value:"CHF 1,260–2,520/mo",sub:"Requires 70%+ disability assessment",cls:"warn"},{label:"IV threshold — quarter pension",value:"40–49% disabled",sub:"Below 40% = no IV pension at all",cls:"warn"},{label:"BVG disability pension",value:"~40% insured salary",sub:"Coordinated with IV — varies by fund",cls:""}],
+    checks:[{icon:"1",title:"File IV application immediately",sub:"Process takes 12–24 months — start now"},{icon:"2",title:"Notify your BVG pension fund",sub:"Disability cover activates from BVG"},{icon:"3",title:"Check employer continued pay (OR 324a)",sub:"3 weeks to several months by seniority"},{icon:"4",title:"Apply for Krankentaggeld",sub:"Daily allowance bridges IV assessment gap"},{icon:"5",title:"Check UVG if work-related accident",sub:"Full accident insurance — report immediately"}],
+    links:[{label:"AHV-IV — Invalidity Insurance",url:"https://www.ahv-iv.ch/en/Social-insurances/Invalidity-insurance-IV"},{label:"IV-Stelle Zurich",url:"https://www.iv-stelle.zh.ch/internet/iv-stelle/de/home.html"},{label:"BSV — IV benefits",url:"https://www.bsv.admin.ch/en"}]
+  },
+  marriage:{
+    title:"Marriage — what changes",subtitle:"Tax change, AHV couple cap, Heiratsstrafe, Pillar 2 & 3a",
+    pills:[{label:"AHV couple cap",value:"CHF 3,780/mo",sub:"vs CHF 5,040 cohabiting — Heiratsstrafe",cls:"warn"},{label:"Tax impact in most cantons",value:"Often higher",sub:"Joint filing = marriage penalty",cls:"warn"},{label:"Pillar 3a limit",value:"CHF 7,258/yr",sub:"Per person — update beneficiary now",cls:""}],
+    checks:[{icon:"1",title:"Register marriage at Zivilstandsamt",sub:"Both partners must appear in person"},{icon:"2",title:"Update Pillar 2 beneficiary",sub:"Spouse is now automatic beneficiary — confirm with fund"},{icon:"3",title:"Update Pillar 3a beneficiary",sub:"Update form at bank or insurance"},{icon:"4",title:"Notify tax authority",sub:"Change to joint filing — check canton rules"},{icon:"5",title:"Name change if applicable",sub:"Update passport, permits, bank accounts"}],
+    links:[{label:"ch.ch — Marriage in Switzerland",url:"https://www.ch.ch/en/family/marriage/"},{label:"Comparis — Tax calculator",url:"https://en.comparis.ch/steuern/steuerrechner"},{label:"AHV-IV — Couple pension rules",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Old-age-pensions"}]
+  },
+  inheritance:{
+    title:"Inheritance — what changes",subtitle:"Swiss inheritance law, ESchG 2023, cantonal tax, will planning",
+    pills:[{label:"Inheritance tax ZH — spouse/children",value:"0%",sub:"Zurich has no tax for direct family",cls:"ok"},{label:"Mandatory share (Pflichtteil) 2023",value:"1/2 of legal share",sub:"ESchG reform — more testamentary freedom",cls:""},{label:"Federal estate tax",value:"None",sub:"Switzerland has no federal inheritance tax",cls:"ok"}],
+    checks:[{icon:"1",title:"Write a will (Testament)",sub:"Notarised, or handwritten + dated + signed"},{icon:"2",title:"Designate Pillar 3a beneficiaries",sub:"Avoids estate — major tax advantage"},{icon:"3",title:"Check your cantonal inheritance tax",sub:"Varies enormously — ZG, SZ lowest; GE higher"},{icon:"4",title:"Create advance directive (Vorsorgeauftrag)",sub:"Who decides if you become incapacitated"},{icon:"5",title:"Notify banks and pension funds",sub:"Pillar 2 and 3a have own beneficiary rules"}],
+    links:[{label:"ch.ch — Inheritance in Switzerland",url:"https://www.ch.ch/en/inheritance/"},{label:"ZGB — Inheritance law (fedlex)",url:"https://www.fedlex.admin.ch/eli/cc/24/233_245_233/en"},{label:"KT Zurich — Erbschaftssteuer",url:"https://www.zh.ch/de/steuern-finanzen/steuern/erbschafts-und-schenkungssteuer.html"}]
+  }
+};
+
+function buildResults() {
+  const ev = eventData[selectedEvent]; if(!ev) return;
+  const canton   = document.getElementById('canton').value   || 'ZH';
+  const income   = parseInt(document.getElementById('income').value)   || 0;
+  const children = parseInt(document.getElementById('children').value) || 0;
+  document.getElementById('res-tag').textContent = 'Canton: ' + canton + (income ? '  ·  CHF ' + income.toLocaleString() + '/yr' : '') + (children ? '  ·  ' + children + ' child' + (children>1?'ren':'') : '');
+  document.getElementById('res-title').textContent = ev.title;
+  document.getElementById('res-subtitle').textContent = ev.subtitle;
+  if(selectedEvent==='jobloss' && children>0){ ev.pills[1].value='80% salary'; ev.pills[1].sub='You have children — higher rate'; ev.pills[1].cls='ok'; }
+  document.getElementById('res-pills').innerHTML = ev.pills.map(p=>`<div class="result-pill ${p.cls}"><div class="pill-label">${p.label}</div><div class="pill-value">${p.value}</div><div class="pill-sub">${p.sub}</div></div>`).join('');
+  document.getElementById('res-checklist').innerHTML = ev.checks.map(c=>`<li><div class="check-icon">${c.icon}</div><div class="check-text"><strong>${c.title}</strong><span>${c.sub}</span></div></li>`).join('');
+  document.getElementById('res-links').innerHTML = ev.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;text-decoration:none;color:var(--navy);font-size:.88rem;font-weight:600;transition:all .15s" onmouseover="this.style.borderColor='#1A3C5E'" onmouseout="this.style.borderColor='#DDE3EA'">&#128279; ${l.label}<span style="margin-left:auto;color:var(--muted);font-size:.75rem">&rarr;</span></a>`).join('');
+}
+</script>
+</body>
+</html>
