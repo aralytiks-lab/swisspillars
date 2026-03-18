@@ -1,371 +1,3219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SwissPillars — Your Family's Financial Compass</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwissPillars - Swiss Family Financial Compass</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --red:    #D4192C;
-      --navy:   #1A3C5E;
-      --light:  #EAF1F8;
-      --gray:   #F5F5F5;
+      --red: #D4192C;
+      --navy: #1A3C5E;
+      --light: #EAF1F8;
+      --green: #2E7D32;
+      --amber: #F57C00;
       --border: #DDE3EA;
-      --text:   #1A2733;
-      --muted:  #5A6978;
-      --white:  #FFFFFF;
-      --green:  #2E7D32;
-      --radius: 12px;
-      --shadow: 0 2px 16px rgba(26,60,94,.10);
+      --gray: #F5F5F5;
+      --text: #1A2733;
+      --muted: #5A6978;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; }
 
-    header {
-      background: var(--white);
-      border-bottom: 3px solid var(--red);
-      padding: 0 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px; position: sticky; top: 0; z-index: 100;
-      box-shadow: var(--shadow);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: var(--navy); text-decoration: none; }
-    .logo-cross { width: 28px; height: 28px; background: var(--red); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-    .logo-cross::before { content: "+"; color: white; font-size: 1.4rem; font-weight: 900; line-height: 1; }
-    .lang-bar { display: flex; gap: 6px; }
-    .lang-btn { padding: 4px 10px; border: 1px solid var(--border); background: var(--white); border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: var(--muted); transition: all .15s; }
-    .lang-btn:hover, .lang-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
 
-    main { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-    .hero { text-align: center; margin-bottom: 40px; }
-    .hero-badge { display: inline-block; background: var(--light); color: var(--navy); font-size: 0.78rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px; }
-    .hero h1 { font-size: 2rem; font-weight: 800; color: var(--navy); line-height: 1.2; margin-bottom: 12px; }
-    .hero h1 span { color: var(--red); }
-    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+    .header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
 
-    .steps { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
-    .step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--border); color: var(--muted); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all .2s; }
-    .step-dot.active { background: var(--navy); color: white; }
-    .step-dot.done   { background: var(--green); color: white; }
-    .step-line { width: 60px; height: 2px; background: var(--border); transition: background .2s; }
-    .step-line.done { background: var(--green); }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--navy);
+    }
 
-    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; margin-bottom: 24px; }
-    .card h2 { font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
-    .card-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+    .swiss-cross {
+      width: 32px;
+      height: 32px;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 2px;
+    }
 
-    .event-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 14px; }
-    .event-card { border: 2px solid var(--border); border-radius: 10px; padding: 18px 14px; cursor: pointer; transition: all .18s; text-align: center; background: var(--white); }
-    .event-card:hover { border-color: var(--navy); background: var(--light); transform: translateY(-2px); }
-    .event-card.selected { border-color: var(--navy); background: var(--light); }
-    .event-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
-    .event-name { font-size: 0.88rem; font-weight: 600; color: var(--navy); }
-    .event-sub  { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+    .swiss-cross::before,
+    .swiss-cross::after {
+      content: '';
+      position: absolute;
+      background: white;
+    }
 
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
-    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-    select, input[type="number"] { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: var(--text); background: var(--white); appearance: none; outline: none; transition: border-color .15s; }
-    select:focus, input:focus { border-color: var(--navy); }
+    .swiss-cross::before {
+      width: 14px;
+      height: 4px;
+    }
 
-    .btn-row { display: flex; gap: 12px; margin-top: 28px; justify-content: flex-end; }
-    .btn { padding: 12px 28px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
-    .btn-primary { background: var(--navy); color: white; }
-    .btn-primary:hover { background: #243f5e; transform: translateY(-1px); }
-    .btn-secondary { background: var(--gray); color: var(--navy); border: 1.5px solid var(--border); }
-    .btn-secondary:hover { background: var(--border); }
+    .swiss-cross::after {
+      width: 4px;
+      height: 14px;
+    }
 
-    .result-header { background: var(--navy); color: white; border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; }
-    .result-header h2 { font-size: 1.4rem; margin-bottom: 6px; }
-    .result-header p  { opacity: 0.8; font-size: 0.9rem; }
+    .lang-switcher {
+      display: flex;
+      gap: 0.5rem;
+    }
 
-    .result-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-    @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
-    .result-pill { background: var(--white); border-radius: 10px; padding: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--navy); }
-    .result-pill.warn { border-left-color: #E65100; }
-    .result-pill.ok   { border-left-color: var(--green); }
-    .pill-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-    .pill-value { font-size: 1.3rem; font-weight: 800; color: var(--navy); margin: 6px 0 2px; }
-    .pill-sub   { font-size: 0.78rem; color: var(--muted); }
+    .lang-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
 
-    .checklist { list-style: none; }
-    .checklist li { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; }
-    .checklist li:last-child { border-bottom: none; }
-    .check-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--light); color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .check-text strong { display: block; font-size: 0.88rem; color: var(--navy); }
-    .check-text span   { font-size: 0.8rem; color: var(--muted); }
+    .lang-btn.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
 
-    .disclaimer { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 8px; padding: 14px 18px; font-size: 0.8rem; color: #5D4037; margin-top: 20px; line-height: 1.6; }
+    .container {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-    .hidden { display: none !important; }
+    .spa-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      align-items: start;
+      max-width: 100%;
+      margin: 0;
+      padding: 16px 24px;
+    }
+    .inputs-col { min-width: 0; }
+    .results-col {
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      background: white;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      padding: 16px;
+    }
+    .accordion-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      cursor: pointer;
+      background: var(--navy);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select: none;
+    }
+    .accordion-header:hover { background: #0f2a45; }
+    .accordion-icon { font-size: 0.8rem; transition: transform 0.2s; }
+    .accordion-section.collapsed .accordion-icon { transform: rotate(-90deg); }
+    .accordion-body { padding: 16px 18px; }
+    .accordion-section.collapsed .accordion-body { display: none; }
+    .live-results-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; border-bottom: 2px solid var(--navy); padding-bottom: 8px; }
+    .live-results-placeholder { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
+    .mini-traffic { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: white; margin: 0 auto 8px; }
+    .mini-traffic.green { background: #2E7D32; }
+    .mini-traffic.amber { background: #E6A817; }
+    .mini-traffic.red { background: #D4192C; }
+    .mini-verdict { text-align: center; font-weight: 600; font-size: 0.95rem; margin-bottom: 12px; }
+    .mini-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .mini-number { background: #f8f9fa; border-radius: 8px; padding: 8px; text-align: center; }
+    .mini-number-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 2px; }
+    .mini-number-value { font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+    .mini-gap { font-size: 1rem; font-weight: 700; text-align: center; padding: 10px; border-radius: 8px; margin-bottom: 12px; }
+    .mini-gap.positive { background: #e8f5e9; color: #2E7D32; }
+    .mini-gap.negative { background: #ffebee; color: #D4192C; }
+    .mini-runway { background: #f0f4ff; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; margin-bottom: 12px; }
+    .mini-runway-label { color: var(--muted); margin-bottom: 2px; }
+    .mini-runway-val { font-weight: 700; color: var(--navy); }
+    .mini-insight { font-size: 0.82rem; background: #fffde7; border-left: 3px solid #E6A817; padding: 10px 12px; border-radius: 0 8px 8px 0; line-height: 1.4; }
+    .full-results-link { display: block; text-align: center; margin-top: 12px; background: var(--navy); color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; border: none; width: 100%; }
+    .full-results-link:hover { background: #0f2a45; }
+    @media (max-width: 900px) {
+      .spa-layout { grid-template-columns: 1fr; }
+      .results-col { position: static; max-height: none; }
+    }
 
-    footer { text-align: center; padding: 32px 20px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px; background: var(--white); }
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      gap: 1rem;
+    }
+
+    .progress-phase {
+      flex: 1;
+      text-align: center;
+      padding: 1rem;
+      border-radius: 8px;
+      background: var(--gray);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .progress-phase.active {
+      background: var(--light);
+      color: var(--navy);
+      border: 2px solid var(--navy);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--navy);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--navy);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+      margin-top: 1.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--light) 0%, #fff 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--navy);
+    }
+
+    .hero-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      padding: 1.5rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #fff;
+    }
+
+    .card:hover:not(.disabled) {
+      border-color: var(--navy);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .card.active {
+      border-color: var(--navy);
+      background: var(--light);
+    }
+
+    .card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .help-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .net-display {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #f0f4f8;
+      border: 1px solid #c8d8e8;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: var(--navy);
+      font-weight: 600;
+    }
+    .net-display .net-value { flex: 1; }
+    .net-display .net-badge {
+      font-size: 0.72rem;
+      background: #1A3C5E;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .net-override-link {
+      font-size: 0.82rem;
+      color: var(--navy);
+      cursor: pointer;
+      text-decoration: underline;
+      opacity: 0.7;
+      margin-top: 0.3rem;
+      display: inline-block;
+    }
+    .net-override-link:hover { opacity: 1; }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(26, 60, 94, 0.1);
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      border-color: var(--navy);
+      background: var(--light);
+      color: var(--navy);
+    }
+
+    .partner-section {
+      background: var(--gray);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .partner-section h3 {
+      margin-top: 0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .expense-list {
+      background: var(--gray);
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+
+    .expense-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      align-items: start;
+    }
+
+    .expense-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .expense-label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .expense-input-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .expense-input {
+      width: 130px;
+    }
+
+    .expense-unit {
+      color: var(--muted);
+      font-size: 0.9rem;
+      min-width: 45px;
+    }
+
+    .exp-mode-toggle { display:flex; gap:2px; margin-left:4px; }
+    .exp-mode-btn { padding:2px 7px; font-size:0.7rem; border:1px solid var(--border); border-radius:4px; background:white; color:var(--muted); cursor:pointer; font-weight:600; line-height:1.4; }
+    .exp-mode-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
+    .expense-group-header { font-size:0.8rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.05em; margin:14px 0 4px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+    .expense-secondary {
+      color: var(--muted);
+      font-size: 0.8rem;
+      width: 100%;
+      text-align: right;
+      font-style: italic;
+    }
+
+    .total-expenses {
+      background: var(--light);
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: right;
+      color: var(--navy);
+      margin-top: 1rem;
+    }
+
+    .total-highlight { color: var(--navy); }
+    .total-secondary { font-size: 0.85rem; font-weight: 400; color: var(--muted); }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #0f2540;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--gray);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #eee;
+    }
+
+    .results-section {
+      background: var(--gray);
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .traffic-light {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .traffic-light.green {
+      background: var(--green);
+      color: white;
+    }
+
+    .traffic-light.amber {
+      background: var(--amber);
+      color: white;
+    }
+
+    .traffic-light.red {
+      background: var(--red);
+      color: white;
+    }
+
+    .verdict {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .verdict-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .verdict-text {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .key-numbers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .key-number {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .key-number-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .key-number-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .key-number-value.positive {
+      color: var(--green);
+    }
+
+    .key-number-value.negative {
+      color: var(--red);
+    }
+
+    .collapsible-header {
+      background: var(--light);
+      padding: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--navy);
+      user-select: none;
+    }
+
+    .collapsible-header:hover {
+      background: #d5e7f3;
+    }
+
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .collapsible-content.open {
+      max-height: 10000px;
+      transition: max-height 0.4s ease-in;
+    }
+
+    .collapsible-body {
+      padding: 1.5rem 0;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .chart-title {
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .phase-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--amber);
+      margin-bottom: 2rem;
+    }
+
+    .phase-section.phase2 {
+      border-left-color: var(--green);
+    }
+
+    .phase-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    /* Scenario context banner */
+    .scenario-context-banner {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--navy); color: white;
+      border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+    }
+    .scenario-icon { font-size: 2rem; }
+    .scenario-context-label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.08em; }
+    .scenario-context-title { font-size: 1.15rem; font-weight: 700; margin-top: 2px; }
+
+    /* Financial runway card */
+    .runway-summary-card {
+      background: white; border-radius: 10px; padding: 1.4rem 1.6rem;
+      border: 2px solid var(--border); margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .runway-summary-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+    .runway-row { display: flex; justify-content: space-between; padding: 0.45rem 0; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+    .runway-row:last-of-type { border-bottom: none; }
+    .runway-row-label { color: var(--muted); }
+    .runway-row-val { font-weight: 600; color: var(--text); }
+    .runway-subtotal { background: var(--light); margin: 0 -0.5rem; padding: 0.5rem 0.5rem; border-radius: 4px; font-weight: 700; border-bottom: none; }
+    .runway-negative .runway-row-val { color: var(--red); }
+    .runway-total { background: var(--navy); color: white; margin: 0.5rem -0.5rem; padding: 0.65rem 0.5rem; border-radius: 6px; font-weight: 700; border-bottom: none; }
+    .runway-total .runway-row-label { color: rgba(255,255,255,.85); }
+    .runway-total .runway-row-val { color: white; }
+    .runway-divider { border-top: 2px solid var(--border); margin: 1rem 0; }
+    .runway-interpretation { display: flex; flex-direction: column; gap: 0.6rem; }
+    .runway-stat { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+    .runway-stat-label { color: var(--muted); flex: 1; }
+    .runway-stat-val { font-weight: 700; color: var(--navy); }
+    .runway-stat-val.positive { color: var(--green); }
+    .runway-stat-val.negative { color: var(--red); }
+
+    .disclaimer {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .note {
+      background: #fff9e6;
+      border: 1px solid #ffe082;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      color: #856404;
+      font-size: 0.95rem;
+    }
+
+    .warning {
+      background: #ffebee;
+      border: 1px solid #ef5350;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      color: #c62828;
+      font-size: 0.95rem;
+    }
+
+    .info-block {
+      background: var(--light);
+      padding: 1rem;
+      border-radius: 4px;
+      border-left: 4px solid var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .info-block-title {
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .info-block-text {
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-bar {
+        flex-direction: column;
+        margin-bottom: 2rem;
+      }
+
+      .progress-phase {
+        padding: 0.75rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .key-numbers {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .runway-calc-hint { display: block; font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 2px; }
+
+    .ai-insight-card { background: linear-gradient(135deg, #f0f7ff 0%, #e8f4e8 100%); border: 2px solid var(--navy); border-radius: 12px; padding: 20px; margin: 16px 0; }
+    .ai-insight-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ai-insight-icon { font-size: 1.5rem; }
+    .ai-insight-title { font-size: 1.1rem; font-weight: 700; color: var(--navy); flex: 1; }
+    .ai-score-badge { color: white; font-weight: 700; font-size: 0.9rem; padding: 4px 10px; border-radius: 20px; }
+    .ai-score-label { font-size: 0.95rem; font-weight: 600; margin-bottom: 12px; }
+    .ai-pillars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .ai-pillar-item { background: white; border-radius: 8px; padding: 10px 12px; }
+    .ai-pillar-name { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+    .ai-pillar-val { font-size: 0.95rem; font-weight: 600; color: var(--navy); }
+    .ai-recommendation { background: white; border-left: 4px solid var(--navy); padding: 12px 14px; border-radius: 0 8px 8px 0; font-size: 0.9rem; line-height: 1.5; }
   </style>
 </head>
 <body>
 
-<header>
-  <a class="logo" href="#">
-    <div class="logo-cross"></div>
-    SwissPillars
-  </a>
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('de')">DE</button>
-    <button class="lang-btn" onclick="setLang('fr')">FR</button>
-    <button class="lang-btn" onclick="setLang('it')">IT</button>
-    <button class="lang-btn" onclick="setLang('rm')">RM</button>
+<div class="header">
+  <div class="logo">
+    <div class="swiss-cross"></div>
+    <span id="appName">SwissPillars</span>
   </div>
-</header>
-
-<main>
-
-  <div class="steps">
-    <div class="step-dot active" id="dot1">1</div>
-    <div class="step-line" id="line1"></div>
-    <div class="step-dot" id="dot2">2</div>
-    <div class="step-line" id="line2"></div>
-    <div class="step-dot" id="dot3">3</div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" onclick="setLanguage('de')">DE</button>
+    <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
   </div>
+</div>
 
-  <!-- SCREEN 1: Event picker -->
-  <div id="screen1">
+<div class="container">
+  <div class="spa-layout"><div class="inputs-col">
+
+  <!-- Section 0: Scenario & Family -->
+  <div class="accordion-section" id="section0">
+    <div class="accordion-header" onclick="toggleAccordion('section0')">
+      <span>🎯 Scenario &amp; Family</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+    <h2 id="s0Title" style="margin-top:0;">What do you want to plan for?</h2>
     <div class="hero">
-      <div class="hero-badge">🇨🇭 Free &middot; Anonymous &middot; Switzerland</div>
-      <h1>What life event are you<br><span>planning for?</span></h1>
-      <p data-i18n="hero_sub">Understand the financial &amp; legal impact of major life events in Switzerland — in minutes, for free.</p>
+      <div class="hero-title" id="heroTitle">See exactly what happens to your family's finances</div>
+      <div class="hero-subtitle" id="heroSub">Free · Anonymous · Switzerland</div>
     </div>
-    <div class="card">
-      <h2 data-i18n="pick_event">Select a life event</h2>
-      <p class="card-sub" data-i18n="pick_event_sub">We'll walk you through exactly what changes for your family.</p>
-      <div class="event-grid">
-        <div class="event-card" onclick="selectEvent('death')"       id="ev-death">      <span class="event-icon">&#9899;</span><div class="event-name" data-i18n="ev_death">Death of spouse</div>      <div class="event-sub">AHV, BVG, pension</div></div>
-        <div class="event-card" onclick="selectEvent('disability')"  id="ev-disability"> <span class="event-icon">&#9855;</span><div class="event-name" data-i18n="ev_disability">Disability</div>       <div class="event-sub">IV, BVG, UVG</div></div>
-        <div class="event-card" onclick="selectEvent('baby')"        id="ev-baby">       <span class="event-icon">&#128118;</span><div class="event-name" data-i18n="ev_baby">New baby</div>           <div class="event-sub">Maternity, Familienzulagen</div></div>
-        <div class="event-card" onclick="selectEvent('divorce')"     id="ev-divorce">    <span class="event-icon">&#128148;</span><div class="event-name" data-i18n="ev_divorce">Divorce</div>          <div class="event-sub">BVG split, alimony</div></div>
-        <div class="event-card" onclick="selectEvent('retirement')"  id="ev-retirement"> <span class="event-icon">&#127958;</span><div class="event-name" data-i18n="ev_retirement">Retirement</div>    <div class="event-sub">AHV, Pillar 2 &amp; 3a</div></div>
-        <div class="event-card" onclick="selectEvent('jobloss')"     id="ev-jobloss">    <span class="event-icon">&#128201;</span><div class="event-name" data-i18n="ev_jobloss">Job loss</div>        <div class="event-sub">ALV, RAV, budget</div></div>
-        <div class="event-card" onclick="selectEvent('marriage')"    id="ev-marriage">   <span class="event-icon">&#128146;</span><div class="event-name" data-i18n="ev_marriage">Marriage</div>        <div class="event-sub">Tax, AHV cap, Pillar 2</div></div>
-        <div class="event-card" onclick="selectEvent('inheritance')" id="ev-inheritance"><span class="event-icon">&#127963;</span><div class="event-name" data-i18n="ev_inheritance">Inheritance</div>  <div class="event-sub">ZGB, cantonal tax</div></div>
+
+    <div class="cards-grid" id="eventCards"></div>
+
+    <div id="whoAffectedContainer" style="display:none;">
+      <h2 id="whoAffectedTitle">Who passes away?</h2>
+      <div class="cards-grid" id="affectedCards"></div>
+    </div>
+
+    <div id="employmentSection" style="margin-top:24px;">
+      <h2 id="whoEmployedTitle">Who is employed?</h2>
+      <div class="cards-grid" id="employmentCards"></div>
+    </div>
+
+    <div id="childrenSection" style="margin-top:24px;">
+      <h2 id="numChildrenTitle">How many children?</h2>
+      <div style="display:flex; align-items:center; gap:16px; margin-top:8px;">
+        <button class="toggle-btn" onclick="changeChildren(-1)" style="width:48px; font-size:1.4rem; padding:4px;">−</button>
+        <span id="childrenCount" style="font-size:1.6rem; font-weight:700; min-width:32px; text-align:center;">0</span>
+        <button class="toggle-btn" onclick="changeChildren(1)" style="width:48px; font-size:1.4rem; padding:4px;">+</button>
+        <span id="childrenLabel" style="color:#666; font-size:0.95rem;">children</span>
       </div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="goToStep2()" id="btn-next1" style="opacity:.4;cursor:default" disabled>Next: Your family profile &rarr;</button>
+    </div>
+    </div></div><!-- close section0 accordion-body and accordion-section -->
+
+  <!-- Screen 1: hidden — employment/children/income already in Section 0 -->
+  <div style="display:none;" id="screen1">
+    <h1 id="s1Title">Family Setup</h1>
+    <div class="toggle-group">
+      <button class="toggle-btn active" onclick="setIncomeMode('dual')" id="dualBtn"><span id="dualLabel">Dual income</span></button>
+      <button class="toggle-btn" onclick="setIncomeMode('single')" id="singleBtn"><span id="singleLabel">Single income</span></button>
+    </div>
+    <div id="incomePartnerSelector" style="display:none;">
+      <label id="whoEarnsLabel">Who earns the income?</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setIncomePartner('p1')" id="earnerP1Btn"><span id="earnerP1Label">Partner 1</span></button>
+        <button class="toggle-btn" onclick="setIncomePartner('p2')" id="earnerP2Btn"><span id="earnerP2Label">Partner 2</span></button>
       </div>
+    </div>
+    <div class="form-group">
+      <label id="numChildrenLabel">Number of children</label>
+      <select id="numChildren" onchange="updateState('numChildren', parseInt(this.value))">
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4+</option>
+      </select>
     </div>
   </div>
 
-  <!-- SCREEN 2: Family profile -->
-  <div id="screen2" class="hidden">
-    <div class="card">
-      <h2 data-i18n="family_title">Your family profile</h2>
-      <p class="card-sub" data-i18n="family_sub">We use this to personalise your results. Nothing is stored or sent anywhere.</p>
-      <div class="form-row">
-        <div>
-          <label data-i18n="lbl_canton">Your canton</label>
-          <select id="canton">
-            <option value="">— select —</option>
-            <option value="ZH">Zurich (ZH)</option><option value="BE">Bern (BE)</option>
-            <option value="GE">Geneva (GE)</option><option value="VD">Vaud (VD)</option>
-            <option value="AG">Aargau (AG)</option><option value="BS">Basel-Stadt (BS)</option>
-            <option value="BL">Basel-Landschaft (BL)</option><option value="LU">Luzern (LU)</option>
-            <option value="SG">St. Gallen (SG)</option><option value="TI">Ticino (TI)</option>
-            <option value="VS">Valais (VS)</option><option value="FR">Fribourg (FR)</option>
-            <option value="ZG">Zug (ZG)</option><option value="SO">Solothurn (SO)</option>
-            <option value="GR">Graubuenden (GR)</option><option value="TG">Thurgau (TG)</option>
-            <option value="SZ">Schwyz (SZ)</option><option value="NE">Neuchatel (NE)</option>
-            <option value="UR">Uri (UR)</option><option value="OW">Obwalden (OW)</option>
-            <option value="NW">Nidwalden (NW)</option><option value="GL">Glarus (GL)</option>
-            <option value="SH">Schaffhausen (SH)</option><option value="AR">Appenzell AR</option>
-            <option value="AI">Appenzell AI</option><option value="JU">Jura (JU)</option>
-          </select>
-        </div>
-        <div>
-          <label data-i18n="lbl_status">Marital status</label>
-          <select id="marital">
-            <option value="">— select —</option>
-            <option value="married">Married</option>
-            <option value="single">Single</option>
-            <option value="divorced">Divorced</option>
-            <option value="widowed">Widowed</option>
-            <option value="partner">Registered partnership</option>
-            <option value="cohabiting">Cohabiting (unmarried)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div>
-          <label data-i18n="lbl_age">Your age</label>
-          <input type="number" id="age" min="18" max="90" placeholder="e.g. 38" />
-        </div>
-        <div>
-          <label data-i18n="lbl_children">Number of children</label>
-          <input type="number" id="children" min="0" max="10" placeholder="e.g. 2" />
-        </div>
-      </div>
-      <div class="form-row">
-        <div>
-          <label data-i18n="lbl_income">Gross annual income (CHF)</label>
-          <select id="income">
-            <option value="">— select range —</option>
-            <option value="40000">Under CHF 50,000</option>
-            <option value="70000">CHF 50,000 – 90,000</option>
-            <option value="110000">CHF 90,000 – 130,000</option>
-            <option value="160000">CHF 130,000 – 200,000</option>
-            <option value="220000">Over CHF 200,000</option>
-          </select>
-        </div>
-        <div>
-          <label data-i18n="lbl_employ">Employment type</label>
-          <select id="employ">
-            <option value="">— select —</option>
-            <option value="employee">Employee</option>
-            <option value="self">Self-employed</option>
-            <option value="notworking">Not currently working</option>
-          </select>
-        </div>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goToStep1()">&larr; Back</button>
-        <button class="btn btn-primary"   onclick="goToStep3()">See my results &rarr;</button>
-      </div>
+  <!-- Section 2: Income -->
+  <div class="accordion-section" id="section2">
+    <div class="accordion-header" onclick="toggleAccordion('section2')">
+      <span>💰 Income</span>
+      <span class="accordion-icon">▼</span>
     </div>
+    <div class="accordion-body">
+    <h2 id="s2Title" style="margin-top:0;">Income</h2>
+
+    <div id="incomePartners"></div>
+    </div></div><!-- close section2 -->
+
+  <!-- Section 3: Monthly Expenses -->
+  <div class="accordion-section" id="section3">
+    <div class="accordion-header" onclick="toggleAccordion('section3')">
+      <span>🛒 Monthly Expenses</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+    <h2 id="s3Title" style="margin-top:0;">Monthly Expenses</h2>
+    <div class="note" id="expenseNoteText"></div>
+
+    <div class="expense-list" id="expensesList"></div>
+
+    <div class="note" id="mortgageNoteText"></div>
+    </div></div><!-- close section3 -->
+
+  <!-- Section 4: Assets -->
+  <div class="accordion-section" id="section4">
+    <div class="accordion-header" onclick="toggleAccordion('section4')">
+      <span>🏦 Assets</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+    <h2 id="s4Title" style="margin-top:0;">Assets</h2>
+
+    <div class="form-group">
+      <label id="savingsLabel">Cash & savings (CHF)</label>
+      <input type="number" id="savings" value="0" onchange="updateState('savings', parseFloat(this.value))">
+    </div>
+
+    <div class="form-group">
+      <label id="propertyLabel">Property market value (CHF)</label>
+      <input type="number" id="property" value="0" onchange="updateState('property', parseFloat(this.value))">
+    </div>
+    </div></div><!-- close section4 -->
+
+  <!-- Section 5: Liabilities -->
+  <div class="accordion-section" id="section5">
+    <div class="accordion-header" onclick="toggleAccordion('section5')">
+      <span>💳 Liabilities</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+    <h2 id="s5Title" style="margin-top:0;">Liabilities</h2>
+
+    <div class="form-group">
+      <label id="mortgageLabel">Outstanding mortgage (CHF)</label>
+      <input type="number" id="mortgage" value="0" onchange="updateState('mortgage', parseFloat(this.value))">
+    </div>
+
+    <div class="form-group">
+      <label id="mortgageRateLabel">Mortgage interest rate (%)</label>
+      <input type="number" id="mortgageRate" value="1.3" step="0.1" onchange="updateState('mortgageRate', parseFloat(this.value))">
+    </div>
+
+    <div class="form-group">
+      <label id="otherDebtsLabel">Other debts (CHF)</label>
+      <input type="number" id="otherDebts" value="0" onchange="updateState('otherDebts', parseFloat(this.value))">
+      <div class="help-text" id="mortgageHelpText">Mortgage payoff is a key first step after death — it eliminates the interest expense permanently.</div>
+    </div>
+
+    <div class="form-group">
+      <label id="alimonyLabel">Monthly alimony / maintenance payments (CHF)</label>
+      <input type="number" id="alimonyMonthly" value="0" onchange="updateState('alimonyMonthly', parseFloat(this.value))">
+      <div class="help-text" id="alimonyHelpText">Regular payments to an ex-partner or children from a previous relationship.</div>
+    </div>
+    </div></div><!-- close section5 -->
+
+  <!-- Section 6: Pillar 1 -->
+  <div class="accordion-section" id="section6">
+    <div class="accordion-header" onclick="toggleAccordion('section6')">
+      <span>🏛️ Pillar 1 — AHV / IV State Pension</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+  <div id="screen6">
+    <h2 id="s6Title" style="margin-top:0;">Pillar 1 — AHV/IV State Insurance</h2>
+    <div class="note" id="pillar1ExplainText"></div>
+
+    <div id="pillar1Partners"></div>
+
+    <div style="margin-top: 2rem; padding: 1rem; background: var(--light); border-radius: 4px;">
+      <a href="https://www.ahv-iv.ch" target="_blank" style="color: var(--navy); font-weight: 600; text-decoration: none;">
+        <span id="ahvLinkText">Request your free AHV statement at ahv-iv.ch →</span>
+      </a>
+    </div>
+  </div></div></div><!-- close screen6 inner div, accordion-body, accordion-section -->
+
+  <!-- Section 7: Pillar 2 -->
+  <div class="accordion-section" id="section7">
+    <div class="accordion-header" onclick="toggleAccordion('section7')">
+      <span>🏢 Pillar 2 — Occupational Pension (BVG)</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+  <div id="screen7">
+    <h2 id="s7Title" style="margin-top:0;">Pillar 2 — Occupational Pension (BVK, VITA, etc.)</h2>
+    <div class="note" id="pillar2ExplainText"></div>
+
+    <div id="pillar2Partners"></div>
+  </div></div></div><!-- close screen7, accordion-body, accordion-section -->
+
+  <!-- Section 8: Pillar 3a -->
+  <div class="accordion-section" id="section8">
+    <div class="accordion-header" onclick="toggleAccordion('section8')">
+      <span>🐷 Pillar 3a — Private Savings</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+  <div id="screen8">
+    <h2 id="s8Title" style="margin-top:0;">Pillar 3a — Private Pension Savings</h2>
+    <div class="note" id="pillar3aExplainText"></div>
+
+    <div id="pillar3aPartners"></div>
+  </div></div></div><!-- close screen8, accordion-body, accordion-section -->
+
+  <!-- Section 9: Pillar 3b -->
+  <div class="accordion-section" id="section9">
+    <div class="accordion-header" onclick="toggleAccordion('section9')">
+      <span>🛡️ Pillar 3b — Term Life Insurance</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body">
+  <div id="screen9">
+    <h2 id="s9Title" style="margin-top:0;">Pillar 3b — Term Life Insurance</h2>
+    <div class="note" id="pillar3bExplainText"></div>
+
+    <div id="pillar3bPartners"></div>
+  </div></div></div><!-- close screen9, section9 accordion-body, section9 -->
+  </div><!-- close inputs-col -->
+
+  <!-- RIGHT PANEL: Live Results -->
+  <div class="results-col" id="liveResultsCol">
+    <div class="live-results-title">📊 Live Results</div>
+    <div id="liveResultsContent">
+      <div class="live-results-placeholder">Complete the scenario and family details on the left to see your results here.</div>
+    </div>
+    <button class="full-results-link" onclick="showFullResults()">View Full Analysis ↓</button>
   </div>
 
-  <!-- SCREEN 3: Results -->
-  <div id="screen3" class="hidden">
-    <div class="result-header">
-      <div style="font-size:.8rem;opacity:.7;margin-bottom:6px;" id="res-tag"></div>
-      <h2 id="res-title">Your personalised analysis</h2>
-      <p id="res-subtitle"></p>
-    </div>
-    <div class="result-grid" id="res-pills"></div>
-    <div class="card">
-      <h2 data-i18n="checklist_title">Your action checklist</h2>
-      <p class="card-sub" data-i18n="checklist_sub">What to do, and when.</p>
-      <ul class="checklist" id="res-checklist"></ul>
-    </div>
-    <div class="card">
-      <h2 data-i18n="links_title">Official Swiss resources</h2>
-      <p class="card-sub" data-i18n="links_sub">Verified government and authority links.</p>
-      <div id="res-links" style="display:flex;flex-direction:column;gap:10px;"></div>
-    </div>
-    <div class="disclaimer">
-      <strong>Disclaimer:</strong> SwissPillars provides information only, not financial or legal advice. All figures are estimates based on 2025 Swiss regulations. Please consult a qualified advisor before making any decisions. No data you enter is stored or transmitted anywhere.
-    </div>
-    <div class="btn-row" style="justify-content:flex-start;margin-top:24px;">
-      <button class="btn btn-secondary" onclick="goToStep1()">&larr; Start over</button>
-    </div>
-  </div>
+  </div><!-- close spa-layout -->
 
-</main>
+  <!-- Full Results Section (below the SPA layout) -->
+  <div id="fullResultsSection" style="display:none; max-width:900px; margin:24px auto; padding:0 16px;">
+    <div class="screen" id="screen10">
+      <h1 id="resultsTitle">Your Financial Protection Analysis</h1>
 
-<footer>
-  SwissPillars &mdash; Free, anonymous, Swiss family financial planning &mdash; MVP v0.1 &mdash; March 2026<br>
-  Not financial advice. Data sources: BSV, AHV-IV.ch, SVA Zurich, SECO, admin.ch
-</footer>
+      <div id="resultsContent"></div>
+
+      <div class="disclaimer" id="disclaimerText"></div>
+    </div><!-- close screen10 -->
+  </div><!-- close fullResultsSection -->
+</div>
 
 <script>
-const i18n = {
-  en: { hero_sub:"Understand the financial & legal impact of major life events in Switzerland.", pick_event:"Select a life event", pick_event_sub:"We'll walk you through what changes for your family.", ev_death:"Death of spouse", ev_disability:"Disability", ev_baby:"New baby", ev_divorce:"Divorce", ev_retirement:"Retirement", ev_jobloss:"Job loss", ev_marriage:"Marriage", ev_inheritance:"Inheritance", family_title:"Your family profile", family_sub:"Nothing is stored or sent anywhere.", lbl_canton:"Your canton", lbl_status:"Marital status", lbl_age:"Your age", lbl_children:"Children", lbl_income:"Gross annual income (CHF)", lbl_employ:"Employment type", checklist_title:"Your action checklist", checklist_sub:"What to do, and when.", links_title:"Official Swiss resources", links_sub:"Verified government links." },
-  de: { hero_sub:"Verstehen Sie die finanziellen Auswirkungen wichtiger Lebensereignisse in der Schweiz.", pick_event:"Lebensereignis wählen", pick_event_sub:"Wir zeigen, was sich für Ihre Familie ändert.", ev_death:"Tod des Ehepartners", ev_disability:"Invalidität", ev_baby:"Neues Baby", ev_divorce:"Scheidung", ev_retirement:"Pensionierung", ev_jobloss:"Jobverlust", ev_marriage:"Heirat", ev_inheritance:"Erbschaft", family_title:"Ihr Familienprofil", family_sub:"Keine Daten werden gespeichert oder übertragen.", lbl_canton:"Ihr Kanton", lbl_status:"Zivilstand", lbl_age:"Ihr Alter", lbl_children:"Kinder", lbl_income:"Bruttojahreseinkommen (CHF)", lbl_employ:"Beschäftigungsart", checklist_title:"Ihre Checkliste", checklist_sub:"Was zu tun ist und wann.", links_title:"Offizielle Schweizer Quellen", links_sub:"Geprüfte Behördenlinks." },
-  fr: { hero_sub:"Comprenez l'impact financier des grands événements de la vie en Suisse.", pick_event:"Choisissez un événement de vie", pick_event_sub:"Nous vous guidons sur ce qui change pour votre famille.", ev_death:"Décès du conjoint", ev_disability:"Invalidité", ev_baby:"Naissance", ev_divorce:"Divorce", ev_retirement:"Retraite", ev_jobloss:"Perte d'emploi", ev_marriage:"Mariage", ev_inheritance:"Héritage", family_title:"Votre profil familial", family_sub:"Aucune donnée n'est stockée ou transmise.", lbl_canton:"Votre canton", lbl_status:"État civil", lbl_age:"Votre âge", lbl_children:"Enfants", lbl_income:"Revenu annuel brut (CHF)", lbl_employ:"Type d'emploi", checklist_title:"Votre liste d'actions", checklist_sub:"Quoi faire et quand.", links_title:"Ressources officielles suisses", links_sub:"Liens gouvernementaux vérifiés." },
-  it: { hero_sub:"Capisci l'impatto finanziario dei grandi eventi della vita in Svizzera.", pick_event:"Seleziona un evento della vita", pick_event_sub:"Ti guidiamo su cosa cambia per la tua famiglia.", ev_death:"Decesso del coniuge", ev_disability:"Invalidità", ev_baby:"Nuovo bambino", ev_divorce:"Divorzio", ev_retirement:"Pensionamento", ev_jobloss:"Perdita di lavoro", ev_marriage:"Matrimonio", ev_inheritance:"Eredità", family_title:"Il tuo profilo familiare", family_sub:"Nessun dato viene memorizzato o trasmesso.", lbl_canton:"Il tuo cantone", lbl_status:"Stato civile", lbl_age:"La tua età", lbl_children:"Figli", lbl_income:"Reddito annuo lordo (CHF)", lbl_employ:"Tipo di impiego", checklist_title:"La tua lista di azioni", checklist_sub:"Cosa fare e quando.", links_title:"Risorse ufficiali svizzere", links_sub:"Link governativi verificati." },
-  rm: { hero_sub:"Chapir l'effect finanzial da gronds eveniments da vita en Svizra.", pick_event:"Tscherna in eveniment da vita", pick_event_sub:"Nus ta mussan tgei che sa mida per tia famiglia.", ev_death:"Mort dal consort", ev_disability:"Invaliditad", ev_baby:"In uffant nov", ev_divorce:"Divorzi", ev_retirement:"Pensiun", ev_jobloss:"Pers da lavur", ev_marriage:"Maridaglia", ev_inheritance:"Ierta", family_title:"Tiu profil da famiglia", family_sub:"Naginas datas vegnan memorisadas.", lbl_canton:"Tiu chantun", lbl_status:"Stadi civil", lbl_age:"Tia vegliadetgna", lbl_children:"Uffants", lbl_income:"Salari annual brud (CHF)", lbl_employ:"Tip d'occupaziun", checklist_title:"Tia glista d'acziuns", checklist_sub:"Tgei far ed il cura.", links_title:"Resursas ufizialas svizras", links_sub:"Links guvernamentals verifitgads." }
-};
-
-let currentLang = 'en';
-let selectedEvent = null;
-
-function setLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
-  const t = i18n[lang] || i18n.en;
-  document.querySelectorAll('[data-i18n]').forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
-}
-
-function selectEvent(ev) {
-  selectedEvent = ev;
-  document.querySelectorAll('.event-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('ev-'+ev).classList.add('selected');
-  const btn = document.getElementById('btn-next1');
-  btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-}
-
-function goToStep1() { show('screen1'); hide('screen2'); hide('screen3'); setDots(1); }
-function goToStep2() { if(!selectedEvent) return; hide('screen1'); show('screen2'); hide('screen3'); setDots(2); scroll(0,0); }
-function goToStep3() { hide('screen1'); hide('screen2'); show('screen3'); setDots(3); buildResults(); scroll(0,0); }
-function show(id) { document.getElementById(id).classList.remove('hidden'); }
-function hide(id) { document.getElementById(id).classList.add('hidden'); }
-function setDots(step) {
-  for(let i=1;i<=3;i++){const d=document.getElementById('dot'+i);d.classList.remove('active','done');if(i<step)d.classList.add('done');else if(i===step)d.classList.add('active');}
-  for(let i=1;i<=2;i++){document.getElementById('line'+i).classList.toggle('done',i<step);}
-}
-
-const eventData = {
-  death:{
-    title:"Death of spouse — what changes",subtitle:"AHV survivor pension, Pillar 2 death benefit, tax change",
-    pills:[{label:"AHV widow/widower pension (max)",value:"CHF 2,016/mo",sub:"2025 — with children or age 45+",cls:""},{label:"AHV orphan pension (per child)",value:"CHF 1,008/mo",sub:"Until age 18 (25 if in education)",cls:"ok"},{label:"Pillar 2 survivor pension",value:"~60% of BVG",sub:"Of projected retirement pension",cls:"warn"}],
-    checks:[{icon:"1",title:"Register death at Zivilstandsamt",sub:"Within 2 days"},{icon:"2",title:"Apply for AHV survivor pension",sub:"Contact SVA — your cantonal AHV office"},{icon:"3",title:"Notify pension fund (BVG)",sub:"Request survivor pension — within 1 month"},{icon:"4",title:"Change tax filing to individual",sub:"Notify cantonal tax authority"},{icon:"5",title:"Request Pillar 3a payout",sub:"Contact bank or insurance company"}],
-    links:[{label:"AHV-IV.ch — Survivor pensions",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Survivors-pensions"},{label:"BSV — AHV amounts 2025",url:"https://www.bsv.admin.ch/de/leistungen-ahv-detail"},{label:"SVA Zurich",url:"https://www.svazurich.ch"}]
+const T = {
+  en: {
+    appName: "SwissPillars",
+    step0Title: "What do you want to plan for?",
+    death: "Death", disability: "Disability", divorce: "Divorce", newBaby: "New Baby",
+    comingSoon: "Coming soon",
+    whoAffected: "Who is affected?",
+    whoAffectedDeath: "Who passes away?",
+    whoAffectedDisability: "Who becomes unable to work?",
+    scenarioVerbDeath: "passes away",
+    scenarioVerbDisability: "becomes unable to work",
+    scenarioVerbBoth: "both become unable to work",
+    whoEmployed: "Who is employed?",
+    bothWork: "Both work", onlyP1Works: "Only Partner 1 works", onlyP2Works: "Only Partner 2 works",
+    numChildrenTitle: "How many children?",
+    childrenLabelSingle: "child", childrenLabelPlural: "children",
+    partner1: "Partner 1", partner2: "Partner 2", both: "Both",
+    step1Title: "Family Setup",
+    dualIncome: "Dual income", singleIncome: "Single income",
+    whoEarns: "Who earns the income?",
+    p1Name: "Partner 1 name", p2Name: "Partner 2 name",
+    numChildren: "Number of children",
+    step2Title: "Income",
+    grossAnnual: "Gross annual salary (CHF)",
+    employment: "Employment %",
+    netMonthly: "Net monthly take-home (CHF)",
+    autoEstimated: "Auto-estimated — you can change this",
+    otherIncomeTitle: "Other household income (monthly)",
+    otherIncomeDividends: "Dividends / investment income",
+    otherIncomeRental: "Rental income",
+    otherIncomeOther: "Other income",
+    otherIncomeHelp: "Passive income that continues regardless of who passes away or becomes disabled.",
+    step3Title: "Monthly Expenses",
+    housing: "Housing (rent, mortgage, utilities, maintenance)",
+    healthIns: "Health insurance (Krankenkasse)",
+    taxes: "Taxes (estimated monthly)",
+    food: "Food & groceries",
+    transport: "Transport (car, SBB, fuel)",
+    children: "Children & family (childcare, activities)",
+    communication: "Communication (internet, phone, TV licence)",
+    insGroupLabel: "Insurances",
+    insLiability: "Liability insurance (Haftpflicht)",
+    insLegal: "Legal protection (Rechtsschutz)",
+    insTravel: "Travel insurance",
+    insRega: "REGA / Air rescue membership",
+    insOther: "Other insurances (car, household, etc.)",
+    other: "Other (holidays, hobbies, clothing, etc.)",
+    totalExpenses: "Total monthly expenses",
+    expenseNote: "Tip: find these on your tax return and bank statements. Do NOT include Pillar 3a premiums or term insurance — those come later.",
+    monthly: "Monthly", yearly: "Yearly",
+    scenarioAnalysis: "Scenario Analysis",
+    scenarioIf: "If",
+    scenarioDies: "dies",
+    scenarioDisabled: "becomes disabled",
+    financialRunwayTitle: "Family Financial Runway",
+    totalLumpSum: "Total lump sums",
+    familyExpensesLabel: "Your monthly expenses",
+    bufferCoversExpenses: "Net buffer covers family expenses for",
+    gapCoveredBy: "Monthly gap covered by buffer for",
+    phase1GapBuffer: "Months 1-24 gap: savings cover",
+    phase2GapBuffer: "Month 25+ gap: savings cover",
+    mortgageNote: "If you pay mortgage interest, include it here under Housing.",
+    step4Title: "Assets",
+    savings: "Cash & savings (CHF)",
+    propertyValue: "Property market value (CHF)",
+    assetsHelp: "Find cash/savings on your tax return (line 400). Property market value on your tax return (line 421).",
+    step5Title: "Liabilities",
+    mortgage: "Outstanding mortgage (CHF)",
+    mortgageRate: "Mortgage interest rate (%)",
+    otherDebts: "Other debts (CHF)",
+    alimony: "Monthly alimony / maintenance (CHF)",
+    alimonyHelp: "Regular payments to an ex-partner or children from a previous relationship.",
+    mortgagePayoffHelp: "Mortgage payoff is a key first step after death — it eliminates the interest expense permanently.",
+    step6Title: "Pillar 1 — AHV/IV State Insurance",
+    ahvExplain: "The Swiss state automatically pays pensions in case of death or disability. We estimate these from your salary, but you can override with your exact figures from your AHV Kontoauszug.",
+    ahvEstimate: "Estimated AHV pension",
+    ahvOverride: "I have my exact AHV figures",
+    partnerPensionDeath: "Partner pension on death (CHF/month)",
+    orphanPensionDeath: "Orphan pension per child on death (CHF/month)",
+    ivPensionDisability: "IV disability pension at 100% disability (CHF/month)",
+    ahvLink: "Request your free AHV statement at ahv-iv.ch →",
+    step7Title: "Pillar 2 — Occupational Pension (BVK, VITA, etc.)",
+    pillar2Explain: "Find these figures on your latest Pillar 2 certificate (Vorsorgeausweis / Certificat de prévoyance).",
+    pillar2aCapital: "Current capital / retirement savings (CHF)",
+    p2aPartnerPension: "On DEATH: Partner pension (CHF/year from certificate)",
+    p2aOrphanPension: "On DEATH: Orphan pension per child (CHF/year)",
+    p2aDisability: "On DISABILITY: Disability pension (CHF/year from certificate)",
+    p2aChildrenDisability: "On DISABILITY: Children's disability pension per child (CHF/year)",
+    p2aLapses: "This partner leaves employment soon",
+    p2aLapsesNote: "Partner 2 Pillar 2a coverage will lapse — only capital remains",
+    step8Title: "Pillar 3a — Private Pension Savings",
+    pillar3aExplain: "Pillar 3a grows tax-free. On death, the savings are paid out as a lump sum to beneficiaries.",
+    p3aInsurance: "Insurance policy (Generali, Swiss Life, etc.)",
+    p3aBank: "Bank/investment account (VIAC, finpension, frankly)",
+    p3aDeathCapital: "Death capital payout (CHF)",
+    p3aDisPension: "Monthly disability pension (CHF/month)",
+    p3aAnnualPremium: "Annual premium (CHF/year)",
+    p3aExemptionDays: "Premium exemption starts after (days)",
+    p3aBalance: "Current account balance (CHF)",
+    p3aAnnualContrib: "Annual contribution (CHF/year)",
+    p3aReturn: "Expected annual return (%)",
+    p3aBankNote: "Bank Pillar 3a provides NO disability pension. On death, the full balance is paid out.",
+    step9Title: "Pillar 3b — Term Life Insurance",
+    pillar3bExplain: "Term insurance pays a lump sum on death. It is NOT income replacement on disability (usually just a premium waiver).",
+    hasTermIns: "Has term insurance",
+    termDeathSum: "Death sum insured (CHF)",
+    termAnnualPremium: "Annual premium (CHF/year)",
+    termDisNote: "Important: disability benefit in term insurance = premium waiver only. It does NOT replace income.",
+    calculateBtn: "Calculate my results →",
+    resultsTitle: "Your Financial Protection Analysis",
+    protected: "Your family is financially protected ✓",
+    minorGap: "Minor monthly gap — manageable",
+    significantGap: "Significant gap — action needed",
+    monthlyIncome: "Monthly income",
+    monthlyExpenses: "Monthly expenses",
+    monthlySurplus: "Monthly surplus",
+    monthlyGap: "Monthly gap",
+    netBuffer: "Net cash buffer",
+    bufferCovers: "Buffer covers",
+    years: "years",
+    months: "months",
+    indefinite: "Indefinitely",
+    noBuffer: "No buffer",
+    recalculate: "← Recalculate",
+    startOver: "Start Over",
+    ahvWidow: "AHV widow/widower pension",
+    ahvOrphans: "AHV orphan pensions",
+    p2aPartner: "Pillar 2 partner pension",
+    p2aOrphans: "Pillar 2 orphan pensions",
+    survivorIncome: "Survivor's salary",
+    p1IvPension: "IV state pension",
+    p2aDisPension: "Pillar 2 disability pension",
+    p2aChildrenPension: "Pillar 2 children's pension",
+    p3aDisPensionLabel: "Pillar 3a disability pension",
+    disclaimer: "This tool provides estimates for planning purposes only. It is not financial advice. Figures are based on Swiss AHV Scale 44 (2025/2026) and your inputs. Consult a certified financial advisor for personal advice.",
+    next: "Next →",
+    back: "← Back",
+    notEmployed: "Not employed",
+    chf: "CHF",
+    perMonth: "/month",
+    perYear: "/year",
+    disabilityDegreeNote: "Results shown for 100% disability (full IV pension). Real IV degree is determined by SUVA/IV office.",
+    waitingPeriodNote: "⚠️ Critical: Pillar 2a pays nothing during the 24-month waiting period.",
+    savingsLabel: "Cash & savings",
+    p3aPayoutLabel: "Pillar 3a payout",
+    termPayoutLabel: "Term insurance payout",
+    mortgageLabel: "Less: Mortgage payoff",
+    netBufferLabel: "Net cash buffer",
+    lumpChartTitle: "Lump sums on death",
+    cashflowChartTitle: "Monthly cashflow comparison",
+    incomeChartTitle: "Income sources",
+    runwayChartTitle: "Buffer runway",
+    detailedBreakdown: "See detailed breakdown",
+    phase1: "⚠️ Months 1–24 (Pillar 2a waiting period)",
+    phase2: "✅ Month 25+ (Full coverage)",
+    heroText: "See exactly what happens to your family's finances — income, expenses, and insurance gaps — based on real Swiss rules.",
+    heroSub: "Free · Anonymous · Switzerland",
+    yes: "Yes",
+    no: "No",
   },
-  baby:{
-    title:"New baby — what changes",subtitle:"Maternity pay, Familienzulagen, health insurance, tax",
-    pills:[{label:"Maternity pay (EO)",value:"80% salary",sub:"14 weeks / 98 days",cls:"ok"},{label:"Familienzulage ZH (0–12 yrs)",value:"CHF 215/mo",sub:"Per child, from birth — 2025 rate",cls:"ok"},{label:"Paternity leave (EO)",value:"80% salary",sub:"10 working days",cls:""}],
-    checks:[{icon:"1",title:"Register birth at Zivilstandsamt",sub:"Within 3 days"},{icon:"2",title:"Apply for Familienzulagen via employer",sub:"Familienausgleichskasse (FAK)"},{icon:"3",title:"Add child to KVG health insurance",sub:"Within 3 months of birth"},{icon:"4",title:"Claim maternity EO compensation",sub:"Via employer to AHV office"},{icon:"5",title:"Update tax return",sub:"New child deductions apply immediately"}],
-    links:[{label:"AHV-IV — Maternity compensation",url:"https://www.ahv-iv.ch/en/Social-insurances/Income-compensation-allowances-EO/Maternity"},{label:"SVA ZH — Familienzulagen",url:"https://svazurich.ch/unsere-produkte/weitere-produkte/weitere-leistungen/familienzulagen/sinn-und-zweck.html"},{label:"KT Zurich — Family allowances",url:"https://www.zh.ch/de/soziales/familienzulagen.html"}]
+  de: {
+    appName: "SwissPillars",
+    step0Title: "Was möchten Sie planen?",
+    death: "Todesfall", disability: "Invalidität", divorce: "Scheidung", newBaby: "Neues Baby",
+    comingSoon: "Demnächst",
+    whoAffected: "Wer ist betroffen?",
+    whoAffectedDeath: "Wer stirbt?",
+    whoAffectedDisability: "Wer wird arbeitsunfähig?",
+    scenarioVerbDeath: "stirbt",
+    scenarioVerbDisability: "wird arbeitsunfähig",
+    scenarioVerbBoth: "beide werden arbeitsunfähig",
+    whoEmployed: "Wer ist erwerbstätig?",
+    bothWork: "Beide arbeiten", onlyP1Works: "Nur Partner 1 arbeitet", onlyP2Works: "Nur Partner 2 arbeitet",
+    numChildrenTitle: "Wie viele Kinder?",
+    childrenLabelSingle: "Kind", childrenLabelPlural: "Kinder",
+    partner1: "Partner 1", partner2: "Partner 2", both: "Beide",
+    step1Title: "Familie",
+    dualIncome: "Zwei Einkommen", singleIncome: "Ein Einkommen",
+    whoEarns: "Wer verdient das Einkommen?",
+    p1Name: "Name Partner 1", p2Name: "Name Partner 2",
+    numChildren: "Anzahl Kinder",
+    step2Title: "Einkommen",
+    grossAnnual: "Bruttojahreseinkommen (CHF)",
+    employment: "Beschäftigungsgrad",
+    netMonthly: "Nettolohn monatlich (CHF)",
+    autoEstimated: "Geschätzt — Sie können dies ändern",
+    otherIncomeTitle: "Sonstige Haushaltseinkünfte (monatlich)",
+    otherIncomeDividends: "Dividenden / Kapitalerträge",
+    otherIncomeRental: "Mieteinnahmen",
+    otherIncomeOther: "Sonstige Einkünfte",
+    otherIncomeHelp: "Passive Einkünfte, die unabhängig davon weiterlaufen, wer stirbt oder invalid wird.",
+    step3Title: "Monatliche Ausgaben",
+    housing: "Wohnen (Miete, Hypothek, Nebenkosten)",
+    healthIns: "Krankenkasse",
+    taxes: "Steuern (monatlich geschätzt)",
+    food: "Lebensmittel & Einkäufe",
+    transport: "Transport (Auto, SBB, Treibstoff)",
+    children: "Kinder & Familie (Kita, Aktivitäten)",
+    communication: "Kommunikation (Internet, Telefon, Serafe)",
+    insGroupLabel: "Versicherungen",
+    insLiability: "Haftpflichtversicherung",
+    insLegal: "Rechtsschutzversicherung",
+    insTravel: "Reiseversicherung",
+    insRega: "REGA / Rettungsflugwacht",
+    insOther: "Weitere Versicherungen (Auto, Hausrat, usw.)",
+    other: "Sonstiges (Urlaub, Hobbys, Kleidung)",
+    totalExpenses: "Monatliche Gesamtausgaben",
+    expenseNote: "Tipp: Finden Sie diese auf Ihrer Steuererklärung und Kontoauszügen. NICHT Säule 3a Prämien oder Risikoversicherungen einschliessen — diese kommen später.",
+    monthly: "Monatlich", yearly: "Jährlich",
+    scenarioAnalysis: "Szenario-Analyse",
+    scenarioIf: "Wenn",
+    scenarioDies: "stirbt",
+    scenarioDisabled: "invalid wird",
+    financialRunwayTitle: "Finanzielle Reichweite der Familie",
+    totalLumpSum: "Gesamte Kapitalleistungen",
+    familyExpensesLabel: "Monatliche Ausgaben",
+    bufferCoversExpenses: "Netto-Puffer deckt Familienausgaben für",
+    gapCoveredBy: "Monatliches Defizit durch Puffer gedeckt für",
+    phase1GapBuffer: "Monate 1-24 Defizit: Ersparnisse reichen für",
+    phase2GapBuffer: "Ab Monat 25 Defizit: Ersparnisse reichen für",
+    mortgageNote: "Wenn Sie Hypothekarzinsen zahlen, nehmen Sie diese unter Wohnen auf.",
+    step4Title: "Vermögen",
+    savings: "Bargeld & Ersparnisse (CHF)",
+    propertyValue: "Immobilienwert (CHF)",
+    assetsHelp: "Bargeld & Ersparnisse auf Ihrer Steuererklärung (Zeile 400). Immobilienwert auf Ihrer Steuererklärung (Zeile 421).",
+    step5Title: "Verbindlichkeiten",
+    mortgage: "Hypothek (CHF)",
+    mortgageRate: "Hypothekarzins (%)",
+    otherDebts: "Sonstige Schulden (CHF)",
+    alimony: "Monatliche Unterhaltszahlungen (CHF)",
+    alimonyHelp: "Regelmässige Zahlungen an einen früheren Partner oder Kinder aus einer früheren Beziehung.",
+    mortgagePayoffHelp: "Die Hypothek abbezahlen ist ein wichtiger Schritt nach dem Tod — es spart den Zinsaufwand dauerhaft.",
+    step6Title: "Säule 1 — AHV/IV",
+    ahvExplain: "Der Schweizer Staat zahlt automatisch Renten bei Tod oder Invalidität. Wir schätzen diese nach Ihrem Gehalt, aber Sie können Ihre genauen AHV-Zahlen eingeben.",
+    ahvEstimate: "Geschätzte AHV-Rente",
+    ahvOverride: "Ich habe meine genauen AHV-Zahlen",
+    partnerPensionDeath: "Witwer-/Witwen-Rente bei Tod (CHF/Monat)",
+    orphanPensionDeath: "Waisenrente pro Kind bei Tod (CHF/Monat)",
+    ivPensionDisability: "IV-Rente bei 100% Invalidität (CHF/Monat)",
+    ahvLink: "AHV-Kontoauszug kostenlos beantragen: ahv-iv.ch",
+    step7Title: "Säule 2 — BVG Pensionskasse",
+    pillar2Explain: "Finden Sie diese Zahlen auf Ihrem letzten BVG-Vorsorgeausweis.",
+    pillar2aCapital: "Aktuelles Altersguthaben (CHF)",
+    p2aPartnerPension: "Bei TOD: Partnerrente (CHF/Jahr aus Vorsorgeausweis)",
+    p2aOrphanPension: "Bei TOD: Waisenrente pro Kind (CHF/Jahr)",
+    p2aDisability: "Bei INVALIDITÄT: Invalidenrente (CHF/Jahr aus Vorsorgeausweis)",
+    p2aChildrenDisability: "Bei INVALIDITÄT: Kinderrente pro Kind (CHF/Jahr)",
+    p2aLapses: "Dieser Partner verlässt bald das Arbeitsverhältnis",
+    p2aLapsesNote: "BVG-Deckung erlischt — nur Kapital bleibt",
+    step8Title: "Säule 3a — Privates Sparen",
+    pillar3aExplain: "Säule 3a wächst steuerfrei. Bei Tod wird das Guthaben als Kapitalleistung ausbezahlt.",
+    p3aInsurance: "Lebensversicherungspolice",
+    p3aBank: "Bank / Anlagekonto",
+    p3aDeathCapital: "Todesfallkapital (CHF)",
+    p3aDisPension: "Monatliche Invalidenrente (CHF/Monat)",
+    p3aAnnualPremium: "Jahresprämie (CHF/Jahr)",
+    p3aExemptionDays: "Prämienbefreiung nach (Tagen)",
+    p3aBalance: "Aktueller Kontostand (CHF)",
+    p3aAnnualContrib: "Jahresbeitrag (CHF/Jahr)",
+    p3aReturn: "Erwartete Jahresrendite (%)",
+    p3aBankNote: "Bank Säule 3a bietet KEINE Invalidenrente. Guthaben wird bei Tod ausbezahlt.",
+    step9Title: "Säule 3b — Risikolebensversicherung",
+    pillar3bExplain: "Risikoversicherung zahlt eine Summe bei Tod. Sie ersetzt NICHT das Einkommen bei Invalidität (normalerweise nur Prämienbefreiung).",
+    hasTermIns: "Hat Risikoversicherung",
+    termDeathSum: "Todesfallsumme (CHF)",
+    termAnnualPremium: "Jahresprämie (CHF/Jahr)",
+    termDisNote: "Wichtig: Invalidität in der Risikoversicherung = nur Prämienbefreiung. Kein Einkommensersatz.",
+    calculateBtn: "Meine Ergebnisse berechnen →",
+    resultsTitle: "Ihre Finanzschutzanalyse",
+    protected: "Ihre Familie ist finanziell abgesichert ✓",
+    minorGap: "Kleines monatliches Defizit — handhabbar",
+    significantGap: "Erhebliches Defizit — Handlungsbedarf",
+    monthlyIncome: "Monatliches Einkommen",
+    monthlyExpenses: "Monatliche Ausgaben",
+    monthlySurplus: "Monatlicher Überschuss",
+    monthlyGap: "Monatliches Defizit",
+    netBuffer: "Netto-Puffer",
+    bufferCovers: "Puffer reicht für",
+    years: "Jahre",
+    months: "Monate",
+    indefinite: "Unbegrenzt",
+    noBuffer: "Kein Puffer",
+    recalculate: "← Neu berechnen",
+    startOver: "Neu starten",
+    ahvWidow: "AHV Witwer-/Witwenrente",
+    ahvOrphans: "AHV Waisenrenten",
+    p2aPartner: "Pensionskasse Partnerrente",
+    p2aOrphans: "Pensionskasse Waisenrenten",
+    survivorIncome: "Einkommen Partner",
+    p1IvPension: "IV-Staatsrente",
+    p2aDisPension: "Pensionskasse Invalidenrente",
+    p2aChildrenPension: "Pensionskasse Kinderrente",
+    p3aDisPensionLabel: "Säule 3a Invalidenrente",
+    disclaimer: "Dieses Tool liefert Schätzungen zu Planungszwecken. Es ist keine Finanzberatung. Berechnung basiert auf AHV Skala 44 (2025/2026) und Ihren Eingaben. Wenden Sie sich für persönliche Beratung an einen zertifizierten Finanzberater.",
+    next: "Weiter →",
+    back: "← Zurück",
+    notEmployed: "Nicht erwerbstätig",
+    chf: "CHF",
+    perMonth: "/Monat",
+    perYear: "/Jahr",
+    disabilityDegreeNote: "Ergebnisse für 100% Invalidität. Tatsächlicher IV-Grad wird von SUVA/IV bestimmt.",
+    waitingPeriodNote: "⚠️ Wichtig: Die Pensionskasse zahlt in den ersten 24 Monaten nichts.",
+    savingsLabel: "Bargeld & Ersparnisse",
+    p3aPayoutLabel: "Säule 3a Auszahlung",
+    termPayoutLabel: "Risikoversicherung Auszahlung",
+    mortgageLabel: "Abzüglich: Hypothek",
+    netBufferLabel: "Netto-Puffer",
+    lumpChartTitle: "Einmalige Kapitalleistungen",
+    cashflowChartTitle: "Monatlicher Cashflow",
+    incomeChartTitle: "Einkommensquellen",
+    runwayChartTitle: "Puffer-Reichweite",
+    detailedBreakdown: "Detaillierte Aufschlüsselung anzeigen",
+    phase1: "⚠️ Monate 1–24 (Wartefrist)",
+    phase2: "✅ Ab Monat 25 (Volle Deckung)",
+    heroText: "Sehen Sie genau, was mit den Finanzen Ihrer Familie passiert — Einkommen, Ausgaben und Versicherungslücken — basierend auf echten Schweizer Regeln.",
+    heroSub: "Kostenlos · Anonym · Schweiz",
+    yes: "Ja",
+    no: "Nein",
   },
-  jobloss:{
-    title:"Job loss — what changes",subtitle:"ALV unemployment insurance, RAV registration, budget impact",
-    pills:[{label:"ALV payout — with children",value:"80% salary",sub:"Insured salary capped CHF 148,200/yr",cls:"ok"},{label:"ALV payout — no children",value:"70% salary",sub:"Standard rate",cls:"warn"},{label:"Register with RAV",value:"Day 1",sub:"Every day of delay = lost benefit",cls:""}],
-    checks:[{icon:"1",title:"Register at RAV immediately",sub:"Do not wait — go on your first day unemployed"},{icon:"2",title:"Register with Arbeitslosenkasse",sub:"Cantonal unemployment insurance fund"},{icon:"3",title:"Document job search actively",sub:"Must apply for jobs to keep benefits"},{icon:"4",title:"Check health insurance subsidy",sub:"Praemienverbilligung may apply"},{icon:"5",title:"Do not withdraw Pillar 2",sub:"Assets go to Freizuegigkeitskonto — leave them"}],
-    links:[{label:"SECO — arbeit.swiss (register here)",url:"https://www.arbeit.swiss/secoalv/en/home.html"},{label:"ALV FAQ — arbeit.swiss",url:"https://www.arbeit.swiss/secoalv/en/home/menue/stellensuchende/arbeitslos-was-tun-/faq_arbeitslosenentschaedigung.html"},{label:"Freizuegigkeitsstiftung",url:"https://www.sfbvg.ch/en"}]
-  },
-  divorce:{
-    title:"Divorce — what changes",subtitle:"Pillar 2 split, AHV splitting, alimony, tax filing change",
-    pills:[{label:"Pillar 2 split",value:"50 / 50",sub:"Mandatory equal split — Art. 122 ZGB",cls:"warn"},{label:"AHV contributions",value:"Split equally",sub:"For years of marriage",cls:""},{label:"Tax filing",value:"Individual",sub:"No longer joint — often higher tax",cls:"warn"}],
-    checks:[{icon:"1",title:"Consult a divorce lawyer or mediator",sub:"Understand your entitlements first"},{icon:"2",title:"Request Pillar 2 statements from both funds",sub:"Required for court BVG calculation"},{icon:"3",title:"File divorce proceedings at Zivilgericht",sub:"Court issues BVG split order"},{icon:"4",title:"Notify AHV of contribution splitting",sub:"SVA — Rentensplitting"},{icon:"5",title:"Update Pillar 3a beneficiaries",sub:"Ex-spouse may still be listed"}],
-    links:[{label:"BJ.admin.ch — Divorce law",url:"https://www.bj.admin.ch/bj/en/home/gesellschaft/zivilrecht.html"},{label:"AHV-IV — Pension splitting",url:"https://www.ahv-iv.ch/en"},{label:"Beobachter — Scheidung guide",url:"https://www.beobachter.ch/recht/familienrecht/scheidung"}]
-  },
-  retirement:{
-    title:"Retirement — what changes",subtitle:"AHV pension, 13th AHV (new Dec 2026), Pillar 2, Pillar 3a",
-    pills:[{label:"Max AHV pension (single) 2025",value:"CHF 2,520/mo",sub:"+ 13th pension in December 2026",cls:"ok"},{label:"Married couple AHV cap",value:"CHF 3,780/mo",sub:"150% of max — Heiratsstrafe",cls:"warn"},{label:"Pillar 3a limit 2025",value:"CHF 7,258/yr",sub:"Fully tax deductible",cls:""}],
-    checks:[{icon:"1",title:"Request AHV pension estimate",sub:"Free — contact SVA or ahv-iv.ch"},{icon:"2",title:"Decide: Pillar 2 annuity or lump sum?",sub:"Irrevocable decision — get independent advice"},{icon:"3",title:"Stagger Pillar 3a withdrawals over 5 years",sub:"Major tax saving — do not withdraw all at once"},{icon:"4",title:"Calculate early retirement cost",sub:"AHV reduced 6.8% per year brought forward"},{icon:"5",title:"Note 13th AHV payment — December 2026",sub:"First ever payment — approved March 2024 referendum"}],
-    links:[{label:"AHV-IV — Retirement pensions",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Old-age-pensions"},{label:"SVA Zurich — Pension calculation",url:"https://www.svazurich.ch"},{label:"VZ — Pillar 2 guide",url:"https://www.vermoegenszentrum.ch/wissen/pensionierung.html"}]
-  },
-  disability:{
-    title:"Disability — what changes",subtitle:"IV pension, BVG disability pension, UVG, income gap",
-    pills:[{label:"IV full pension (2025)",value:"CHF 1,260–2,520/mo",sub:"Requires 70%+ disability assessment",cls:"warn"},{label:"IV threshold — quarter pension",value:"40–49% disabled",sub:"Below 40% = no IV pension at all",cls:"warn"},{label:"BVG disability pension",value:"~40% insured salary",sub:"Coordinated with IV — varies by fund",cls:""}],
-    checks:[{icon:"1",title:"File IV application immediately",sub:"Process takes 12–24 months — start now"},{icon:"2",title:"Notify your BVG pension fund",sub:"Disability cover activates from BVG"},{icon:"3",title:"Check employer continued pay (OR 324a)",sub:"3 weeks to several months by seniority"},{icon:"4",title:"Apply for Krankentaggeld",sub:"Daily allowance bridges IV assessment gap"},{icon:"5",title:"Check UVG if work-related accident",sub:"Full accident insurance — report immediately"}],
-    links:[{label:"AHV-IV — Invalidity Insurance",url:"https://www.ahv-iv.ch/en/Social-insurances/Invalidity-insurance-IV"},{label:"IV-Stelle Zurich",url:"https://www.iv-stelle.zh.ch/internet/iv-stelle/de/home.html"},{label:"BSV — IV benefits",url:"https://www.bsv.admin.ch/en"}]
-  },
-  marriage:{
-    title:"Marriage — what changes",subtitle:"Tax change, AHV couple cap, Heiratsstrafe, Pillar 2 & 3a",
-    pills:[{label:"AHV couple cap",value:"CHF 3,780/mo",sub:"vs CHF 5,040 cohabiting — Heiratsstrafe",cls:"warn"},{label:"Tax impact in most cantons",value:"Often higher",sub:"Joint filing = marriage penalty",cls:"warn"},{label:"Pillar 3a limit",value:"CHF 7,258/yr",sub:"Per person — update beneficiary now",cls:""}],
-    checks:[{icon:"1",title:"Register marriage at Zivilstandsamt",sub:"Both partners must appear in person"},{icon:"2",title:"Update Pillar 2 beneficiary",sub:"Spouse is now automatic beneficiary — confirm with fund"},{icon:"3",title:"Update Pillar 3a beneficiary",sub:"Update form at bank or insurance"},{icon:"4",title:"Notify tax authority",sub:"Change to joint filing — check canton rules"},{icon:"5",title:"Name change if applicable",sub:"Update passport, permits, bank accounts"}],
-    links:[{label:"ch.ch — Marriage in Switzerland",url:"https://www.ch.ch/en/family/marriage/"},{label:"Comparis — Tax calculator",url:"https://en.comparis.ch/steuern/steuerrechner"},{label:"AHV-IV — Couple pension rules",url:"https://www.ahv-iv.ch/en/Social-insurances/Old-age-and-survivors-insurance-OASI/Old-age-pensions"}]
-  },
-  inheritance:{
-    title:"Inheritance — what changes",subtitle:"Swiss inheritance law, ESchG 2023, cantonal tax, will planning",
-    pills:[{label:"Inheritance tax ZH — spouse/children",value:"0%",sub:"Zurich has no tax for direct family",cls:"ok"},{label:"Mandatory share (Pflichtteil) 2023",value:"1/2 of legal share",sub:"ESchG reform — more testamentary freedom",cls:""},{label:"Federal estate tax",value:"None",sub:"Switzerland has no federal inheritance tax",cls:"ok"}],
-    checks:[{icon:"1",title:"Write a will (Testament)",sub:"Notarised, or handwritten + dated + signed"},{icon:"2",title:"Designate Pillar 3a beneficiaries",sub:"Avoids estate — major tax advantage"},{icon:"3",title:"Check your cantonal inheritance tax",sub:"Varies enormously — ZG, SZ lowest; GE higher"},{icon:"4",title:"Create advance directive (Vorsorgeauftrag)",sub:"Who decides if you become incapacitated"},{icon:"5",title:"Notify banks and pension funds",sub:"Pillar 2 and 3a have own beneficiary rules"}],
-    links:[{label:"ch.ch — Inheritance in Switzerland",url:"https://www.ch.ch/en/inheritance/"},{label:"ZGB — Inheritance law (fedlex)",url:"https://www.fedlex.admin.ch/eli/cc/24/233_245_233/en"},{label:"KT Zurich — Erbschaftssteuer",url:"https://www.zh.ch/de/steuern-finanzen/steuern/erbschafts-und-schenkungssteuer.html"}]
+  fr: {
+    appName: "SwissPillars",
+    step0Title: "Que souhaitez-vous planifier?",
+    death: "Décès", disability: "Invalidité", divorce: "Divorce", newBaby: "Nouveau bébé",
+    comingSoon: "Bientôt disponible",
+    whoAffected: "Qui est concerné?",
+    whoAffectedDeath: "Qui décède ?",
+    whoAffectedDisability: "Qui devient incapable de travailler ?",
+    scenarioVerbDeath: "décède",
+    scenarioVerbDisability: "devient incapable de travailler",
+    scenarioVerbBoth: "tous deux deviennent incapables de travailler",
+    whoEmployed: "Qui travaille ?",
+    bothWork: "Les deux travaillent", onlyP1Works: "Seulement Partenaire 1", onlyP2Works: "Seulement Partenaire 2",
+    numChildrenTitle: "Combien d'enfants ?",
+    childrenLabelSingle: "enfant", childrenLabelPlural: "enfants",
+    partner1: "Partenaire 1", partner2: "Partenaire 2", both: "Les deux",
+    step1Title: "Famille",
+    dualIncome: "Deux revenus", singleIncome: "Un seul revenu",
+    whoEarns: "Qui gagne le revenu ?",
+    p1Name: "Nom Partenaire 1", p2Name: "Nom Partenaire 2",
+    numChildren: "Nombre d'enfants",
+    step2Title: "Revenus",
+    grossAnnual: "Salaire annuel brut (CHF)",
+    employment: "Taux d'occupation",
+    netMonthly: "Salaire net mensuel (CHF)",
+    autoEstimated: "Estimé automatiquement — vous pouvez modifier",
+    otherIncomeTitle: "Autres revenus du ménage (mensuels)",
+    otherIncomeDividends: "Dividendes / revenus de placement",
+    otherIncomeRental: "Revenus locatifs",
+    otherIncomeOther: "Autres revenus",
+    otherIncomeHelp: "Revenus passifs qui continuent indépendamment du décès ou de l'invalidité.",
+    step3Title: "Dépenses mensuelles",
+    housing: "Logement (loyer, hypothèque, charges)",
+    healthIns: "Assurance maladie (caisse maladie)",
+    taxes: "Impôts (estimation mensuelle)",
+    food: "Alimentation & courses",
+    transport: "Transport (voiture, CFF, carburant)",
+    children: "Enfants & famille (crèche, activités)",
+    communication: "Communication (internet, téléphone, Serafe)",
+    insGroupLabel: "Assurances",
+    insLiability: "Assurance responsabilité civile",
+    insLegal: "Protection juridique",
+    insTravel: "Assurance voyage",
+    insRega: "REGA / Garde aérienne suisse de sauvetage",
+    insOther: "Autres assurances (voiture, ménage, etc.)",
+    other: "Autres (vacances, loisirs, vêtements)",
+    totalExpenses: "Total dépenses mensuelles",
+    expenseNote: "Conseil: trouvez ces chiffres sur votre déclaration fiscale et relevés bancaires. N'incluez PAS les primes du pilier 3a ni l'assurance-vie — celles-ci viennent plus tard.",
+    monthly: "Mensuel", yearly: "Annuel",
+    scenarioAnalysis: "Analyse du scénario",
+    scenarioIf: "Si",
+    scenarioDies: "décède",
+    scenarioDisabled: "devient invalide",
+    financialRunwayTitle: "Capacité financière de la famille",
+    totalLumpSum: "Total des prestations en capital",
+    familyExpensesLabel: "Dépenses mensuelles",
+    bufferCoversExpenses: "Le capital net couvre les dépenses familiales pendant",
+    gapCoveredBy: "Le déficit mensuel est couvert par le capital pendant",
+    phase1GapBuffer: "Mois 1-24 déficit: l'épargne couvre",
+    phase2GapBuffer: "Mois 25+ déficit: l'épargne couvre",
+    mortgageNote: "Si vous payez des intérêts hypothécaires, incluez-les ici sous Logement.",
+    step4Title: "Actifs",
+    savings: "Liquidités & épargne (CHF)",
+    propertyValue: "Valeur vénale immobilière (CHF)",
+    assetsHelp: "Trouvez liquidités & épargne sur votre déclaration fiscale (ligne 400). Valeur immobilière sur votre déclaration fiscale (ligne 421).",
+    step5Title: "Passifs",
+    mortgage: "Hypothèque (CHF)",
+    mortgageRate: "Taux hypothécaire (%)",
+    otherDebts: "Autres dettes (CHF)",
+    alimony: "Pension alimentaire mensuelle (CHF)",
+    alimonyHelp: "Paiements réguliers à un ex-partenaire ou des enfants d'une relation précédente.",
+    mortgagePayoffHelp: "Le remboursement de l'hypothèque est une étape clé après le décès — il supprime définitivement les frais d'intérêts.",
+    step6Title: "Pilier 1 — AVS/AI",
+    ahvExplain: "L'État suisse paie automatiquement les rentes en cas de décès ou d'invalidité. Nous les estimons selon votre salaire, mais vous pouvez entrer vos chiffres AVS exacts.",
+    ahvEstimate: "Rente AVS estimée",
+    ahvOverride: "J'ai mes chiffres AVS exacts",
+    partnerPensionDeath: "Rente de conjoint en cas de décès (CHF/mois)",
+    orphanPensionDeath: "Rente d'orphelin par enfant en cas de décès (CHF/mois)",
+    ivPensionDisability: "Rente AI à 100% d'invalidité (CHF/mois)",
+    ahvLink: "Demandez votre extrait AVS gratuit: ahv-iv.ch",
+    step7Title: "Pilier 2 — LPP Caisse de pension",
+    pillar2Explain: "Trouvez ces chiffres sur votre dernier certificat de prévoyance (Vorsorgeausweis / Certificat).",
+    pillar2aCapital: "Capital de retraite actuel (CHF)",
+    p2aPartnerPension: "En cas de DÉCÈS: Rente de conjoint (CHF/an du certificat)",
+    p2aOrphanPension: "En cas de DÉCÈS: Rente d'orphelin par enfant (CHF/an)",
+    p2aDisability: "En cas d'INVALIDITÉ: Rente d'invalidité (CHF/an du certificat)",
+    p2aChildrenDisability: "En cas d'INVALIDITÉ: Rente d'enfant par enfant (CHF/an)",
+    p2aLapses: "Ce partenaire cesse bientôt son activité",
+    p2aLapsesNote: "La couverture LPP prendra fin — seul le capital subsiste",
+    step8Title: "Pilier 3a — Épargne privée",
+    pillar3aExplain: "Le pilier 3a croît sans impôt. En cas de décès, le solde est versé comme capital aux bénéficiaires.",
+    p3aInsurance: "Police d'assurance-vie",
+    p3aBank: "Compte bancaire / investissement",
+    p3aDeathCapital: "Capital-décès (CHF)",
+    p3aDisPension: "Rente mensuelle d'invalidité (CHF/mois)",
+    p3aAnnualPremium: "Prime annuelle (CHF/an)",
+    p3aExemptionDays: "Exonération de primes après (jours)",
+    p3aBalance: "Solde actuel du compte (CHF)",
+    p3aAnnualContrib: "Cotisation annuelle (CHF/an)",
+    p3aReturn: "Rendement annuel attendu (%)",
+    p3aBankNote: "Le pilier 3a bancaire ne verse AUCUNE rente d'invalidité. Le solde est versé en cas de décès.",
+    step9Title: "Pilier 3b — Assurance-vie temporaire",
+    pillar3bExplain: "L'assurance temporaire paie un capital en cas de décès. Elle ne remplace PAS le revenu en cas d'invalidité (généralement exonération de primes uniquement).",
+    hasTermIns: "Possède une assurance temporaire",
+    termDeathSum: "Capital-décès (CHF)",
+    termAnnualPremium: "Prime annuelle (CHF/an)",
+    termDisNote: "Important: invalidité dans l'assurance temporaire = exonération de primes uniquement. Pas de remplacement de revenu.",
+    calculateBtn: "Calculer mes résultats →",
+    resultsTitle: "Analyse de votre protection financière",
+    protected: "Votre famille est financièrement protégée ✓",
+    minorGap: "Léger déficit mensuel — gérable",
+    significantGap: "Déficit important — action requise",
+    monthlyIncome: "Revenu mensuel",
+    monthlyExpenses: "Dépenses mensuelles",
+    monthlySurplus: "Excédent mensuel",
+    monthlyGap: "Déficit mensuel",
+    netBuffer: "Capital tampon net",
+    bufferCovers: "Le capital couvre",
+    years: "ans",
+    months: "mois",
+    indefinite: "Indéfiniment",
+    noBuffer: "Pas de capital",
+    recalculate: "← Recalculer",
+    startOver: "Recommencer",
+    ahvWidow: "Rente AVS de conjoint",
+    ahvOrphans: "Rentes AVS d'orphelins",
+    p2aPartner: "Rente de conjoint LPP",
+    p2aOrphans: "Rentes d'orphelins LPP",
+    survivorIncome: "Revenu du partenaire",
+    p1IvPension: "Rente AI d'État",
+    p2aDisPension: "Rente d'invalidité LPP",
+    p2aChildrenPension: "Rente d'enfant LPP",
+    p3aDisPensionLabel: "Rente d'invalidité pilier 3a",
+    disclaimer: "Cet outil fournit des estimations à des fins de planification uniquement. Il ne constitue pas un conseil financier. Calculs basés sur l'échelle AVS 44 (2025/2026) et vos données. Consultez un conseiller financier agréé pour un avis personnel.",
+    next: "Suivant →",
+    back: "← Retour",
+    notEmployed: "Sans activité lucrative",
+    chf: "CHF",
+    perMonth: "/mois",
+    perYear: "/an",
+    disabilityDegreeNote: "Résultats pour 100% d'invalidité. Le taux réel est déterminé par la SUVA/AI.",
+    waitingPeriodNote: "⚠️ Important: La LPP ne verse rien pendant les 24 premiers mois.",
+    savingsLabel: "Liquidités & épargne",
+    p3aPayoutLabel: "Versement pilier 3a",
+    termPayoutLabel: "Versement assurance temporaire",
+    mortgageLabel: "Moins: remboursement hypothèque",
+    netBufferLabel: "Capital net",
+    lumpChartTitle: "Prestations en capital",
+    cashflowChartTitle: "Comparaison des flux mensuels",
+    incomeChartTitle: "Sources de revenus",
+    runwayChartTitle: "Durée du capital",
+    detailedBreakdown: "Voir la répartition détaillée",
+    phase1: "⚠️ Mois 1–24 (Délai d'attente)",
+    phase2: "✅ Mois 25+ (Couverture complète)",
+    heroText: "Voyez exactement ce qui arrive aux finances de votre famille — revenus, dépenses et lacunes d'assurance — selon les règles suisses.",
+    heroSub: "Gratuit · Anonyme · Suisse",
+    yes: "Oui",
+    no: "Non",
   }
 };
 
-function buildResults() {
-  const ev = eventData[selectedEvent]; if(!ev) return;
-  const canton   = document.getElementById('canton').value   || 'ZH';
-  const income   = parseInt(document.getElementById('income').value)   || 0;
-  const children = parseInt(document.getElementById('children').value) || 0;
-  document.getElementById('res-tag').textContent = 'Canton: ' + canton + (income ? '  ·  CHF ' + income.toLocaleString() + '/yr' : '') + (children ? '  ·  ' + children + ' child' + (children>1?'ren':'') : '');
-  document.getElementById('res-title').textContent = ev.title;
-  document.getElementById('res-subtitle').textContent = ev.subtitle;
-  if(selectedEvent==='jobloss' && children>0){ ev.pills[1].value='80% salary'; ev.pills[1].sub='You have children — higher rate'; ev.pills[1].cls='ok'; }
-  document.getElementById('res-pills').innerHTML = ev.pills.map(p=>`<div class="result-pill ${p.cls}"><div class="pill-label">${p.label}</div><div class="pill-value">${p.value}</div><div class="pill-sub">${p.sub}</div></div>`).join('');
-  document.getElementById('res-checklist').innerHTML = ev.checks.map(c=>`<li><div class="check-icon">${c.icon}</div><div class="check-text"><strong>${c.title}</strong><span>${c.sub}</span></div></li>`).join('');
-  document.getElementById('res-links').innerHTML = ev.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;text-decoration:none;color:var(--navy);font-size:.88rem;font-weight:600;transition:all .15s" onmouseover="this.style.borderColor='#1A3C5E'" onmouseout="this.style.borderColor='#DDE3EA'">&#128279; ${l.label}<span style="margin-left:auto;color:var(--muted);font-size:.75rem">&rarr;</span></a>`).join('');
+let lang = 'en';
+let currentScreen = 0;
+let charts = {};
+let breakdownMode = 'monthly';
+let netOverrideOpen = {}; // tracks which partners have the net override input open
+
+const state = {
+  scenario: null,
+  affectedPartners: null,
+  singleIncome: false,
+  incomePartner: 'p1',
+  p1Name: 'Partner 1',
+  p2Name: 'Partner 2',
+  numChildren: 0,
+  p1GrossAnnual: 0,
+  p1Employment: 100,
+  p1NetMonthly: 0,
+  p2GrossAnnual: 0,
+  p2Employment: 100,
+  p2NetMonthly: 0,
+  otherIncomeDividends: 0,
+  otherIncomeRental: 0,
+  otherIncomeOther: 0,
+  otherIncomeModes: { dividends: 'monthly', rental: 'monthly', other: 'monthly' },
+  expenseMode: 'monthly',
+  expenseModes: {},
+  expenses: {
+    housing: 1250,
+    healthIns: 350,
+    taxes: 1000,
+    food: 1250,
+    transport: 450,
+    children: 0,
+    communication: 160,
+    insLiability: 70,
+    insLegal: 40,
+    insTravel: 15,
+    insRega: 6,
+    insOther: 100,
+    other: 400,
+  },
+  savings: 0,
+  property: 0,
+  mortgage: 0,
+  mortgageRate: 1.3,
+  otherDebts: 0,
+  alimonyMonthly: 0,
+  p1AhvOverride: false,
+  p1AhvPartnerPension: 0,
+  p1AhvOrphanPension: 0,
+  p1IvPension: 0,
+  p2AhvOverride: false,
+  p2AhvPartnerPension: 0,
+  p2AhvOrphanPension: 0,
+  p2IvPension: 0,
+  p1P2aCapital: 0,
+  p1P2aPartnerPension: 0,
+  p1P2aOrphanPension: 0,
+  p1P2aDisability: 0,
+  p1P2aChildrenDisability: 0,
+  p1P2aLapses: false,
+  p2P2aCapital: 0,
+  p2P2aPartnerPension: 0,
+  p2P2aOrphanPension: 0,
+  p2P2aDisability: 0,
+  p2P2aChildrenDisability: 0,
+  p2P2aLapses: false,
+  p1P3aType: 'insurance',
+  p1P3aDeathCapital: 0,
+  p1P3aDisPension: 0,
+  p1P3aAnnualPremium: 0,
+  p1P3aExemptionDays: 91,
+  p1P3aBalance: 0,
+  p1P3aAnnualContrib: 7258,
+  p1P3aReturn: 4,
+  p2P3aType: 'insurance',
+  p2P3aDeathCapital: 0,
+  p2P3aDisPension: 0,
+  p2P3aAnnualPremium: 0,
+  p2P3aExemptionDays: 91,
+  p2P3aBalance: 0,
+  p2P3aAnnualContrib: 7258,
+  p2P3aReturn: 4,
+  p1HasTermIns: false,
+  p1TermDeathSum: 0,
+  p1TermAnnualPremium: 0,
+  p2HasTermIns: false,
+  p2TermDeathSum: 0,
+  p2TermAnnualPremium: 0,
+};
+
+function _(key) {
+  return T[lang][key] || key;
 }
+
+function setLanguage(newLang) {
+  lang = newLang;
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  renderAll();
+}
+
+function updateState(key, value) {
+  if (key === 'expenses') {
+    state.expenses = value;
+  } else {
+    state[key] = value;
+  }
+  if (key === 'numChildren' && state.numChildren > 0 && state.expenses.children === 0) {
+    state.expenses.children = 500;
+  }
+  renderLiveResults();
+}
+
+function renderAll() {
+  renderAllSections();
+  renderLiveResults();
+}
+
+function renderAllSections() {
+  renderScreen0();
+  renderScreen2();
+  renderScreen3();
+  renderScreen4();
+  renderScreen5();
+  renderScreen6();
+  renderScreen7();
+  renderScreen8();
+  renderScreen9();
+}
+
+function renderProgress() {
+  // Progress bar removed in SPA layout
+}
+
+function renderCurrentScreen() {
+  // All screens rendered via renderAllSections() in SPA layout
+}
+
+function renderScreen0() {
+  document.getElementById('s0Title').textContent = _('step0Title');
+  document.getElementById('heroTitle').textContent = _('heroText');
+  document.getElementById('heroSub').textContent = _('heroSub');
+
+  const events = [
+    { key: 'death', icon: '☠️', id: 'death' },
+    { key: 'disability', icon: '♿', id: 'disability' },
+    { key: 'divorce', icon: '💔', id: 'divorce', comingSoon: true },
+    { key: 'newBaby', icon: '👶', id: 'newbaby', comingSoon: true },
+  ];
+
+  const eventHtml = events.map(e => {
+    const cls = `card ${state.scenario === e.id ? 'active' : ''} ${e.comingSoon ? 'disabled' : ''}`;
+    const onclick = e.comingSoon ? '' : `selectEvent('${e.id}')`;
+    return `
+      <div class="${cls}" ${onclick ? `onclick="${onclick}"` : ''}>
+        <div class="card-icon">${e.icon}</div>
+        <div class="card-title">${_(e.key)}</div>
+        ${e.comingSoon ? `<div class="card-label">${_('comingSoon')}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('eventCards').innerHTML = eventHtml;
+
+  if (state.scenario) {
+    document.getElementById('whoAffectedContainer').style.display = 'block';
+    const whoKey = state.scenario === 'death' ? 'whoAffectedDeath' : 'whoAffectedDisability';
+    document.getElementById('whoAffectedTitle').textContent = _(whoKey);
+
+    const partners = state.scenario === 'disability'
+      ? [
+          { key: 'partner1', id: 'partner1' },
+          { key: 'partner2', id: 'partner2' },
+          { key: 'both', id: 'both' }
+        ]
+      : [
+          { key: 'partner1', id: 'partner1' },
+          { key: 'partner2', id: 'partner2' }
+        ];
+
+    const scenarioVerb = state.scenario === 'death' ? _('scenarioVerbDeath') : _('scenarioVerbDisability');
+    const affectedHtml = partners.map(p => {
+      const cls = `card ${state.affectedPartners === p.id ? 'active' : ''}`;
+      const icon = state.scenario === 'death' ? '☠️' : '♿';
+      const subtitle = p.id === 'both' ? _('scenarioVerbBoth') : scenarioVerb;
+      return `
+        <div class="${cls}" onclick="selectAffected('${p.id}')">
+          <div class="card-icon" style="font-size:1.4rem;">${icon}</div>
+          <div class="card-title">${_(p.key)}</div>
+          <div class="card-label" style="font-size:0.8rem; color:#666; margin-top:4px;">${subtitle}</div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('affectedCards').innerHTML = affectedHtml;
+  } else {
+    document.getElementById('whoAffectedContainer').style.display = 'none';
+  }
+
+  // Employment cards
+  document.getElementById('whoEmployedTitle').textContent = _('whoEmployed');
+  const empMode = state.singleIncome ? state.incomePartner : 'both';
+  const empOptions = [
+    { id: 'both', label: _('bothWork'), icon: '👫' },
+    { id: 'p1', label: _('onlyP1Works'), icon: '🧑' },
+    { id: 'p2', label: _('onlyP2Works'), icon: '🧑' },
+  ];
+  document.getElementById('employmentCards').innerHTML = empOptions.map(opt => `
+    <div class="card ${empMode === opt.id ? 'active' : ''}" onclick="selectEmployment('${opt.id}')">
+      <div class="card-icon" style="font-size:1.4rem;">${opt.icon}</div>
+      <div class="card-title" style="font-size:0.9rem;">${opt.label}</div>
+    </div>
+  `).join('');
+
+  // Children counter
+  document.getElementById('numChildrenTitle').textContent = _('numChildrenTitle');
+  document.getElementById('childrenCount').textContent = state.numChildren;
+  const childLabel = state.numChildren === 1 ? _('childrenLabelSingle') : _('childrenLabelPlural');
+  document.getElementById('childrenLabel').textContent = childLabel;
+
+}
+
+function selectEvent(event) {
+  state.scenario = event;
+  state.affectedPartners = null;
+  renderScreen0();
+  renderScreen6(); renderScreen7(); renderScreen8(); renderScreen9();
+  renderLiveResults();
+}
+
+function selectAffected(partner) {
+  state.affectedPartners = partner;
+  renderScreen0();
+  renderScreen6(); renderScreen7(); renderScreen8(); renderScreen9();
+  renderLiveResults();
+}
+
+function selectEmployment(mode) {
+  if (mode === 'both') {
+    state.singleIncome = false;
+  } else {
+    state.singleIncome = true;
+    state.incomePartner = mode; // 'p1' or 'p2'
+  }
+  renderScreen0();
+  renderScreen2();
+  renderLiveResults();
+}
+
+function changeChildren(delta) {
+  const newVal = Math.max(0, Math.min(6, state.numChildren + delta));
+  updateState('numChildren', newVal);
+  renderScreen0();
+}
+
+function renderScreen1() {
+  document.getElementById('s1Title').textContent = _('step1Title');
+  document.getElementById('dualLabel').textContent = _('dualIncome');
+  document.getElementById('singleLabel').textContent = _('singleIncome');
+  document.getElementById('numChildrenLabel').textContent = _('numChildren');
+  document.getElementById('whoEarnsLabel').textContent = _('whoEarns');
+  document.getElementById('earnerP1Label').textContent = _('partner1');
+  document.getElementById('earnerP2Label').textContent = _('partner2');
+
+  document.getElementById('numChildren').value = state.numChildren;
+
+  document.getElementById('dualBtn').classList.toggle('active', !state.singleIncome);
+  document.getElementById('singleBtn').classList.toggle('active', state.singleIncome);
+
+  const selector = document.getElementById('incomePartnerSelector');
+  selector.style.display = state.singleIncome ? 'block' : 'none';
+  document.getElementById('earnerP1Btn').classList.toggle('active', state.incomePartner === 'p1');
+  document.getElementById('earnerP2Btn').classList.toggle('active', state.incomePartner === 'p2');
+}
+
+function setIncomeMode(mode) {
+  state.singleIncome = mode === 'single';
+  renderScreen1();
+}
+
+function setIncomePartner(p) {
+  state.incomePartner = p;
+  renderScreen1();
+}
+
+function setBreakdownMode(mode) {
+  breakdownMode = mode;
+  document.getElementById('breakdownMonthlyBtn').classList.toggle('active', mode === 'monthly');
+  document.getElementById('breakdownYearlyBtn').classList.toggle('active', mode === 'yearly');
+  if (state.scenario === 'death') renderDeathCharts();
+  else renderDisabilityCharts();
+}
+
+function toggleAccordion(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function getIncomePartners() {
+  if (!state.singleIncome) {
+    return [
+      { name: 'p1', label: state.p1Name },
+      { name: 'p2', label: state.p2Name }
+    ];
+  }
+  const ip = state.incomePartner;
+  return [{ name: ip, label: ip === 'p1' ? state.p1Name : state.p2Name }];
+}
+
+function getAllPartners() {
+  return [
+    { name: 'p1', label: state.p1Name },
+    { name: 'p2', label: state.p2Name }
+  ];
+}
+
+// Returns only the affected partner when scenario is selected, otherwise all partners
+function getAffectedPartners() {
+  if (state.affectedPartners === 'partner1') return [{ name: 'p1', label: state.p1Name }];
+  if (state.affectedPartners === 'partner2') return [{ name: 'p2', label: state.p2Name }];
+  return getAllPartners();
+}
+
+function renderScreen2() {
+  document.getElementById('s2Title').textContent = _('step2Title');
+
+  // Auto-calculate net for any partner not in manual override mode BEFORE building HTML
+  const partners = getIncomePartners();
+  partners.forEach(p => { if (!netOverrideOpen[p.name]) updateAutoNetMonthly(p.name); });
+
+  let html = '';
+
+  partners.forEach(p => {
+    const gross = state[p.name + 'GrossAnnual'];
+    const net = state[p.name + 'NetMonthly'];
+    const isOverrideOpen = netOverrideOpen[p.name] || false;
+
+    const netSection = isOverrideOpen
+      ? `<div class="form-group">
+           <label>${_('netMonthly')} <span style="font-weight:400;color:var(--muted);font-size:0.85rem;">— manual override</span></label>
+           <input type="number" value="${net}" onchange="updateState('${p.name}NetMonthly', parseFloat(this.value)||0); renderScreen2();">
+           <span class="net-override-link" onclick="netOverrideOpen['${p.name}']=false; updateAutoNetMonthly('${p.name}'); renderScreen2(); renderLiveResults();">↩ Reset to auto-estimate</span>
+         </div>`
+      : `<div class="form-group">
+           <label>${_('netMonthly')}</label>
+           <div class="net-display">
+             <span class="net-value">CHF ${net.toLocaleString('de-CH')}<span style="font-size:0.85rem;font-weight:400;color:#555;">/month</span></span>
+             <span class="net-badge">Auto</span>
+           </div>
+           <span class="net-override-link" onclick="netOverrideOpen['${p.name}']=true; renderScreen2();">✎ Override manually</span>
+         </div>`;
+
+    html += `
+      <div class="partner-section">
+        <h3>${p.label}</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>${_('grossAnnual')}</label>
+            <input type="number" value="${gross}" placeholder="e.g. 100000" onchange="updateState('${p.name}GrossAnnual', parseFloat(this.value)||0); updateAutoNetMonthly('${p.name}'); renderScreen2(); renderLiveResults();">
+            <div class="help-text">Used for AHV/IV pension calculations</div>
+          </div>
+          ${netSection}
+        </div>
+      </div>
+    `;
+  });
+
+  // Add other household income section with M/Y toggles
+  const oiFields = [
+    { key: 'dividends', stateKey: 'otherIncomeDividends', label: _('otherIncomeDividends') },
+    { key: 'rental',    stateKey: 'otherIncomeRental',    label: _('otherIncomeRental')    },
+    { key: 'other',     stateKey: 'otherIncomeOther',     label: _('otherIncomeOther')     },
+  ];
+
+  const oiRows = oiFields.map(f => {
+    const monthly = state[f.stateKey] || 0;
+    const mode = state.otherIncomeModes[f.key] || 'monthly';
+    const isM = mode === 'monthly';
+    const displayVal = isM ? Math.round(monthly) : Math.round(monthly * 12);
+    const secondaryVal = isM ? Math.round(monthly * 12) : Math.round(monthly);
+    const secondaryUnit = isM ? '/year' : '/month';
+    return `
+      <div class="expense-item" style="margin-bottom:0.5rem;">
+        <div class="expense-label" style="font-size:0.9rem;">${f.label}</div>
+        <div class="expense-input-group">
+          <input type="number" class="expense-input" value="${displayVal}"
+            onchange="state['${f.stateKey}'] = ${isM ? 'parseFloat(this.value)||0' : '(parseFloat(this.value)||0)/12'}; updateState('${f.stateKey}', state['${f.stateKey}']); renderLiveResults();">
+          <div class="exp-mode-toggle">
+            <button class="exp-mode-btn ${isM ? 'active' : ''}" onclick="setOtherIncomeMode('${f.key}','monthly')">M</button>
+            <button class="exp-mode-btn ${!isM ? 'active' : ''}" onclick="setOtherIncomeMode('${f.key}','yearly')">Y</button>
+          </div>
+          <div class="expense-secondary">= CHF ${secondaryVal.toLocaleString('de-CH')} ${secondaryUnit}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  html += `
+    <div class="partner-section" style="margin-top: 1.5rem; border-top: 2px solid #e0e0e0; padding-top: 1.5rem;">
+      <h3>${_('otherIncomeTitle')}</h3>
+      <div class="help-text" style="margin-bottom: 1rem;">${_('otherIncomeHelp')}</div>
+      ${oiRows}
+    </div>
+  `;
+
+  document.getElementById('incomePartners').innerHTML = html;
+}
+
+function updateAutoNetMonthly(partner) {
+  const gross = state[partner + 'GrossAnnual'];
+  const autoNet = Math.round(gross * 0.84 / 12);
+  state[partner + 'NetMonthly'] = autoNet;
+}
+
+function setExpenseMode(mode) {
+  state.expenseMode = mode;
+  renderExpensesList();
+}
+
+function renderScreen3() {
+  const s3 = document.getElementById('s3Title');
+  if (s3) s3.textContent = _('step3Title');
+  const en = document.getElementById('expenseNoteText');
+  if (en) en.textContent = _('expenseNote');
+  const mn = document.getElementById('mortgageNoteText');
+  if (mn) mn.textContent = _('mortgageNote');
+  renderExpensesList();
+}
+
+function renderExpensesList() {
+  const categories = [
+    { key: 'housing',       label: _('housing') },
+    { key: 'healthIns',     label: _('healthIns') },
+    { key: 'taxes',         label: _('taxes') },
+    { key: 'food',          label: _('food') },
+    { key: 'transport',     label: _('transport') },
+    { key: 'children',      label: _('children') },
+    { key: 'communication', label: _('communication') },
+    { key: '__insGroup__',  label: _('insGroupLabel'), isGroup: true },
+    { key: 'insLiability',  label: _('insLiability'), indent: true },
+    { key: 'insLegal',      label: _('insLegal'),      indent: true },
+    { key: 'insTravel',     label: _('insTravel'),     indent: true },
+    { key: 'insRega',       label: _('insRega'),       indent: true },
+    { key: 'insOther',      label: _('insOther'),      indent: true },
+    { key: 'other',         label: _('other') },
+  ];
+
+  let html = '';
+  categories.forEach(cat => {
+    if (cat.isGroup) {
+      html += `<div class="expense-group-header">${cat.label}</div>`;
+      return;
+    }
+
+    const monthly = state.expenses[cat.key] || 0;
+    const catMode = state.expenseModes[cat.key] || 'monthly';
+    const isM = catMode === 'monthly';
+    const activeVal = isM ? Math.round(monthly) : Math.round(monthly * 12);
+    const secondaryVal = isM ? Math.round(monthly * 12) : Math.round(monthly);
+    const secondaryUnit = isM ? _('perYear') : _('perMonth');
+
+    html += `
+      <div class="expense-item" style="${cat.indent ? 'margin-left:16px;' : ''}">
+        <div class="expense-label">${cat.label}</div>
+        <div class="expense-input-group">
+          <input type="number" class="expense-input" value="${activeVal}"
+            onchange="state.expenses['${cat.key}'] = ${isM ? 'parseFloat(this.value)||0' : '(parseFloat(this.value)||0)/12'}; renderExpensesTotal(); renderLiveResults();">
+          <div class="exp-mode-toggle">
+            <button class="exp-mode-btn ${isM ? 'active' : ''}" onclick="setExpCatMode('${cat.key}','monthly')">M</button>
+            <button class="exp-mode-btn ${!isM ? 'active' : ''}" onclick="setExpCatMode('${cat.key}','yearly')">Y</button>
+          </div>
+          <div class="expense-secondary">= CHF ${secondaryVal.toLocaleString('de-CH')} ${secondaryUnit}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('expensesList').innerHTML = html;
+  renderExpensesTotal();
+}
+
+function setExpCatMode(key, mode) {
+  state.expenseModes[key] = mode;
+  renderExpensesList();
+}
+
+function setOtherIncomeMode(key, mode) {
+  state.otherIncomeModes[key] = mode;
+  renderScreen2();
+  renderLiveResults();
+}
+
+function renderExpensesTotal() {
+  const total = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const monthly = Math.round(total);
+  const yearly = Math.round(total * 12);
+  const html = `<strong>${_('totalExpenses')}</strong>: <span class="total-highlight">CHF ${monthly.toLocaleString('de-CH')} ${_('perMonth')}</span>
+    <span class="total-secondary"> (= CHF ${yearly.toLocaleString('de-CH')} ${_('perYear')})</span>`;
+  let container = document.querySelector('.expense-list');
+  let totalEl = container.querySelector('.total-expenses');
+  if (!totalEl) {
+    totalEl = document.createElement('div');
+    totalEl.className = 'total-expenses';
+    container.appendChild(totalEl);
+  }
+  totalEl.innerHTML = html;
+}
+
+function renderScreen4() {
+  document.getElementById('s4Title').textContent = _('step4Title');
+  document.getElementById('savingsLabel').textContent = _('savings');
+  document.getElementById('propertyLabel').textContent = _('propertyValue');
+  document.getElementById('savings').value = state.savings;
+  document.getElementById('property').value = state.property;
+}
+
+function renderScreen5() {
+  document.getElementById('s5Title').textContent = _('step5Title');
+  document.getElementById('mortgageLabel').textContent = _('mortgage');
+  document.getElementById('mortgageRateLabel').textContent = _('mortgageRate');
+  document.getElementById('otherDebtsLabel').textContent = _('otherDebts');
+  document.getElementById('mortgageHelpText').textContent = _('mortgagePayoffHelp');
+  document.getElementById('alimonyLabel').textContent = _('alimony');
+  document.getElementById('alimonyHelpText').textContent = _('alimonyHelp');
+  document.getElementById('mortgage').value = state.mortgage;
+  document.getElementById('mortgageRate').value = state.mortgageRate;
+  document.getElementById('otherDebts').value = state.otherDebts;
+  document.getElementById('alimonyMonthly').value = state.alimonyMonthly;
+}
+
+function ahvPension(grossAnnualSalary) {
+  const min = 1260, max = 2520, minInc = 15120, maxInc = 90720;
+  if (grossAnnualSalary <= minInc) return min;
+  if (grossAnnualSalary >= maxInc) return max;
+  return Math.round(min + (grossAnnualSalary - minInc) / (maxInc - minInc) * (max - min));
+}
+
+function ahvWidowPension(deceasedGrossSalary) {
+  return Math.min(Math.round(ahvPension(deceasedGrossSalary) * 0.8), 2016);
+}
+
+function ahvOrphanPension(deceasedGrossSalary) {
+  return Math.round(ahvPension(deceasedGrossSalary) * 0.4);
+}
+
+function ivDisabilityPension(grossSalary, degreePct = 100) {
+  const full = ahvPension(grossSalary);
+  if (degreePct >= 70) return full;
+  if (degreePct >= 50) return Math.round(full * 0.75);
+  if (degreePct >= 40) return Math.round(full * 0.5);
+  if (degreePct >= 25) return Math.round(full * 0.25);
+  return 0;
+}
+
+function renderScreen6() {
+  document.getElementById('s6Title').textContent = _('step6Title');
+  let noteDiv = document.getElementById('pillar1ExplainText');
+  if (noteDiv) noteDiv.textContent = _('ahvExplain');
+  document.getElementById('ahvLinkText').textContent = _('ahvLink');
+
+  let html = '';
+  const partners = getAffectedPartners().map(p => ({ ...p, gross: state[p.name + 'GrossAnnual'] }));
+
+  if (!state.affectedPartners) {
+    html = `<div class="note" style="margin-bottom:1rem;">⬆️ Select the scenario and who is affected above to see the relevant AHV figures here.</div>`;
+  }
+
+  partners.forEach(p => {
+    const estPension = ahvPension(p.gross);
+    const estWidow = Math.round(estPension * 0.8);
+    const estOrphan = Math.round(estPension * 0.4);
+    const estIV = ivDisabilityPension(p.gross, 100);
+    const override = state[p.name + 'AhvOverride'];
+    const isDeath = state.scenario === 'death';
+    const isDisability = state.scenario === 'disability';
+
+    html += `
+      <div class="partner-section">
+        <h3>${p.label}</h3>
+        <div class="info-block">
+          <div class="info-block-title">${_('ahvEstimate')}</div>
+          <div class="info-block-text">
+            Based on CHF ${p.gross.toLocaleString('de-CH')} salary:
+            ${isDeath ? `
+              est. widow/widower pension ≈ <strong>CHF ${estWidow.toLocaleString('de-CH')}/month</strong>
+              ${state.numChildren > 0 ? `<br><span style="color:#2E7D32; font-weight:600;">👶 ${state.numChildren} child${state.numChildren > 1 ? 'ren' : ''}: orphan pension ≈ CHF ${(estOrphan * state.numChildren).toLocaleString('de-CH')}/month total</span>` : ''}
+            ` : isDisability ? `
+              est. IV disability pension ≈ <strong>CHF ${estIV.toLocaleString('de-CH')}/month</strong> (at 100% disability)
+            ` : `
+              est. AHV pension ≈ <strong>CHF ${estPension.toLocaleString('de-CH')}/month</strong>
+            `}
+          </div>
+        </div>
+
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="${p.name}AhvOverride" ${override ? 'checked' : ''} onchange="updateState('${p.name}AhvOverride', this.checked); renderScreen6();">
+          <label for="${p.name}AhvOverride" style="margin: 0;">${_('ahvOverride')}</label>
+        </div>
+
+        ${override ? `
+          ${isDeath || !state.scenario ? `
+            <div class="form-group">
+              <label>${_('partnerPensionDeath')}</label>
+              <input type="number" value="${state[p.name + 'AhvPartnerPension']}" onchange="updateState('${p.name}AhvPartnerPension', parseFloat(this.value));">
+            </div>
+            <div class="form-group">
+              <label>${_('orphanPensionDeath')}</label>
+              <input type="number" value="${state[p.name + 'AhvOrphanPension']}" onchange="updateState('${p.name}AhvOrphanPension', parseFloat(this.value));">
+            </div>
+          ` : ''}
+          ${isDisability || !state.scenario ? `
+            <div class="form-group">
+              <label>${_('ivPensionDisability')}</label>
+              <input type="number" value="${state[p.name + 'IvPension']}" onchange="updateState('${p.name}IvPension', parseFloat(this.value));">
+            </div>
+          ` : ''}
+        ` : ''}
+      </div>
+    `;
+  });
+
+  document.getElementById('pillar1Partners').innerHTML = html;
+}
+
+function renderScreen7() {
+  document.getElementById('s7Title').textContent = _('step7Title');
+  document.getElementById('pillar2ExplainText').textContent = _('pillar2Explain');
+
+  let html = '';
+  const partners = getAffectedPartners();
+
+  if (!state.affectedPartners) {
+    html = `<div class="note" style="margin-bottom:1rem;">⬆️ Select the scenario and who is affected above to see the relevant Pillar 2 figures here.</div>`;
+  }
+
+  partners.forEach(p => {
+    const lapses = state[p.name + 'P2aLapses'];
+    const notWorking = state.singleIncome && state.incomePartner !== p.name;
+    html += `
+      <div class="partner-section">
+        <h3>${p.label}'s Pillar 2a ${notWorking ? '<span style="font-size:0.75rem; color:#888; font-weight:400;">(not currently employed — enter past BVG if any)</span>' : ''}</h3>
+
+        <div class="form-group">
+          <label>${_('pillar2aCapital')}</label>
+          <input type="number" value="${state[p.name + 'P2aCapital']}" onchange="updateState('${p.name}P2aCapital', parseFloat(this.value));">
+        </div>
+    `;
+
+    if (state.scenario === 'death') {
+      html += `
+        <div class="form-group">
+          <label>${_('p2aPartnerPension')}</label>
+          <input type="number" value="${state[p.name + 'P2aPartnerPension']}" onchange="updateState('${p.name}P2aPartnerPension', parseFloat(this.value));">
+        </div>
+
+        <div class="form-group">
+          <label>${_('p2aOrphanPension')}</label>
+          <input type="number" value="${state[p.name + 'P2aOrphanPension']}" onchange="updateState('${p.name}P2aOrphanPension', parseFloat(this.value));">
+        </div>
+      `;
+    } else if (state.scenario === 'disability') {
+      html += `
+        <div class="form-group">
+          <label>${_('p2aDisability')}</label>
+          <input type="number" value="${state[p.name + 'P2aDisability']}" onchange="updateState('${p.name}P2aDisability', parseFloat(this.value));">
+        </div>
+
+        <div class="form-group">
+          <label>${_('p2aChildrenDisability')}</label>
+          <input type="number" value="${state[p.name + 'P2aChildrenDisability']}" onchange="updateState('${p.name}P2aChildrenDisability', parseFloat(this.value));">
+        </div>
+
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="${p.name}P2aLapses" ${lapses ? 'checked' : ''} onchange="updateState('${p.name}P2aLapses', this.checked); renderScreen7();">
+          <label for="${p.name}P2aLapses" style="margin: 0;">${_('p2aLapses')}</label>
+        </div>
+        ${lapses ? `<div class="note">${_('p2aLapsesNote')}</div>` : ''}
+      `;
+    }
+
+    html += `
+      </div>
+    `;
+  });
+
+  document.getElementById('pillar2Partners').innerHTML = html;
+}
+
+function renderScreen8() {
+  document.getElementById('s8Title').textContent = _('step8Title');
+  document.getElementById('pillar3aExplainText').textContent = _('pillar3aExplain');
+
+  let html = '';
+  const partners = getAffectedPartners();
+  const isDeath = state.scenario === 'death';
+  const isDisability = state.scenario === 'disability';
+
+  if (!state.affectedPartners) {
+    html = `<div class="note" style="margin-bottom:1rem;">⬆️ Select the scenario and who is affected above to see the relevant Pillar 3a figures here.</div>`;
+  }
+
+  partners.forEach(p => {
+    const type = state[p.name + 'P3aType'];
+    const isInsurance = type === 'insurance';
+
+    html += `
+      <div class="partner-section">
+        <h3>${p.label}'s Pillar 3a</h3>
+
+        <div class="toggle-group">
+          <button class="toggle-btn ${isInsurance ? 'active' : ''}" onclick="updateState('${p.name}P3aType', 'insurance'); renderScreen8();">
+            ${_('p3aInsurance')}
+          </button>
+          <button class="toggle-btn ${!isInsurance ? 'active' : ''}" onclick="updateState('${p.name}P3aType', 'bank'); renderScreen8();">
+            ${_('p3aBank')}
+          </button>
+        </div>
+
+        ${isInsurance ? `
+          ${isDeath || !state.scenario ? `
+            <div class="form-group">
+              <label>${_('p3aDeathCapital')}</label>
+              <input type="number" value="${state[p.name + 'P3aDeathCapital']}" onchange="updateState('${p.name}P3aDeathCapital', parseFloat(this.value));">
+            </div>
+          ` : ''}
+          ${isDisability || !state.scenario ? `
+            <div class="form-group">
+              <label>${_('p3aDisPension')}</label>
+              <input type="number" value="${state[p.name + 'P3aDisPension']}" onchange="updateState('${p.name}P3aDisPension', parseFloat(this.value));">
+            </div>
+          ` : ''}
+          <div class="form-group">
+            <label>${_('p3aAnnualPremium')}</label>
+            <input type="number" value="${state[p.name + 'P3aAnnualPremium']}" onchange="updateState('${p.name}P3aAnnualPremium', parseFloat(this.value));">
+          </div>
+        ` : `
+          <div class="form-group">
+            <label>${_('p3aBalance')}</label>
+            <input type="number" value="${state[p.name + 'P3aBalance']}" onchange="updateState('${p.name}P3aBalance', parseFloat(this.value));">
+          </div>
+          <div class="form-group">
+            <label>${_('p3aAnnualContrib')}</label>
+            <input type="number" value="${state[p.name + 'P3aAnnualContrib']}" onchange="updateState('${p.name}P3aAnnualContrib', parseFloat(this.value));">
+          </div>
+          <div class="form-group">
+            <label>${_('p3aReturn')}</label>
+            <input type="number" value="${state[p.name + 'P3aReturn']}" step="0.1" onchange="updateState('${p.name}P3aReturn', parseFloat(this.value));">
+          </div>
+          <div class="note">${_('p3aBankNote')}</div>
+        `}
+      </div>
+    `;
+  });
+
+  document.getElementById('pillar3aPartners').innerHTML = html;
+}
+
+function renderScreen9() {
+  const s9 = document.getElementById('s9Title');
+  if (s9) s9.textContent = _('step9Title');
+  const p3b = document.getElementById('pillar3bExplainText');
+  if (p3b) p3b.textContent = _('pillar3bExplain');
+
+  let html = '';
+  const partners = getAffectedPartners();
+
+  if (!state.affectedPartners) {
+    html = `<div class="note" style="margin-bottom:1rem;">⬆️ Select the scenario and who is affected above to see the relevant term life insurance here.</div>`;
+  }
+
+  partners.forEach(p => {
+    const hasIns = state[p.name + 'HasTermIns'];
+    html += `
+      <div class="partner-section">
+        <h3>${p.label}</h3>
+
+        <div class="toggle-group">
+          <button class="toggle-btn ${!hasIns ? 'active' : ''}" onclick="updateState('${p.name}HasTermIns', false); renderScreen9();">
+            ${_('no')}
+          </button>
+          <button class="toggle-btn ${hasIns ? 'active' : ''}" onclick="updateState('${p.name}HasTermIns', true); renderScreen9();">
+            ${_('yes')}
+          </button>
+        </div>
+
+        ${hasIns ? `
+          <div class="form-group">
+            <label>${_('termDeathSum')}</label>
+            <input type="number" value="${state[p.name + 'TermDeathSum']}" onchange="updateState('${p.name}TermDeathSum', parseFloat(this.value));">
+          </div>
+          <div class="form-group">
+            <label>${_('termAnnualPremium')}</label>
+            <input type="number" value="${state[p.name + 'TermAnnualPremium']}" onchange="updateState('${p.name}TermAnnualPremium', parseFloat(this.value));">
+          </div>
+          <div class="note">${_('termDisNote')}</div>
+        ` : ''}
+      </div>
+    `;
+  });
+
+  document.getElementById('pillar3bPartners').innerHTML = html;
+}
+
+function calculateResults() {
+  showFullResults();
+}
+
+function renderScreen10() {
+  const rt = document.getElementById('resultsTitle');
+  if (rt) rt.textContent = _('resultsTitle');
+  const dt = document.getElementById('disclaimerText');
+  if (dt) dt.textContent = _('disclaimer');
+  const rc = document.getElementById('recalculateText');
+  if (rc) rc.textContent = _('recalculate');
+  const so = document.getElementById('startOverText');
+  if (so) so.textContent = _('startOver');
+
+  // Build scenario context header
+  const scenarioIcon = state.scenario === 'death' ? '💀' : '♿';
+  const scenarioName = state.scenario === 'death' ? _('death') : _('disability');
+  const partnerLabel = state.affectedPartners === 'partner1' ? _('partner1') : _('partner2');
+  const scenarioVerb = state.scenario === 'death' ? _('scenarioDies') : _('scenarioDisabled');
+
+  let html = `
+    <div class="scenario-context-banner">
+      <span class="scenario-icon">${scenarioIcon}</span>
+      <div class="scenario-context-text">
+        <div class="scenario-context-label">${_('scenarioAnalysis')}</div>
+        <div class="scenario-context-title">${_('scenarioIf')} <strong>${partnerLabel}</strong> ${scenarioVerb}</div>
+      </div>
+    </div>
+  `;
+
+  if (state.scenario === 'death') {
+    html += renderDeathResults();
+  } else if (state.scenario === 'disability') {
+    html += renderDisabilityResults();
+  }
+
+  document.getElementById('resultsContent').innerHTML = html;
+
+  setTimeout(() => {
+    if (state.scenario === 'death') {
+      renderDeathCharts();
+    } else {
+      renderDisabilityCharts();
+    }
+  }, 100);
+}
+
+function showFullResults() {
+  const fullSection = document.getElementById('fullResultsSection');
+  fullSection.style.display = 'block';
+  renderScreen10();
+  setTimeout(() => {
+    fullSection.scrollIntoView({ behavior: 'smooth' });
+    if (state.scenario === 'death') renderDeathCharts();
+    else renderDisabilityCharts();
+  }, 100);
+}
+
+function renderLiveResults() {
+  const el = document.getElementById('liveResultsContent');
+  if (!el) return;
+
+  if (!state.scenario || !state.affectedPartners) {
+    el.innerHTML = '<div class="live-results-placeholder">Select a scenario and who is affected on the left to see results here.</div>';
+    return;
+  }
+
+  try {
+    if (state.scenario === 'death') {
+      el.innerHTML = renderLiveDeathResults();
+    } else if (state.scenario === 'disability') {
+      el.innerHTML = renderLiveDisabilityResults();
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="live-results-placeholder">Fill in the details on the left to see your results.</div>';
+  }
+}
+
+function renderLiveDeathResults() {
+  const deceased = getDeceasedPartner();
+  const survivor = getSurvivorPartner();
+  if (!deceased) return '<div class="live-results-placeholder">Select who is affected.</div>';
+
+  const savings = state.savings;
+  const deceasedGross = state[deceased.name + 'GrossAnnual'];
+  const p3aPayout = state[deceased.name + 'P3aType'] === 'insurance' ? state[deceased.name + 'P3aDeathCapital'] : state[deceased.name + 'P3aBalance'];
+  const termPayout = state[deceased.name + 'HasTermIns'] ? state[deceased.name + 'TermDeathSum'] : 0;
+  const totalLump = savings + p3aPayout + termPayout;
+  const netBuffer = totalLump - state.mortgage;
+
+  const ahvWidowPen = state[deceased.name + 'AhvOverride'] ? state[deceased.name + 'AhvPartnerPension'] : ahvWidowPension(deceasedGross);
+  const ahvOrphansPen = (state[deceased.name + 'AhvOverride'] ? state[deceased.name + 'AhvOrphanPension'] : ahvOrphanPension(deceasedGross)) * state.numChildren;
+  const p2aPartnerMonthly = state[deceased.name + 'P2aPartnerPension'] / 12;
+  const p2aOrphanMonthly = (state[deceased.name + 'P2aOrphanPension'] / 12) * state.numChildren;
+  const survivorNetMonthly = survivor ? state[survivor.name + 'NetMonthly'] : 0;
+  const otherIncomeMonthly = (state.otherIncomeDividends || 0) + (state.otherIncomeRental || 0) + (state.otherIncomeOther || 0);
+  const totalIncomeMonth = ahvWidowPen + ahvOrphansPen + p2aPartnerMonthly + p2aOrphanMonthly + survivorNetMonthly + otherIncomeMonthly;
+
+  const baseExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const mortgageInterestMonthly = (state.mortgageRate / 100) * state.mortgage / 12;
+  let adjustedExpenses = baseExpenses + mortgageInterestMonthly + state.alimonyMonthly;
+  adjustedExpenses -= (state[deceased.name + 'P3aAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'TermAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'NetMonthly'] * 0.02);
+  if (survivor && state.numChildren > 0 && state[survivor.name + 'NetMonthly'] > 0) adjustedExpenses += 1500 * Math.min(2, state.numChildren);
+  adjustedExpenses -= 400;
+  adjustedExpenses = Math.max(0, adjustedExpenses);
+
+  const monthlySurplus = totalIncomeMonth - adjustedExpenses;
+  const monthlyGap = monthlySurplus < 0 ? Math.abs(monthlySurplus) : 0;
+  const totalMonthlyExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const bufferRunwayMonths = totalMonthlyExpenses > 0 ? Math.floor(netBuffer / totalMonthlyExpenses) : 0;
+  const bry = Math.floor(bufferRunwayMonths / 12);
+  const brm = bufferRunwayMonths % 12;
+
+  let trafficClass = 'green';
+  if (monthlyGap > 1000) trafficClass = 'red';
+  else if (monthlyGap > 0) trafficClass = 'amber';
+
+  const trafficIcon = trafficClass === 'green' ? '✓' : trafficClass === 'amber' ? '⚠' : '✗';
+  const verdictText = trafficClass === 'green' ? 'Protected' : trafficClass === 'amber' ? 'Minor gap' : 'Significant gap';
+
+  const runwayText = netBuffer <= 0 ? 'No buffer' : bry > 0 ? `${bry}y ${brm > 0 ? brm + 'm' : ''}` : `${brm} months`;
+
+  const deceasedLabel = deceased.label;
+  const survivorLabel = survivor ? survivor.label : 'family';
+  const termNeeded = monthlyGap > 0 ? Math.max(0, Math.ceil(((monthlyGap * 12 / 0.02) - netBuffer) / 50000) * 50000) : 0;
+
+  const insightText = monthlyGap > 0
+    ? `${deceasedLabel} should take out <strong>CHF ${termNeeded.toLocaleString('de-CH')} term life insurance</strong> to protect ${survivorLabel}.`
+    : `${deceasedLabel}'s coverage is sufficient. Also run the Disability scenario.`;
+
+  return `
+    <div class="mini-traffic ${trafficClass}">${trafficIcon}</div>
+    <div class="mini-verdict">${verdictText} — if ${deceasedLabel} passes away</div>
+    <div class="mini-numbers">
+      <div class="mini-number">
+        <div class="mini-number-label">Monthly income</div>
+        <div class="mini-number-value">CHF ${Math.round(totalIncomeMonth).toLocaleString('de-CH')}</div>
+      </div>
+      <div class="mini-number">
+        <div class="mini-number-label">Monthly expenses</div>
+        <div class="mini-number-value">CHF ${Math.round(adjustedExpenses).toLocaleString('de-CH')}</div>
+      </div>
+    </div>
+    <div class="mini-gap ${monthlySurplus >= 0 ? 'positive' : 'negative'}">
+      ${monthlySurplus >= 0 ? '✓ Surplus' : '⚠ Gap'}: CHF ${Math.abs(Math.round(monthlySurplus)).toLocaleString('de-CH')}/month
+    </div>
+    <div class="mini-runway">
+      <div class="mini-runway-label">Net buffer (savings + insurance − mortgage)</div>
+      <div class="mini-runway-val">CHF ${Math.round(netBuffer).toLocaleString('de-CH')} → covers ${runwayText} of expenses</div>
+    </div>
+    <div class="mini-insight">${insightText}</div>
+  `;
+}
+
+function renderLiveDisabilityResults() {
+  const disabled = { name: state.affectedPartners === 'partner1' ? 'p1' : 'p2', label: state.affectedPartners === 'partner1' ? state.p1Name : state.p2Name };
+  const disabledGross = state[disabled.name + 'GrossAnnual'];
+  const phase1IvPension = state[disabled.name + 'AhvOverride'] ? state[disabled.name + 'IvPension'] : ivDisabilityPension(disabledGross, 100);
+  const phase1P3aDisPension = state[disabled.name + 'P3aType'] === 'insurance' ? state[disabled.name + 'P3aDisPension'] : 0;
+  const otherIncomeMonthly = (state.otherIncomeDividends || 0) + (state.otherIncomeRental || 0) + (state.otherIncomeOther || 0);
+  const totalExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0) + state.alimonyMonthly;
+  const phase1Gap = Math.max(0, totalExpenses - phase1IvPension - phase1P3aDisPension - otherIncomeMonthly);
+  const phase2P2aDisMonthly = state[disabled.name + 'P2aDisability'] / 12;
+  const phase2Gap = Math.max(0, totalExpenses - phase1IvPension - phase2P2aDisMonthly - phase1P3aDisPension - otherIncomeMonthly);
+
+  let trafficClass = phase1Gap <= 500 ? 'green' : phase1Gap <= 2000 ? 'amber' : 'red';
+  const trafficIcon = trafficClass === 'green' ? '✓' : trafficClass === 'amber' ? '⚠' : '✗';
+
+  return `
+    <div class="mini-traffic ${trafficClass}">${trafficIcon}</div>
+    <div class="mini-verdict">If ${disabled.label} becomes disabled</div>
+    <div class="mini-numbers">
+      <div class="mini-number">
+        <div class="mini-number-label">Phase 1 gap (mo 1–24)</div>
+        <div class="mini-number-value ${phase1Gap > 0 ? 'negative' : 'positive'}">CHF ${Math.round(phase1Gap).toLocaleString('de-CH')}</div>
+      </div>
+      <div class="mini-number">
+        <div class="mini-number-label">Phase 2 gap (mo 25+)</div>
+        <div class="mini-number-value ${phase2Gap > 0 ? 'negative' : 'positive'}">CHF ${Math.round(phase2Gap).toLocaleString('de-CH')}</div>
+      </div>
+    </div>
+    <div class="mini-runway">
+      <div class="mini-runway-label">Monthly expenses</div>
+      <div class="mini-runway-val">CHF ${Math.round(totalExpenses).toLocaleString('de-CH')}/month</div>
+    </div>
+    <div class="mini-insight">Phase 1: Only AHV/IV + Pillar 3a pays. Pillar 2 (BVG) kicks in from month 25 onwards.</div>
+  `;
+}
+
+function getDeceasedPartner() {
+  if (state.affectedPartners === 'partner1') return { name: 'p1', label: state.p1Name };
+  if (state.affectedPartners === 'partner2') return { name: 'p2', label: state.p2Name };
+  return null;
+}
+
+function getSurvivorPartner() {
+  if (state.affectedPartners === 'partner1') return { name: 'p2', label: state.p2Name };
+  if (state.affectedPartners === 'partner2') return { name: 'p1', label: state.p1Name };
+  return null;
+}
+
+function renderDeathResults() {
+  const deceased = getDeceasedPartner();
+  const survivor = getSurvivorPartner();
+
+  const savings = state.savings;
+  const deceasedGross = state[deceased.name + 'GrossAnnual'];
+
+  const p3aPayout = state[deceased.name + 'P3aType'] === 'insurance'
+    ? state[deceased.name + 'P3aDeathCapital']
+    : state[deceased.name + 'P3aBalance'];
+
+  const termPayout = state[deceased.name + 'HasTermIns']
+    ? state[deceased.name + 'TermDeathSum']
+    : 0;
+
+  const totalLump = savings + p3aPayout + termPayout;
+  const netBuffer = totalLump - state.mortgage;
+
+  const ahvWidowPen = state[deceased.name + 'AhvOverride']
+    ? state[deceased.name + 'AhvPartnerPension']
+    : ahvWidowPension(deceasedGross);
+
+  const ahvOrphansPen = (state[deceased.name + 'AhvOverride']
+    ? state[deceased.name + 'AhvOrphanPension']
+    : ahvOrphanPension(deceasedGross)) * state.numChildren;
+
+  const p2aPartnerMonthly = state[deceased.name + 'P2aPartnerPension'] / 12;
+  const p2aOrphanMonthly = (state[deceased.name + 'P2aOrphanPension'] / 12) * state.numChildren;
+
+  const survivorNetMonthly = survivor ? state[survivor.name + 'NetMonthly'] : 0;
+  const otherIncomeMonthly = (state.otherIncomeDividends || 0) + (state.otherIncomeRental || 0) + (state.otherIncomeOther || 0);
+
+  const totalIncomeMonth = ahvWidowPen + ahvOrphansPen + p2aPartnerMonthly + p2aOrphanMonthly + survivorNetMonthly + otherIncomeMonthly;
+
+  let baseExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const mortgageInterestMonthly = (state.mortgageRate / 100) * state.mortgage / 12;
+  let adjustedExpenses = baseExpenses + mortgageInterestMonthly;
+  adjustedExpenses += state.alimonyMonthly;
+
+  adjustedExpenses -= (state[deceased.name + 'P3aAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'TermAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'NetMonthly'] * 0.02);
+
+  if (survivor && state.numChildren > 0 && state[survivor.name + 'NetMonthly'] > 0) {
+    adjustedExpenses += 1500 * Math.min(2, state.numChildren);
+  }
+
+  adjustedExpenses -= 400;
+  adjustedExpenses = Math.max(0, adjustedExpenses);
+
+  const monthlySurplus = totalIncomeMonth - adjustedExpenses;
+  const monthlyGap = monthlySurplus < 0 ? Math.abs(monthlySurplus) : 0;
+  const runwayMonths = monthlyGap > 0 ? Math.floor(netBuffer / monthlyGap) : 999999;
+
+  // Financial runway: how long does the buffer cover total family expenses (not just the gap)
+  const totalMonthlyExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const bufferRunwayMonths = totalMonthlyExpenses > 0 ? Math.floor(netBuffer / totalMonthlyExpenses) : 0;
+  const bufferRunwayYears = Math.floor(bufferRunwayMonths / 12);
+  const bufferRunwayRemMonths = bufferRunwayMonths % 12;
+
+  let trafficClass = 'green';
+  let verdict = _('protected');
+  if (monthlyGap > 1000) {
+    trafficClass = 'red';
+    verdict = _('significantGap');
+  } else if (monthlyGap > 0) {
+    trafficClass = 'amber';
+    verdict = _('minorGap');
+  }
+
+  // Runway from gap perspective (if gap exists)
+  const gapRunwayYears = Math.floor(runwayMonths / 12);
+  const gapRunwayRemMonths = runwayMonths % 12;
+
+  let html = `
+    <div class="results-section">
+      <div class="verdict">
+        <div class="traffic-light ${trafficClass}">
+          ${trafficClass === 'green' ? '✓' : trafficClass === 'amber' ? '⚠️' : '✗'}
+        </div>
+        <div class="verdict-title">${verdict}</div>
+      </div>
+
+      <div class="key-numbers">
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyIncome')}</div>
+          <div class="key-number-value">CHF ${Math.round(totalIncomeMonth).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyExpenses')}</div>
+          <div class="key-number-value">CHF ${Math.round(adjustedExpenses).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${monthlySurplus >= 0 ? _('monthlySurplus') : _('monthlyGap')}</div>
+          <div class="key-number-value ${monthlySurplus >= 0 ? 'positive' : 'negative'}">
+            ${monthlySurplus >= 0 ? '+' : '-'}CHF ${Math.abs(Math.round(monthlySurplus)).toLocaleString('de-CH')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Runway Summary Card -->
+    <div class="runway-summary-card">
+      <div class="runway-summary-title">💰 ${_('financialRunwayTitle')}</div>
+      <div class="runway-row">
+        <span class="runway-row-label">${_('savingsLabel')}</span>
+        <span class="runway-row-val">CHF ${savings.toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-row">
+        <span class="runway-row-label">${_('p3aPayoutLabel')}</span>
+        <span class="runway-row-val">+ CHF ${p3aPayout.toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-row">
+        <span class="runway-row-label">${_('termPayoutLabel')}</span>
+        <span class="runway-row-val">+ CHF ${termPayout.toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-row runway-subtotal">
+        <span class="runway-row-label">${_('totalLumpSum')}</span>
+        <span class="runway-row-val">CHF ${Math.round(totalLump).toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-row runway-negative">
+        <span class="runway-row-label">${_('mortgageLabel')}</span>
+        <span class="runway-row-val">− CHF ${state.mortgage.toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-row runway-total">
+        <span class="runway-row-label">${_('netBufferLabel')}</span>
+        <span class="runway-row-val ${netBuffer > 0 ? 'positive' : 'negative'}">CHF ${Math.round(netBuffer).toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-divider"></div>
+      <div class="runway-interpretation">
+        <div class="runway-stat">
+          <span class="runway-stat-label">${_('familyExpensesLabel')}</span>
+          <span class="runway-stat-val">CHF ${Math.round(totalMonthlyExpenses).toLocaleString('de-CH')}${_('perMonth')}</span>
+        </div>
+        <div class="runway-stat">
+          <span class="runway-stat-label">${_('bufferCoversExpenses')}</span>
+          <span class="runway-stat-val ${bufferRunwayMonths > 36 ? 'positive' : bufferRunwayMonths > 12 ? '' : 'negative'}">
+            ${netBuffer <= 0 ? _('noBuffer') : bufferRunwayYears > 0 ? bufferRunwayYears + ' ' + _('years') + (bufferRunwayRemMonths > 0 ? ' ' + bufferRunwayRemMonths + ' ' + _('months') : '') : bufferRunwayRemMonths + ' ' + _('months')}
+          </span>
+          <span class="runway-calc-hint">CHF ${Math.round(netBuffer).toLocaleString('de-CH')} ÷ CHF ${Math.round(totalMonthlyExpenses).toLocaleString('de-CH')}/month</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <div class="collapsible-header" onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.toggle-icon').textContent = this.nextElementSibling.classList.contains('open') ? '▼' : '▶';">
+        <span>${_('detailedBreakdown')}</span>
+        <span class="toggle-icon">▶</span>
+      </div>
+      <div class="collapsible-content">
+        <div class="collapsible-body">
+          <!-- Monthly/Yearly toggle for breakdown charts -->
+          <div style="display:flex; gap:8px; margin-bottom:16px; justify-content:center;">
+            <button id="breakdownMonthlyBtn" class="toggle-btn active" onclick="setBreakdownMode('monthly')">Monthly</button>
+            <button id="breakdownYearlyBtn" class="toggle-btn" onclick="setBreakdownMode('yearly')">Yearly</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+            <div class="chart-container" style="height:280px;">
+              <div class="chart-title" id="incomeBreakdownTitle">Monthly Income Breakdown</div>
+              <canvas id="incomeBreakdownChart"></canvas>
+            </div>
+            <div class="chart-container" style="height:280px;">
+              <div class="chart-title" id="expenseBreakdownTitle">Monthly Expense Breakdown</div>
+              <canvas id="expenseBreakdownChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-title">${_('lumpChartTitle')}</div>
+            <canvas id="lumpChart"></canvas>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-title">${_('cashflowChartTitle')}</div>
+            <canvas id="cashflowChart"></canvas>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-title">${_('incomeChartTitle')}</div>
+            <canvas id="incomeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // AI insight
+  const coverageScore = monthlyGap <= 0 ? 100 : Math.max(0, Math.round(100 - (monthlyGap / adjustedExpenses) * 100));
+  const scoreColor = coverageScore >= 75 ? '#2E7D32' : coverageScore >= 40 ? '#E6A817' : '#D4192C';
+  const scoreLabel = coverageScore >= 75 ? '🟢 Well protected' : coverageScore >= 40 ? '🟡 Partial coverage' : '🔴 Significant gap';
+  const survivorLabel = survivor ? survivor.label : 'the surviving partner';
+  const deceasedLabel = deceased ? deceased.label : 'the other partner';
+  const survivorEmployment = survivor ? state[survivor.name + 'Employment'] : 0;
+
+  // Term life insurance needed: enough lump sum so that invested at 2% p.a. it covers the monthly gap indefinitely,
+  // minus the net buffer they already have. Round up to nearest CHF 50,000.
+  const termNeeded = monthlyGap > 0 ? Math.max(0, Math.ceil(((monthlyGap * 12 / 0.02) - netBuffer) / 50000) * 50000) : 0;
+  const termMonthlyCostLow = Math.round(termNeeded * 0.0010 / 12);
+  const termMonthlyCostHigh = Math.round(termNeeded * 0.0020 / 12);
+
+  let aiRecPoints = [];
+  if (monthlyGap > 0) {
+    aiRecPoints.push(`This simulation shows that if <strong>${deceasedLabel} were to pass away today</strong>, <strong>${survivorLabel}</strong> would face a monthly shortfall of <strong>CHF ${Math.round(monthlyGap).toLocaleString('de-CH')}</strong>. The existing savings would cover full family expenses for only <strong>${bufferRunwayYears > 0 ? bufferRunwayYears + ' yr' + (bufferRunwayRemMonths > 0 ? ' ' + bufferRunwayRemMonths + ' mo' : '') : bufferRunwayRemMonths + ' months'}</strong>.`);
+    aiRecPoints.push(`<strong>Action for ${deceasedLabel} (while alive):</strong> Take out a term life insurance with a death benefit of approx. <strong>CHF ${termNeeded.toLocaleString('de-CH')}</strong>. Invested conservatively at 2%/yr, this lump sum would cover the shortfall indefinitely. At typical Swiss rates, the premium is roughly <strong>CHF ${termMonthlyCostLow.toLocaleString('de-CH')}–${termMonthlyCostHigh.toLocaleString('de-CH')}/month</strong> — a small cost to protect the family.`);
+    if (survivorEmployment > 0 && survivorEmployment < 100) {
+      aiRecPoints.push(`Also consider: if <strong>${survivorLabel}</strong> increased their employment from ${survivorEmployment}% to 100%, this would reduce the monthly gap and lower the insurance amount ${deceasedLabel} needs.`);
+    }
+  } else {
+    aiRecPoints.push(`This simulation shows that if <strong>${deceasedLabel} were to pass away today</strong>, <strong>${survivorLabel}</strong> would have a monthly <strong>surplus of CHF ${Math.abs(Math.round(monthlySurplus)).toLocaleString('de-CH')}</strong>. The family is financially well protected — existing pensions and insurance already cover the impact of ${deceasedLabel}'s death.`);
+    aiRecPoints.push(`<strong>${deceasedLabel}'s current coverage is sufficient.</strong> Review it again if circumstances change — a larger mortgage, salary increase, more children, or a new property can shift the balance significantly.`);
+    aiRecPoints.push(`Next step: run the <strong>Disability scenario</strong> for both partners. Disability is statistically more likely than death before retirement, and the financial impact can be just as severe.`);
+  }
+  const aiRec = aiRecPoints.map((pt, i) => `<div style="padding:8px 0; ${i < aiRecPoints.length - 1 ? 'border-bottom:1px solid #e0e0e0;' : ''}">${i + 1}. ${pt}</div>`).join('');
+
+  html += `
+    <div class="ai-insight-card">
+      <div class="ai-insight-header">
+        <span class="ai-insight-icon">💡</span>
+        <span class="ai-insight-title">SwissPillars Smart Insight — for ${survivor ? survivor.label : 'your family'}</span>
+        <span class="ai-score-badge" style="background:${scoreColor};">${coverageScore}/100</span>
+      </div>
+      <div class="ai-score-label">${scoreLabel}</div>
+      <div class="ai-pillars-grid">
+        <div class="ai-pillar-item">
+          <div class="ai-pillar-name">Pillar 1 (AHV)</div>
+          <div class="ai-pillar-val">CHF ${Math.round(ahvWidowPen + ahvOrphansPen).toLocaleString('de-CH')}/mo</div>
+        </div>
+        <div class="ai-pillar-item">
+          <div class="ai-pillar-name">Pillar 2 (BVG)</div>
+          <div class="ai-pillar-val">CHF ${Math.round(p2aPartnerMonthly + p2aOrphanMonthly).toLocaleString('de-CH')}/mo</div>
+        </div>
+        <div class="ai-pillar-item">
+          <div class="ai-pillar-name">Pillar 3a</div>
+          <div class="ai-pillar-val">CHF ${p3aPayout.toLocaleString('de-CH')} lump</div>
+        </div>
+        <div class="ai-pillar-item">
+          <div class="ai-pillar-name">Term insurance</div>
+          <div class="ai-pillar-val">CHF ${termPayout.toLocaleString('de-CH')} lump</div>
+        </div>
+      </div>
+      <div class="ai-recommendation">${aiRec}</div>
+    </div>
+  `;
+
+  return html;
+}
+
+function renderDisabilityResults() {
+  const disabled = { name: state.affectedPartners === 'partner1' ? 'p1' : 'p2', label: state.affectedPartners === 'partner1' ? state.p1Name : state.p2Name };
+
+  const disabledGross = state[disabled.name + 'GrossAnnual'];
+
+  const phase1IvPension = state[disabled.name + 'AhvOverride']
+    ? state[disabled.name + 'IvPension']
+    : ivDisabilityPension(disabledGross, 100);
+
+  const phase1P3aDisPension = state[disabled.name + 'P3aType'] === 'insurance'
+    ? state[disabled.name + 'P3aDisPension']
+    : 0;
+
+  const otherIncomeMonthly = (state.otherIncomeDividends || 0) + (state.otherIncomeRental || 0) + (state.otherIncomeOther || 0);
+  const phase1Income = phase1IvPension + phase1P3aDisPension + otherIncomeMonthly;
+  const totalExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0) + state.alimonyMonthly;
+  const phase1Gap = totalExpenses - phase1Income;
+  const phase1RunwayMonths = phase1Gap > 0 ? Math.floor(state.savings / phase1Gap) : 999999;
+
+  const phase2P2aDisMonthly = state[disabled.name + 'P2aDisability'] / 12;
+  const phase2P2aChildrenMonthly = (state[disabled.name + 'P2aChildrenDisability'] / 12) * state.numChildren;
+  const phase2Income = phase1IvPension + phase2P2aDisMonthly + phase2P2aChildrenMonthly + phase1P3aDisPension + otherIncomeMonthly;
+  const phase2Gap = totalExpenses - phase2Income;
+  const phase2RunwayMonths = phase2Gap > 0 ? Math.floor(state.savings / phase2Gap) : 999999;
+
+  const getTrafficClass = (gap) => {
+    if (gap <= 500) return 'green';
+    if (gap <= 2000) return 'amber';
+    return 'red';
+  };
+
+  let html = `
+    <div class="warning">${_('disabilityDegreeNote')}</div>
+    <div class="warning">${_('waitingPeriodNote')}</div>
+
+    <div class="phase-section">
+      <div class="phase-title">${_('phase1')}</div>
+      <div class="verdict" style="margin-bottom: 1.5rem;">
+        <div class="traffic-light ${getTrafficClass(phase1Gap)}" style="margin: 0 auto 1rem;">
+          ${getTrafficClass(phase1Gap) === 'green' ? '✓' : getTrafficClass(phase1Gap) === 'amber' ? '⚠️' : '✗'}
+        </div>
+      </div>
+
+      <div class="key-numbers">
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyIncome')}</div>
+          <div class="key-number-value">CHF ${Math.round(phase1Income).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyExpenses')}</div>
+          <div class="key-number-value">CHF ${Math.round(totalExpenses).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${phase1Gap > 0 ? _('monthlyGap') : _('monthlySurplus')}</div>
+          <div class="key-number-value ${phase1Gap <= 0 ? 'positive' : 'negative'}">
+            ${phase1Gap > 0 ? '' : '+'}CHF ${Math.abs(Math.round(phase1Gap)).toLocaleString('de-CH')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-section phase2">
+      <div class="phase-title">${_('phase2')}</div>
+      <div class="verdict" style="margin-bottom: 1.5rem;">
+        <div class="traffic-light ${getTrafficClass(phase2Gap)}" style="margin: 0 auto 1rem;">
+          ${getTrafficClass(phase2Gap) === 'green' ? '✓' : getTrafficClass(phase2Gap) === 'amber' ? '⚠️' : '✗'}
+        </div>
+      </div>
+
+      <div class="key-numbers">
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyIncome')}</div>
+          <div class="key-number-value">CHF ${Math.round(phase2Income).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${_('monthlyExpenses')}</div>
+          <div class="key-number-value">CHF ${Math.round(totalExpenses).toLocaleString('de-CH')}</div>
+        </div>
+        <div class="key-number">
+          <div class="key-number-label">${phase2Gap > 0 ? _('monthlyGap') : _('monthlySurplus')}</div>
+          <div class="key-number-value ${phase2Gap <= 0 ? 'positive' : 'negative'}">
+            ${phase2Gap > 0 ? '' : '+'}CHF ${Math.abs(Math.round(phase2Gap)).toLocaleString('de-CH')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Financial runway for disability: savings vs phase1 gap (critical period)
+  const savingsVal = state.savings;
+  const p1BufMonths = phase1Gap > 0 ? Math.floor(savingsVal / phase1Gap) : 999999;
+  const p1BufYears = Math.floor(p1BufMonths / 12);
+  const p1BufRem = p1BufMonths % 12;
+  const p2BufMonths = phase2Gap > 0 ? Math.floor(savingsVal / phase2Gap) : 999999;
+  const p2BufYears = Math.floor(p2BufMonths / 12);
+  const p2BufRem = p2BufMonths % 12;
+  const expRunwayMonths = totalExpenses > 0 ? Math.floor(savingsVal / totalExpenses) : 999999;
+  const expRunwayYears = Math.floor(expRunwayMonths / 12);
+  const expRunwayRem = expRunwayMonths % 12;
+
+  const fmtRun = (months) => months >= 999999 ? _('indefinite') + ' ✓' :
+    (Math.floor(months/12) > 0 ? Math.floor(months/12) + ' ' + _('years') + (months%12>0 ? ' ' + months%12 + ' ' + _('months') : '') : months + ' ' + _('months'));
+
+  html += `
+    <div class="runway-summary-card" style="margin-top:1.5rem;">
+      <div class="runway-summary-title">💰 ${_('financialRunwayTitle')}</div>
+      <div class="runway-row">
+        <span class="runway-row-label">${_('savingsLabel')}</span>
+        <span class="runway-row-val">CHF ${savingsVal.toLocaleString('de-CH')}</span>
+      </div>
+      <div class="runway-divider"></div>
+      <div class="runway-interpretation">
+        <div class="runway-stat">
+          <span class="runway-stat-label">${_('familyExpensesLabel')}</span>
+          <span class="runway-stat-val">CHF ${Math.round(totalExpenses).toLocaleString('de-CH')}${_('perMonth')}</span>
+        </div>
+        <div class="runway-stat">
+          <span class="runway-stat-label">${_('bufferCoversExpenses')}</span>
+          <span class="runway-stat-val ${expRunwayMonths > 36 ? 'positive' : 'negative'}">${fmtRun(expRunwayMonths)}</span>
+        </div>
+        <div class="runway-stat">
+          <span class="runway-stat-label">⚠️ ${_('phase1GapBuffer')}</span>
+          <span class="runway-stat-val ${p1BufMonths > 24 ? 'positive' : 'negative'}">${fmtRun(p1BufMonths)}</span>
+        </div>
+        <div class="runway-stat">
+          <span class="runway-stat-label">✅ ${_('phase2GapBuffer')}</span>
+          <span class="runway-stat-val ${p2BufMonths > 36 ? 'positive' : 'negative'}">${fmtRun(p2BufMonths)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
+function renderDeathCharts() {
+  const deceased = getDeceasedPartner();
+  const survivor = getSurvivorPartner();
+
+  const savings = state.savings;
+  const deceasedGross = state[deceased.name + 'GrossAnnual'];
+
+  const p3aPayout = state[deceased.name + 'P3aType'] === 'insurance'
+    ? state[deceased.name + 'P3aDeathCapital']
+    : state[deceased.name + 'P3aBalance'];
+
+  const termPayout = state[deceased.name + 'HasTermIns']
+    ? state[deceased.name + 'TermDeathSum']
+    : 0;
+
+  const totalLump = savings + p3aPayout + termPayout;
+  const netBuffer = totalLump - state.mortgage;
+
+  const lumpCtx = document.getElementById('lumpChart');
+  if (lumpCtx) {
+    if (charts.lumpChart) charts.lumpChart.destroy();
+    const s1end = savings;
+    const s2end = s1end + p3aPayout;
+    const s3end = s2end + termPayout;
+    const s4end = s3end - state.mortgage;
+    charts.lumpChart = new Chart(lumpCtx, {
+      type: 'bar',
+      data: {
+        labels: [_('savingsLabel'), _('p3aPayoutLabel'), _('termPayoutLabel'), _('mortgageLabel'), _('netBufferLabel')],
+        datasets: [{
+          data: [
+            [0, s1end],
+            [s1end, s2end],
+            [s2end, s3end],
+            [s3end > s4end ? s4end : s3end, s3end > s4end ? s3end : s4end],
+            [0, s4end]
+          ],
+          backgroundColor: [
+            '#1A3C5E', '#2E7D32', '#0B5394', '#D4192C',
+            s4end >= 0 ? '#1A3C5E' : '#D4192C'
+          ],
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const [lo, hi] = ctx.raw;
+                const val = Math.abs(hi - lo);
+                return 'CHF ' + Math.round(val).toLocaleString('de-CH');
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: { callback: v => 'CHF ' + Math.round(v).toLocaleString('de-CH') }
+          }
+        }
+      }
+    });
+  }
+
+  const ahvWidowPen = state[deceased.name + 'AhvOverride']
+    ? state[deceased.name + 'AhvPartnerPension']
+    : ahvWidowPension(deceasedGross);
+
+  const ahvOrphansPen = (state[deceased.name + 'AhvOverride']
+    ? state[deceased.name + 'AhvOrphanPension']
+    : ahvOrphanPension(deceasedGross)) * state.numChildren;
+
+  const p2aPartnerMonthly = state[deceased.name + 'P2aPartnerPension'] / 12;
+  const p2aOrphanMonthly = (state[deceased.name + 'P2aOrphanPension'] / 12) * state.numChildren;
+
+  const survivorNetMonthly = survivor ? state[survivor.name + 'NetMonthly'] : 0;
+  const otherIncomeMonthly = (state.otherIncomeDividends || 0) + (state.otherIncomeRental || 0) + (state.otherIncomeOther || 0);
+
+  const totalIncomeMonth = ahvWidowPen + ahvOrphansPen + p2aPartnerMonthly + p2aOrphanMonthly + survivorNetMonthly + otherIncomeMonthly;
+
+  let baseExpenses = Object.values(state.expenses).reduce((a, b) => a + b, 0);
+  const mortgageInterestMonthly = (state.mortgageRate / 100) * state.mortgage / 12;
+  let adjustedExpenses = baseExpenses + mortgageInterestMonthly;
+  adjustedExpenses += state.alimonyMonthly;
+  adjustedExpenses -= (state[deceased.name + 'P3aAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'TermAnnualPremium'] / 12);
+  adjustedExpenses -= (state[deceased.name + 'NetMonthly'] * 0.02);
+  if (survivor && state.numChildren > 0 && state[survivor.name + 'NetMonthly'] > 0) {
+    adjustedExpenses += 1500 * Math.min(2, state.numChildren);
+  }
+  adjustedExpenses -= 400;
+  adjustedExpenses = Math.max(0, adjustedExpenses);
+
+  const cashflowCtx = document.getElementById('cashflowChart');
+  if (cashflowCtx) {
+    if (charts.cashflowChart) charts.cashflowChart.destroy();
+    charts.cashflowChart = new Chart(cashflowCtx, {
+      type: 'bar',
+      data: {
+        labels: [_('monthlyIncome'), _('monthlyExpenses')],
+        datasets: [
+          {
+            label: _('monthlyIncome'),
+            data: [totalIncomeMonth, 0],
+            backgroundColor: '#2E7D32'
+          },
+          {
+            label: _('monthlyExpenses'),
+            data: [0, adjustedExpenses],
+            backgroundColor: '#1A3C5E'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  const incomeCtx = document.getElementById('incomeChart');
+  if (incomeCtx) {
+    if (charts.incomeChart) charts.incomeChart.destroy();
+    const incomeData = [];
+    const incomeLabels = [];
+
+    if (ahvWidowPen > 0) {
+      incomeData.push(ahvWidowPen);
+      incomeLabels.push(_('ahvWidow'));
+    }
+    if (ahvOrphansPen > 0) {
+      incomeData.push(ahvOrphansPen);
+      incomeLabels.push(_('ahvOrphans'));
+    }
+    if (p2aPartnerMonthly > 0) {
+      incomeData.push(p2aPartnerMonthly);
+      incomeLabels.push(_('p2aPartner'));
+    }
+    if (p2aOrphanMonthly > 0) {
+      incomeData.push(p2aOrphanMonthly);
+      incomeLabels.push(_('p2aOrphans'));
+    }
+    if (survivorNetMonthly > 0) {
+      incomeData.push(survivorNetMonthly);
+      incomeLabels.push(_('survivorIncome'));
+    }
+    if ((state.otherIncomeDividends || 0) > 0) {
+      incomeData.push(state.otherIncomeDividends);
+      incomeLabels.push(_('otherIncomeDividends'));
+    }
+    if ((state.otherIncomeRental || 0) > 0) {
+      incomeData.push(state.otherIncomeRental);
+      incomeLabels.push(_('otherIncomeRental'));
+    }
+    if ((state.otherIncomeOther || 0) > 0) {
+      incomeData.push(state.otherIncomeOther);
+      incomeLabels.push(_('otherIncomeOther'));
+    }
+
+    if (incomeData.length > 0) {
+      charts.incomeChart = new Chart(incomeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: incomeLabels,
+          datasets: [{
+            data: incomeData,
+            backgroundColor: ['#2E7D32', '#4CAF50', '#1A3C5E', '#0B5394', '#F57C00', '#7B1FA2', '#00838F', '#E65100']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+  }
+
+  const mult = breakdownMode === 'yearly' ? 12 : 1;
+  const modeLabel = breakdownMode === 'yearly' ? '/year' : '/month';
+
+  // Set titles
+  const incBTitle = document.getElementById('incomeBreakdownTitle');
+  if (incBTitle) incBTitle.textContent = (breakdownMode === 'yearly' ? 'Yearly' : 'Monthly') + ' Income Breakdown';
+  const expBTitle = document.getElementById('expenseBreakdownTitle');
+  if (expBTitle) expBTitle.textContent = (breakdownMode === 'yearly' ? 'Yearly' : 'Monthly') + ' Expense Breakdown';
+
+  // Income breakdown chart
+  const deceasedForChart = getDeceasedPartner();
+  const survivorForChart = getSurvivorPartner();
+  const decGrossForChart = state[deceasedForChart.name + 'GrossAnnual'];
+  const ahvWid = state[deceasedForChart.name + 'AhvOverride'] ? state[deceasedForChart.name + 'AhvPartnerPension'] : ahvWidowPension(decGrossForChart);
+  const ahvOrph = (state[deceasedForChart.name + 'AhvOverride'] ? state[deceasedForChart.name + 'AhvOrphanPension'] : ahvOrphanPension(decGrossForChart)) * state.numChildren;
+  const p2aPartMo = state[deceasedForChart.name + 'P2aPartnerPension'] / 12;
+  const p2aOrphMo = (state[deceasedForChart.name + 'P2aOrphanPension'] / 12) * state.numChildren;
+  const survNet = survivorForChart ? state[survivorForChart.name + 'NetMonthly'] : 0;
+
+  const incomeLabels = [];
+  const incomeData = [];
+  const incomeColors = [];
+  if (ahvWid > 0) { incomeLabels.push('AHV widow/widower pension'); incomeData.push(Math.round(ahvWid * mult)); incomeColors.push('#1565C0'); }
+  if (ahvOrph > 0) { incomeLabels.push('AHV orphan pension'); incomeData.push(Math.round(ahvOrph * mult)); incomeColors.push('#1976D2'); }
+  if (p2aPartMo > 0) { incomeLabels.push('BVG partner pension'); incomeData.push(Math.round(p2aPartMo * mult)); incomeColors.push('#2E7D32'); }
+  if (p2aOrphMo > 0) { incomeLabels.push('BVG orphan pension'); incomeData.push(Math.round(p2aOrphMo * mult)); incomeColors.push('#388E3C'); }
+  if (survNet > 0) { incomeLabels.push('Survivor salary'); incomeData.push(Math.round(survNet * mult)); incomeColors.push('#1A3C5E'); }
+  if ((state.otherIncomeDividends || 0) > 0) { incomeLabels.push('Dividends / investment'); incomeData.push(Math.round(state.otherIncomeDividends * mult)); incomeColors.push('#7B1FA2'); }
+  if ((state.otherIncomeRental || 0) > 0) { incomeLabels.push('Rental income'); incomeData.push(Math.round(state.otherIncomeRental * mult)); incomeColors.push('#00838F'); }
+  if ((state.otherIncomeOther || 0) > 0) { incomeLabels.push('Other income'); incomeData.push(Math.round(state.otherIncomeOther * mult)); incomeColors.push('#E65100'); }
+
+  const incBCtx = document.getElementById('incomeBreakdownChart');
+  if (incBCtx) {
+    if (charts.incomeBreakdownChart) charts.incomeBreakdownChart.destroy();
+    charts.incomeBreakdownChart = new Chart(incBCtx, {
+      type: 'doughnut',
+      data: { labels: incomeLabels, datasets: [{ data: incomeData, backgroundColor: incomeColors }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 } } },
+          tooltip: { callbacks: { label: ctx => ctx.label + ': CHF ' + ctx.parsed.toLocaleString('de-CH') + modeLabel } }
+        }
+      }
+    });
+  }
+
+  // Expense breakdown chart
+  const expEntries = Object.entries(state.expenses).filter(([k,v]) => v > 0);
+  const expColors = ['#1A3C5E','#D4192C','#E6A817','#2E7D32','#0B5394','#6A1B9A','#00838F','#EF6C00','#546E7A'];
+  const expBCtx = document.getElementById('expenseBreakdownChart');
+  if (expBCtx) {
+    if (charts.expenseBreakdownChart) charts.expenseBreakdownChart.destroy();
+    charts.expenseBreakdownChart = new Chart(expBCtx, {
+      type: 'doughnut',
+      data: {
+        labels: expEntries.map(([k]) => k.charAt(0).toUpperCase() + k.slice(1)),
+        datasets: [{ data: expEntries.map(([k,v]) => Math.round(v * mult)), backgroundColor: expColors }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 } } },
+          tooltip: { callbacks: { label: ctx => ctx.label + ': CHF ' + ctx.parsed.toLocaleString('de-CH') + modeLabel } }
+        }
+      }
+    });
+  }
+}
+
+function renderDisabilityCharts() {
+}
+
+function nextScreen() {
+  // Navigation removed in SPA layout
+}
+
+function prevScreen() {
+  // Navigation removed in SPA layout
+}
+
+function goToScreen(n) {
+  // Navigation removed in SPA layout
+}
+
+renderAll();
 </script>
+
 </body>
 </html>
