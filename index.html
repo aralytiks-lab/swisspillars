@@ -35,6 +35,13 @@
   gtag('js', new Date());
   gtag('config', 'G-S4N224RKDL');
 </script>
+<script>
+// ── SwissPillars Analytics helper ──
+// Wraps gtag so every event is safe even if GA4 hasn't loaded yet
+function track(name, params){
+  try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){}
+}
+</script>
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1000690406678665" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -553,6 +560,7 @@ let currentStep=0;
 const STEP_LABELS=['','Scenario','Income','Expenses','Assets','Liability','Pillars','Results'];
 const STEP_ACCENTS=['','step-1','step-2','step-3','step-4','step-5','step-6','step-7'];
 function goToHero(){
+  track('start_over',{from_step:currentStep});
   // Full hard reset — clear all state, all screen classes, all charts, all side state
   // 1. Destroy any live charts
   Object.keys(charts).forEach(k=>{if(charts[k]){charts[k].destroy();delete charts[k];}});
@@ -592,13 +600,25 @@ function goToHero(){
   document.getElementById('wizardSection').style.display='none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function startWizard(){document.getElementById('heroSection').style.display='none';document.getElementById('wizardSection').style.display='';goTo(1);}
+function startWizard(){
+  track('calculator_started');
+  document.getElementById('heroSection').style.display='none';
+  document.getElementById('wizardSection').style.display='';
+  goTo(1);
+}
 function goTo(n){
   if(n<1||n>7)return;
   if(currentStep===1&&n>1&&(!state.scenario||!state.affectedPartners)){
     const btn=document.getElementById('s1NextBtn');
     if(btn){btn.style.animation='none';btn.offsetHeight;btn.style.animation='shake .4s ease';}
     return;
+  }
+  // Track step completion when user advances forward
+  if(currentStep>=1&&n>currentStep){
+    track('step_completed',{
+      step_number:currentStep,
+      step_name:STEP_LABELS[currentStep]||'Step'+currentStep
+    });
   }
   if(currentStep>=1)document.getElementById('screen'+currentStep).classList.remove('active');
   currentStep=n;
@@ -654,7 +674,10 @@ function renderScreen1(){
     else hint.innerHTML=`<div class="s1-hint">☝️ Select a <strong>scenario</strong> above to get started.</div>`;
   }
 }
-function selectEvent(id){state.scenario=id;state.affectedPartners=null;renderScreen1();}
+function selectEvent(id){
+  track('scenario_selected',{scenario:id});
+  state.scenario=id;state.affectedPartners=null;renderScreen1();
+}
 function selectAffected(id){state.affectedPartners=id;renderScreen1();}
 function selectEmployment(mode){if(mode==='both'){state.singleIncome=false;}else{state.singleIncome=true;state.incomePartner=mode;}renderScreen1();}
 function changeChildren(d){updateState('numChildren',Math.max(0,Math.min(6,state.numChildren+d)));renderScreen1();}
@@ -827,7 +850,12 @@ function renderScreen5(){document.getElementById('mortgage').value=state.mortgag
 
 // ── STEP 6 ──
 let activePillar=1;
-function switchPillar(n){activePillar=n;document.querySelectorAll('.pillar-tab').forEach((b,i)=>b.classList.toggle('active',i===n-1));document.querySelectorAll('.pillar-screen').forEach((s,i)=>s.classList.toggle('active',i===n-1));}
+function switchPillar(n){
+  track('pillar_tab_viewed',{pillar_number:n,pillar_name:['AHV','BVG','3a','3b'][n-1]||'unknown'});
+  activePillar=n;
+  document.querySelectorAll('.pillar-tab').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+  document.querySelectorAll('.pillar-screen').forEach((s,i)=>s.classList.toggle('active',i===n-1));
+}
 function ahvPension(g){const mn=1260,mx=2520,mnI=15120,mxI=90720;if(g<=mnI)return mn;if(g>=mxI)return mx;return Math.round(mn+(g-mnI)/(mxI-mnI)*(mx-mn));}
 function ahvWid(g){return Math.min(Math.round(ahvPension(g)*0.8),2016);}
 function ahvOrph(g){return Math.round(ahvPension(g)*0.4);}
@@ -947,6 +975,22 @@ function buildDeathResults(){
 
   const surp=totalInc-adjExp;
   const gap=surp<0?Math.abs(surp):0;
+
+  // ── Track results event with key outcome data ──
+  track('results_viewed',{
+    scenario: state.scenario,
+    deceased_partner: dec.label,
+    outcome: gap>0?'gap':'surplus',
+    gap_bracket: gap<=0?'surplus':gap<500?'small':gap<2000?'medium':'large',
+    gap_amount: Math.round(gap),
+    surplus_amount: Math.round(Math.max(0,surp)),
+    has_mortgage: hasMortgage?'yes':'no',
+    has_term_insurance: state[dec.name+'HasTermIns']?'yes':'no',
+    has_p3a: (state[dec.name+'P3aDeathCapital']>0||state[dec.name+'P3aBalance']>0)?'yes':'no',
+    children_count: state.numChildren,
+    score: gap<=0?100:Math.max(0,Math.round(100-(gap/adjExp)*100))
+  });
+
   const bfM=adjExp>0?Math.floor(buf/adjExp):0,bfY=Math.floor(bfM/12),bfRm=bfM%12;
   // Cap runway display at 1200 months (100 years) — beyond that show "Indefinitely"
   const realRunwayMRaw=gap>0?(buf>0?Math.floor(buf/gap):0):999999;
@@ -1042,7 +1086,7 @@ function buildDeathResults(){
 
   const aiPts=gap>0?[
     `If <strong>${decLbl}</strong> were to pass away today, <strong>${surLbl}</strong> would face a monthly shortfall of <strong>${chf(gap)}</strong>. With the CHF ${Math.round(buf).toLocaleString('de-CH')} cash buffer covering this gap, it would last <strong>${realTxt}</strong>.`,
-    `<strong>Recommended action for ${decLbl}:</strong> Take out a term life insurance of approx. <strong>${chf(tN)}</strong>. At typical Swiss rates, this costs roughly <strong>CHF ${tL.toLocaleString('de-CH')}–${tH.toLocaleString('de-CH')}/month</strong> — protecting the family at minimal cost.`
+    `<strong>Recommended action for ${decLbl}:</strong> Take out a term life insurance of approx. <strong>${chf(tN)}</strong>. At typical Swiss rates for a healthy non-smoker aged 30–40, this costs roughly <strong>CHF ${tL.toLocaleString('de-CH')}–${tH.toLocaleString('de-CH')}/month</strong>. Premiums increase significantly with age — compare quotes at Comparis or moneyland.ch for your exact age and health profile.`
   ]:[
     `If <strong>${decLbl}</strong> were to pass away today, <strong>${surLbl}</strong> would have a monthly <strong>surplus of ${chf(Math.abs(surp))}</strong>. The family is well protected — the CHF ${Math.round(buf).toLocaleString('de-CH')} cash buffer is a bonus safety net on top.`,
     `Review this analysis whenever circumstances change (larger mortgage, salary change, new children, new property). The Disability scenario is also worth running once available.`
@@ -1183,7 +1227,7 @@ function buildDeathResults(){
         ${surP3aMo>0||surTermMo>0?`<tr><td>${surLbl}'s premiums</td><td class="r">${chf(surP3aMo+surTermMo)}/mo</td><td class="r">${chf(surP3aMo+surTermMo)}/mo</td><td style="color:#059669;font-size:.78rem;">${surPremNote.join(' + ')} — continues ✅</td></tr>`:''}
       </tbody>
       <tfoot>
-        <tr class="subtotal"><td>Today's total</td><td class="r">${chf(allExpToday)}/mo</td><td></td><td></td></tr>
+        <tr class="subtotal"><td>Today's total</td><td class="r">${chf(allExpToday+state.alimonyMonthly)}/mo</td><td></td><td></td></tr>
         <tr class="total"><td>POST-DEATH TOTAL</td><td></td><td class="r">${chf(adjExp)}/mo</td><td style="font-size:.78rem;color:var(--muted);">${adjExp<allExpToday?`↓ CHF ${Math.round(allExpToday-adjExp).toLocaleString('de-CH')}/mo saved`:`↑ CHF ${Math.round(adjExp-allExpToday).toLocaleString('de-CH')}/mo more`}</td></tr>
       </tfoot>
     </table>
