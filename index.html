@@ -8,6 +8,8 @@
 <meta name="keywords" content="Swiss pension calculator, AHV calculator, BVG calculator, Pillar 3 Switzerland, Swiss family protection, widow pension Switzerland, three pillar system">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://swisspillars.ch/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" href="/favicon.svg">
 <meta property="og:title" content="SwissPillars — Free Swiss Family Protection Calculator">
 <meta property="og:description" content="See exactly what your family receives from AHV, BVG and Pillar 3 if you or your partner pass away. Free, anonymous, 5 minutes.">
 <meta property="og:url" content="https://swisspillars.ch/">
@@ -65,6 +67,7 @@ function track(name, params){
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;font-size:15px;}
 body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 600px 400px at 10% 20%,rgba(200,16,46,.06) 0%,transparent 70%),radial-gradient(ellipse 500px 400px at 90% 80%,rgba(67,56,202,.06) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 50% 50%,rgba(13,148,136,.05) 0%,transparent 70%),var(--bg);animation:meshDrift 20s ease-in-out infinite alternate;}
+body.step-1-active::before,body.step-2-active::before,body.step-3-active::before,body.step-4-active::before,body.step-5-active::before,body.step-6-active::before,body.step-7-active::before{background:none;animation:none;}
 @keyframes meshDrift{0%{background-position:0% 0%,100% 100%,50% 50%;}100%{background-position:15% 25%,75% 65%,55% 45%;}}
 .header{background:rgba(12,31,63,.97);backdrop-filter:blur(12px);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;border-bottom:1px solid rgba(255,255,255,.08);}
 .logo{display:flex;align-items:center;gap:12px;color:white;font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;letter-spacing:.01em;text-decoration:none;cursor:pointer;}
@@ -117,6 +120,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .step-label{font-size:.68rem;font-weight:600;color:rgba(255,255,255,.4);margin-top:6px;text-align:center;white-space:nowrap;transition:color .2s;}
 .step-item.active .step-label{color:rgba(255,255,255,.9);}
 .step-item.done .step-label{color:rgba(255,255,255,.6);}
+/* Wizard step photo backgrounds */
+#wizardSection{position:relative;}
+#wizardSection::before{content:'';position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;transition:background-image .6s ease;filter:brightness(.22) saturate(.6);}
+.step-1-active #wizardSection::before{background-image:url('pics/jungfrauu1.jpg');}
+.step-2-active #wizardSection::before{background-image:url('pics/glacier jungfrau.jpg');}
+.step-3-active #wizardSection::before{background-image:url('pics/hardkulm.jpg');}
+.step-4-active #wizardSection::before{background-image:url('pics/brienz.jpg');}
+.step-5-active #wizardSection::before{background-image:url('pics/rigi cloudy.jpg');}
+.step-6-active #wizardSection::before{background-image:url('pics/swiss flag.jpg');}
+.step-7-active #wizardSection::before{background-image:url('pics/jungfrau2.jpg');}
 .wizard-body{max-width:1000px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
 .screen{display:none;animation:slideUp .3s ease;}
 .screen.active{display:block;}
@@ -333,10 +346,7 @@ input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--
       <div class="hero-trust">🔒 No data stored. No sign-up. No ads.</div>
     </div>
     <div class="hero-credit">📷 Jungfrau, Berner Oberland</div>
-    <div class="hero-corner tl"></div>
-    <div class="hero-corner tr"></div>
-    <div class="hero-corner bl"></div>
-    <div class="hero-corner br"></div>
+
   </div>
 </div>
 
@@ -610,6 +620,7 @@ function goToHero(){
   // 6. Show hero, hide wizard
   document.getElementById('heroSection').style.display='';
   document.getElementById('wizardSection').style.display='none';
+  document.body.className=document.body.className.replace(/\bstep-\d-active\b/g,'').trim();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function startWizard(){
@@ -635,6 +646,9 @@ function goTo(n){
   if(currentStep>=1)document.getElementById('screen'+currentStep).classList.remove('active');
   currentStep=n;
   document.getElementById('screen'+currentStep).classList.add('active');
+  // Swap step background photo
+  document.body.className=document.body.className.replace(/\bstep-\d-active\b/g,'').trim();
+  document.body.classList.add('step-'+n+'-active');
   renderStepper();renderStep(n);
   window.scrollTo({top:0,behavior:'smooth'});
 }
