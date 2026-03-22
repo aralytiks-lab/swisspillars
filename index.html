@@ -3,7 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SwissPillars — Family Financial Protection Calculator</title>
+<title>SwissPillars — Free Swiss Family Protection Calculator</title>
+<meta name="description" content="Free Swiss pension calculator — see exactly what your family receives from AHV Pillar 1, BVG Pillar 2 and Pillar 3 if you or your partner pass away. Based on AHV Scale 44 (2025/2026). Anonymous, no sign-up.">
+<meta name="keywords" content="Swiss pension calculator, AHV calculator, BVG calculator, Pillar 3 Switzerland, Swiss family protection, widow pension Switzerland, three pillar system">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://swisspillars.ch/">
+<meta property="og:title" content="SwissPillars — Free Swiss Family Protection Calculator">
+<meta property="og:description" content="See exactly what your family receives from AHV, BVG and Pillar 3 if you or your partner pass away. Free, anonymous, 5 minutes.">
+<meta property="og:url" content="https://swisspillars.ch/">
+<meta property="og:type" content="website">
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SwissPillars Family Protection Calculator",
+  "url": "https://swisspillars.ch",
+  "description": "Free Swiss pension calculator showing AHV, BVG and Pillar 3 survivor benefits based on AHV Scale 44 (2025/2026).",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF" },
+  "inLanguage": "en",
+  "audience": { "@type": "Audience", "geographicArea": { "@type": "Country", "name": "Switzerland" } }
+}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4N224RKDL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4N224RKDL');
+</script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1000690406678665" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -257,10 +290,13 @@ input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--
 
 <header class="header">
   <div class="logo" onclick="goToHero()"><div class="cross"></div>SwissPillars</div>
-  <div class="lang-btns">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>DE</button>
-    <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>FR</button>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="/articles/" style="color:rgba(255,255,255,.75);font-size:.82rem;font-weight:600;text-decoration:none;white-space:nowrap;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.75)'">📚 Articles</a>
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>DE</button>
+      <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>FR</button>
+    </div>
   </div>
 </header>
 
@@ -1529,5 +1565,23 @@ function renderDeathCharts(){
 renderStepper();
 renderScreen1();
 </script>
+
+<!-- Site footer -->
+<footer style="background:#0C1F3F;color:rgba(255,255,255,.55);text-align:center;padding:1.75rem 1rem;font-size:.8rem;margin-top:2rem;">
+  <div style="max-width:760px;margin:0 auto;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:1.25rem;margin-bottom:.85rem;">
+      <a href="/articles/" style="color:rgba(255,255,255,.75);text-decoration:none;font-weight:600;">📚 Pillar Guides & Articles</a>
+      <a href="/articles/swiss-three-pillar-system.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Three-Pillar System</a>
+      <a href="/articles/pillar-1-ahv-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 1 AHV</a>
+      <a href="/articles/pillar-2-bvg-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 2 BVG</a>
+      <a href="/articles/pillar-3a-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 3a</a>
+      <a href="/articles/pillar-3b-term-life.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Term Life Insurance</a>
+      <a href="/privacy-policy.html" style="color:rgba(255,255,255,.5);text-decoration:none;">Privacy Policy</a>
+    </div>
+    <p>&copy; 2026 SwissPillars.ch &nbsp;&middot;&nbsp; Free &middot; Anonymous &middot; No sign-up</p>
+    <p style="margin-top:.35rem;font-size:.72rem;opacity:.6;">Educational tool only. Not financial advice. Figures based on Swiss AHV Scale 44 (2025/2026).</p>
+  </div>
+</footer>
+
 </body>
 </html>
