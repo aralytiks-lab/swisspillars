@@ -68,10 +68,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 @keyframes meshDrift{0%{background-position:0% 0%,100% 100%,50% 50%;}100%{background-position:15% 25%,75% 65%,55% 45%;}}
 .header{background:rgba(12,31,63,.97);backdrop-filter:blur(12px);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;border-bottom:1px solid rgba(255,255,255,.08);}
 .logo{display:flex;align-items:center;gap:12px;color:white;font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;letter-spacing:.01em;text-decoration:none;cursor:pointer;}
-.cross{width:30px;height:30px;background:var(--red);border-radius:5px;position:relative;flex-shrink:0;box-shadow:0 0 16px rgba(200,16,46,.5);animation:crossPulse 3s ease-in-out infinite;}
+.cross{width:42px;height:42px;background:var(--red);border-radius:6px;position:relative;flex-shrink:0;box-shadow:0 0 16px rgba(200,16,46,.5);animation:crossPulse 3s ease-in-out infinite;}
 @keyframes crossPulse{0%,100%{box-shadow:0 0 12px rgba(200,16,46,.4);}50%{box-shadow:0 0 26px rgba(200,16,46,.8);}}
 .cross::before,.cross::after{content:'';position:absolute;background:white;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:2px;}
-.cross::before{width:17px;height:4px;}.cross::after{width:4px;height:17px;}
+.cross::before{width:24px;height:6px;}.cross::after{width:6px;height:24px;}
 .lang-btns{display:flex;gap:4px;}
 .lang-btn{padding:4px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.65);cursor:pointer;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:600;transition:all .2s;}
 .lang-btn.active{background:white;color:var(--navy);border-color:white;}
@@ -98,6 +98,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-grad
 .hero-cta:hover .hero-cta-arrow{transform:translateX(4px);}
 .hero-trust{margin-top:1.75rem;color:rgba(255,255,255,.5);font-size:.78rem;display:flex;align-items:center;gap:6px;justify-content:center;}
 .hero-credit{position:absolute;bottom:1.1rem;left:1.75rem;z-index:3;color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:.03em;}
+/* Swiss cross corner decorations on hero */
+.hero-corner{position:absolute;z-index:3;width:48px;height:48px;background:#C8102E;border-radius:6px;opacity:.55;}
+.hero-corner::before,.hero-corner::after{content:'';position:absolute;background:white;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:2px;}
+.hero-corner::before{width:28px;height:7px;}.hero-corner::after{width:7px;height:28px;}
+.hero-corner.tl{top:1.25rem;left:1.25rem;}
+.hero-corner.tr{top:1.25rem;right:1.25rem;}
+.hero-corner.bl{bottom:1.25rem;left:1.25rem;}
+.hero-corner.br{bottom:1.25rem;right:1.25rem;}
 .stepper-bar{background:rgba(12,31,63,.96);backdrop-filter:blur(12px);padding:0 2rem;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:62px;z-index:200;}
 .stepper{display:flex;align-items:flex-start;max-width:860px;margin:0 auto;padding:1rem 0;position:relative;}
 .step-item{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;cursor:pointer;transition:opacity .2s;}
@@ -325,6 +333,10 @@ input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--
       <div class="hero-trust">🔒 No data stored. No sign-up. No ads.</div>
     </div>
     <div class="hero-credit">📷 Jungfrau, Berner Oberland</div>
+    <div class="hero-corner tl"></div>
+    <div class="hero-corner tr"></div>
+    <div class="hero-corner bl"></div>
+    <div class="hero-corner br"></div>
   </div>
 </div>
 
@@ -1287,6 +1299,7 @@ function buildDeathResults(){
       <div class="pillar-chip"><div class="pillar-chip-name">🏢 Pillar 2 (BVG)</div><div class="pillar-chip-val">${chf(p2Part+p2Orph)}/mo</div></div>
       <div class="pillar-chip"><div class="pillar-chip-name">💼 Survivor salary</div><div class="pillar-chip-val">${chf(surSalary)}/mo</div></div>
       <div class="pillar-chip"><div class="pillar-chip-name">🐷 Pillar 3a (lump)</div><div class="pillar-chip-val">${chf(p3aPayout)}</div></div>
+      ${termPayout>0?`<div class="pillar-chip"><div class="pillar-chip-name">🛡️ Pillar 3b — Term ins. (lump)</div><div class="pillar-chip-val">${chf(termPayout)}</div></div>`:''}
     </div>
     <div class="insight-body">${aiPts.map((pt,i)=>`<div style="padding:7px 0;${i<aiPts.length-1?'border-bottom:1px solid #e0e0e0;':''}">${i+1}. ${pt}</div>`).join('')}</div>
   </div>
