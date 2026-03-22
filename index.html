@@ -948,8 +948,14 @@ function buildDeathResults(){
   const surp=totalInc-adjExp;
   const gap=surp<0?Math.abs(surp):0;
   const bfM=adjExp>0?Math.floor(buf/adjExp):0,bfY=Math.floor(bfM/12),bfRm=bfM%12;
-  const realRunwayM=gap>0?(buf>0?Math.floor(buf/gap):0):999999;
+  // Cap runway display at 1200 months (100 years) — beyond that show "Indefinitely"
+  const realRunwayMRaw=gap>0?(buf>0?Math.floor(buf/gap):0):999999;
+  const realRunwayM=realRunwayMRaw>1200?999999:realRunwayMRaw;
   const realRunwayY=Math.floor(realRunwayM/12),realRunwayRm=realRunwayM%12;
+  // Also cap worst-case runway display at 100 years
+  const bfMDisplay=bfM>1200?999999:bfM;
+  const bfYd=bfMDisplay===999999?999999:Math.floor(bfMDisplay/12);
+  const bfRmd=bfMDisplay===999999?0:bfMDisplay%12;
 
   const tc=gap>1000?'red':gap>0?'amber':'green';
   const verdict=tc==='green'?'Your family is financially protected ✓':tc==='amber'?'Minor monthly gap — manageable':'Significant gap — action needed';
@@ -958,7 +964,7 @@ function buildDeathResults(){
   const tN=gap>0?Math.max(0,Math.ceil(((gap*12/0.02)-buf)/50000)*50000):0;
   const tL=Math.round(tN*0.001/12),tH=Math.round(tN*0.002/12);
   const decLbl=dec.label,surLbl=sur?sur.label:'your family';
-  const worstCaseTxt=buf<=0?'No buffer':bfY>0?`${bfY}y ${bfRm>0?bfRm+'m':''}`:`${bfRm} months`;
+  const worstCaseTxt=buf<=0?'No buffer':bfMDisplay===999999?'Indefinitely ✓':bfYd>0?`${bfYd}y ${bfRmd>0?bfRmd+'m':''}`:`${bfRmd} months`;
   const realTxt=gap<=0?'Indefinitely ✓ (surplus every month)':realRunwayM>=999999?'Indefinitely ✓':realRunwayY>0?`${realRunwayY}y ${realRunwayRm>0?realRunwayRm+'m':''}`:`${realRunwayRm} months`;
 
   const incRows=[
@@ -1212,7 +1218,7 @@ function buildDeathResults(){
       <div class="runway-scenario worst">
         <div class="runway-scenario-label">📦 Worst-case (no income at all)</div>
         <div class="runway-scenario-val">${worstCaseTxt}</div>
-        <div class="runway-scenario-desc">If <em>zero income</em> arrived after death, the ${chf(buf)} buffer alone covering ${chf(adjExp)}/month expenses would last ${worstCaseTxt}. This is a theoretical worst-case.</div>
+        <div class="runway-scenario-desc">If <em>zero income</em> arrived after death, the ${chf(buf)} buffer alone covering ${chf(adjExp)}/month expenses would last ${worstCaseTxt}. This is a theoretical worst-case — in reality income continues.</div>
       </div>
       <div class="runway-scenario real">
         <div class="runway-scenario-label">✅ Real scenario (income continues)</div>
