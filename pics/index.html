@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwissPillars — Free Swiss Family Protection Calculator</title>
+<meta name="description" content="Free Swiss pension calculator — see exactly what your family receives from AHV Pillar 1, BVG Pillar 2 and Pillar 3 if you or your partner pass away. Based on AHV Scale 44 (2025/2026). Anonymous, no sign-up.">
+<meta name="keywords" content="Swiss pension calculator, AHV calculator, BVG calculator, Pillar 3 Switzerland, Swiss family protection, widow pension Switzerland, three pillar system">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://swisspillars.ch/">
+<meta property="og:title" content="SwissPillars — Free Swiss Family Protection Calculator">
+<meta property="og:description" content="See exactly what your family receives from AHV, BVG and Pillar 3 if you or your partner pass away. Free, anonymous, 5 minutes.">
+<meta property="og:url" content="https://swisspillars.ch/">
+<meta property="og:type" content="website">
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SwissPillars Family Protection Calculator",
+  "url": "https://swisspillars.ch",
+  "description": "Free Swiss pension calculator showing AHV, BVG and Pillar 3 survivor benefits based on AHV Scale 44 (2025/2026).",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF" },
+  "inLanguage": "en",
+  "audience": { "@type": "Audience", "geographicArea": { "@type": "Country", "name": "Switzerland" } }
+}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4N224RKDL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4N224RKDL');
+</script>
+<script>
+// ── SwissPillars Analytics helper ──
+// Wraps gtag so every event is safe even if GA4 hasn't loaded yet
+function track(name, params){
+  try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){}
+}
+</script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1000690406678665" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --navy:#0C1F3F; --navy-mid:#1A3C5E; --red:#C8102E; --red-light:#FFF0F2;
+  --green:#1B6B3A; --green-light:#E8F5EE; --amber:#D97706; --amber-light:#FFFBEB;
+  --indigo:#4338CA; --teal:#0D9488; --border:#DDE4EE; --bg:#F7F8FC;
+  --white:#FFFFFF; --text:#0C1F3F; --muted:#6B7A99;
+  --shadow:0 2px 16px rgba(12,31,63,.08); --shadow-lg:0 8px 40px rgba(12,31,63,.14);
+  --radius:14px; --radius-sm:8px;
+}
+.step-1{--accent:#C8102E;--accent-light:#FFF0F2;}
+.step-2{--accent:#1B6B3A;--accent-light:#E8F5EE;}
+.step-3{--accent:#D97706;--accent-light:#FFFBEB;}
+.step-4{--accent:#4338CA;--accent-light:#EEF2FF;}
+.step-5{--accent:#0D9488;--accent-light:#F0FDFA;}
+.step-6{--accent:#7C3AED;--accent-light:#F5F3FF;}
+.step-7{--accent:#0C1F3F;--accent-light:#EEF3FA;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;font-size:15px;}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 600px 400px at 10% 20%,rgba(200,16,46,.06) 0%,transparent 70%),radial-gradient(ellipse 500px 400px at 90% 80%,rgba(67,56,202,.06) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 50% 50%,rgba(13,148,136,.05) 0%,transparent 70%),var(--bg);animation:meshDrift 20s ease-in-out infinite alternate;}
+@keyframes meshDrift{0%{background-position:0% 0%,100% 100%,50% 50%;}100%{background-position:15% 25%,75% 65%,55% 45%;}}
+.header{background:rgba(12,31,63,.97);backdrop-filter:blur(12px);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;border-bottom:1px solid rgba(255,255,255,.08);}
+.logo{display:flex;align-items:center;gap:12px;color:white;font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;letter-spacing:.01em;text-decoration:none;cursor:pointer;}
+.cross{width:42px;height:42px;background:var(--red);border-radius:6px;position:relative;flex-shrink:0;box-shadow:0 0 16px rgba(200,16,46,.5);animation:crossPulse 3s ease-in-out infinite;}
+@keyframes crossPulse{0%,100%{box-shadow:0 0 12px rgba(200,16,46,.4);}50%{box-shadow:0 0 26px rgba(200,16,46,.8);}}
+.cross::before,.cross::after{content:'';position:absolute;background:white;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:2px;}
+.cross::before{width:24px;height:6px;}.cross::after{width:6px;height:24px;}
+.lang-btns{display:flex;gap:4px;}
+.lang-btn{padding:4px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.65);cursor:pointer;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:600;transition:all .2s;}
+.lang-btn.active{background:white;color:var(--navy);border-color:white;}
+.hero-screen{min-height:calc(100vh - 62px);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.hero-bg-img{position:absolute;inset:0;background:url('pics/jungfrau2.jpg') center/cover no-repeat;filter:brightness(.38) saturate(.8);}
+.hero-floater{position:absolute;border-radius:50%;opacity:.15;animation:float 9s ease-in-out infinite;}
+.hero-floater:nth-child(3){width:320px;height:320px;background:var(--red);top:-90px;right:-70px;animation-delay:0s;}
+.hero-floater:nth-child(4){width:220px;height:220px;background:var(--indigo);bottom:-50px;left:-50px;animation-delay:-3.5s;}
+.hero-floater:nth-child(5){width:150px;height:150px;background:var(--teal);bottom:22%;right:8%;animation-delay:-6s;}
+@keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.05);}}
+.hero-inner{position:relative;z-index:2;max-width:700px;margin:0 auto;padding:4rem 2rem;text-align:center;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);color:rgba(255,255,255,.85);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;}
+.hero-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;box-shadow:0 0 8px #4ADE80;animation:blink 1.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:white;line-height:1.18;margin-bottom:1.25rem;}
+.hero-title em{font-style:italic;color:#FCA5A5;}
+.hero-sub{font-size:1.05rem;color:rgba(255,255,255,.78);max-width:520px;margin:0 auto 2rem;line-height:1.7;}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:2.5rem;}
+.hero-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);color:white;font-size:.82rem;font-weight:500;padding:6px 14px;border-radius:20px;}
+.hero-pill strong{color:#A5F3FC;}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--red),#E53E3E);color:white;border:none;border-radius:50px;padding:16px 40px;font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 8px 32px rgba(200,16,46,.45);transition:all .25s;letter-spacing:.02em;}
+.hero-cta:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 40px rgba(200,16,46,.6);}
+.hero-cta-arrow{font-size:1.2rem;transition:transform .2s;}
+.hero-cta:hover .hero-cta-arrow{transform:translateX(4px);}
+.hero-trust{margin-top:1.75rem;color:rgba(255,255,255,.5);font-size:.78rem;display:flex;align-items:center;gap:6px;justify-content:center;}
+.hero-credit{position:absolute;bottom:1.1rem;left:1.75rem;z-index:3;color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:.03em;}
+/* Swiss cross corner decorations on hero */
+.hero-corner{position:absolute;z-index:3;width:48px;height:48px;background:#C8102E;border-radius:6px;opacity:.55;}
+.hero-corner::before,.hero-corner::after{content:'';position:absolute;background:white;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:2px;}
+.hero-corner::before{width:28px;height:7px;}.hero-corner::after{width:7px;height:28px;}
+.hero-corner.tl{top:1.25rem;left:1.25rem;}
+.hero-corner.tr{top:1.25rem;right:1.25rem;}
+.hero-corner.bl{bottom:1.25rem;left:1.25rem;}
+.hero-corner.br{bottom:1.25rem;right:1.25rem;}
+.stepper-bar{background:rgba(12,31,63,.96);backdrop-filter:blur(12px);padding:0 2rem;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:62px;z-index:200;}
+.stepper{display:flex;align-items:flex-start;max-width:860px;margin:0 auto;padding:1rem 0;position:relative;}
+.step-item{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;cursor:pointer;transition:opacity .2s;}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:19px;left:calc(50% + 22px);width:calc(100% - 44px);height:2px;background:rgba(255,255,255,.15);z-index:0;transition:background .3s;}
+.step-item.done:not(:last-child)::after{background:rgba(255,255,255,.5);}
+.step-circle{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;position:relative;z-index:1;transition:all .25s;}
+.step-item.active .step-circle{background:var(--accent,var(--red));border-color:var(--accent,var(--red));color:white;box-shadow:0 0 0 4px rgba(255,255,255,.15),0 0 20px rgba(255,255,255,.15);}
+.step-item.done .step-circle{background:rgba(255,255,255,.85);border-color:white;color:var(--navy);}
+.step-label{font-size:.68rem;font-weight:600;color:rgba(255,255,255,.4);margin-top:6px;text-align:center;white-space:nowrap;transition:color .2s;}
+.step-item.active .step-label{color:rgba(255,255,255,.9);}
+.step-item.done .step-label{color:rgba(255,255,255,.6);}
+.wizard-body{max-width:1000px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+.screen{display:none;animation:slideUp .3s ease;}
+.screen.active{display:block;}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.screen-card{background:white;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.25rem;}
+.card-header{padding:1.5rem 2rem 1.25rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--accent-light,#EEF3FA),white);display:flex;align-items:flex-start;gap:1rem;}
+.card-header-icon{font-size:2rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12));}
+.card-header-text h1{font-family:'Fraunces',serif;font-weight:700;font-size:1.5rem;color:var(--accent,var(--navy));margin-bottom:.2rem;line-height:1.2;}
+.card-header-text .sub{color:var(--muted);font-size:.88rem;}
+.card-body{padding:1.75rem 2rem;}
+.form-group{margin-bottom:1.25rem;}
+label{display:block;font-weight:600;margin-bottom:.4rem;color:var(--text);font-size:.92rem;}
+.help-text{font-size:.82rem;color:var(--muted);margin-top:.25rem;}
+input[type="text"],input[type="number"],select{width:100%;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Sora',sans-serif;font-size:.95rem;color:var(--text);background:white;transition:border-color .2s,box-shadow .2s;}
+input[type="text"]:focus,input[type="number"]:focus,select:focus{outline:none;border-color:var(--accent,var(--navy));box-shadow:0 0 0 3px rgba(12,31,63,.1);}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;}
+.toggle-group{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.toggle-btn{flex:1;min-width:100px;padding:.6rem .9rem;border:2px solid var(--border);background:white;cursor:pointer;border-radius:var(--radius-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;color:var(--muted);transition:all .2s;}
+.toggle-btn.active{border-color:var(--accent,var(--navy));background:var(--accent-light,#EEF3FA);color:var(--accent,var(--navy));box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.toggle-btn:hover:not(.active){border-color:var(--accent,var(--navy));color:var(--text);}
+.net-display{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;background:#EEF3FA;border:1.5px solid #C8D8E8;border-radius:var(--radius-sm);font-size:.95rem;color:var(--navy);font-weight:600;}
+.net-badge{font-size:.65rem;background:var(--navy);color:#fff;padding:2px 7px;border-radius:10px;font-weight:600;}
+.net-override-link{font-size:.78rem;color:var(--navy);cursor:pointer;text-decoration:underline;opacity:.65;margin-top:.25rem;display:inline-block;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.choice-card{padding:1.25rem;border:2px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.175,.885,.32,1.275);background:white;}
+.choice-card:hover:not(.disabled){border-color:var(--accent,var(--navy));transform:translateY(-4px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.1);}
+.choice-card.active{border-color:var(--accent,var(--navy));background:var(--accent-light,#EEF3FA);transform:scale(1.02);box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.choice-card.disabled{opacity:.4;cursor:not-allowed;}
+.choice-card .card-icon{font-size:2.2rem;margin-bottom:.5rem;display:block;}
+.choice-card .card-title{font-weight:700;font-size:.9rem;color:var(--text);}
+.choice-card .card-label{font-size:.76rem;color:var(--muted);margin-top:.2rem;}
+.partner-section{background:linear-gradient(135deg,var(--accent-light,#F7F8FC),var(--bg));border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.partner-section h3{font-family:'Fraunces',serif;font-weight:600;font-size:1rem;color:var(--accent,var(--navy));margin-top:0;margin-bottom:.85rem;}
+.expense-list{background:var(--bg);border-radius:var(--radius);padding:1.25rem;}
+.expense-item{display:grid;grid-template-columns:1fr auto;gap:.75rem;margin-bottom:.85rem;align-items:start;}
+.expense-item:last-child{margin-bottom:0;}
+.expense-label{font-weight:600;font-size:.88rem;color:var(--text);padding-top:8px;}
+.expense-input-group{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:flex-end;}
+.expense-input{width:115px;}
+.exp-mode-toggle{display:flex;gap:2px;}
+.exp-mode-btn{padding:3px 8px;font-size:.68rem;border:1px solid var(--border);border-radius:4px;background:white;color:var(--muted);cursor:pointer;font-weight:700;font-family:'Sora',sans-serif;transition:all .15s;}
+.exp-mode-btn.active{background:var(--accent,var(--navy));color:white;border-color:transparent;}
+.expense-secondary{color:var(--muted);font-size:.74rem;width:100%;text-align:right;font-style:italic;}
+.expense-group-header{font-size:.72rem;font-weight:700;color:var(--accent,var(--navy));text-transform:uppercase;letter-spacing:.07em;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.total-expenses{background:var(--accent-light,#EEF3FA);padding:.85rem 1rem;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700;text-align:right;color:var(--accent,var(--navy));margin-top:1rem;border:1px solid var(--border);}
+.note{background:#FFFBEB;border:1px solid #FDE68A;padding:.8rem 1rem;border-radius:var(--radius-sm);margin-bottom:1.25rem;color:#92400E;font-size:.88rem;}
+.warning{background:#FFF1F2;border:1px solid #FECDD3;padding:.8rem 1rem;border-radius:var(--radius-sm);margin-bottom:1.25rem;color:#9F1239;font-size:.88rem;}
+.info-block{background:var(--accent-light,#EEF3FA);padding:.9rem 1rem;border-radius:var(--radius-sm);border-left:4px solid var(--accent,var(--navy));margin-bottom:1rem;}
+.info-block-title{font-weight:700;color:var(--accent,var(--navy));margin-bottom:.2rem;font-size:.9rem;}
+.info-block-text{color:var(--text);font-size:.88rem;}
+.checkbox-wrapper{display:flex;align-items:center;gap:.65rem;margin-bottom:1rem;}
+input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--accent,var(--navy));}
+.counter-row{display:flex;align-items:center;gap:1rem;margin-top:.5rem;}
+.counter-btn{width:42px;height:42px;border-radius:50%;border:2px solid var(--accent,var(--navy));background:white;color:var(--accent,var(--navy));font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .2s;}
+.counter-btn:hover{background:var(--accent,var(--navy));color:white;transform:scale(1.1);}
+.counter-val{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;min-width:32px;text-align:center;color:var(--accent,var(--navy));}
+.s1-hint{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;background:#EEF3FA;border:1.5px solid #C8D8E8;border-radius:var(--radius-sm);font-size:.85rem;color:var(--navy);font-weight:500;}
+.s1-hint.done{background:#E8F5EE;border-color:#A7D7B8;color:#1B6B3A;}
+.pillar-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;}
+.pillar-tab{padding:.6rem 1rem;border:none;background:none;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;}
+.pillar-tab.active{color:var(--accent,var(--navy));border-bottom-color:var(--accent,var(--navy));}
+.pillar-screen{display:none;}
+.pillar-screen.active{display:block;}
+.wizard-nav{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:.75rem 2.25rem;background:linear-gradient(135deg,var(--accent,var(--navy)),color-mix(in srgb,var(--accent,var(--navy)) 80%,black));color:white;border:none;border-radius:50px;font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(0,0,0,.18);}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-secondary{padding:.7rem 1.5rem;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:50px;font-family:'Sora',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{background:var(--bg);border-color:var(--navy);}
+.btn-text{padding:.7rem 1rem;background:none;border:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:.85rem;cursor:pointer;}
+/* Results */
+.scenario-banner{display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:white;border-radius:var(--radius);padding:1.1rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 4px 20px rgba(12,31,63,.25);}
+.scenario-banner-icon{font-size:2rem;}
+.scenario-banner-label{font-size:.7rem;opacity:.7;text-transform:uppercase;letter-spacing:.1em;}
+.scenario-banner-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;margin-top:2px;}
+.traffic-ring{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 1rem;box-shadow:0 4px 20px rgba(0,0,0,.18);animation:ringPop .5s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes ringPop{from{transform:scale(.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+.traffic-ring.green{background:linear-gradient(135deg,#059669,#10B981);color:white;}
+.traffic-ring.amber{background:linear-gradient(135deg,#D97706,#F59E0B);color:white;}
+.traffic-ring.red{background:linear-gradient(135deg,#DC2626,var(--red));color:white;}
+.verdict{text-align:center;margin-bottom:1.5rem;}
+.verdict-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.4rem;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.85rem;margin-bottom:1rem;}
+.kpi{background:white;padding:1.1rem;border-radius:var(--radius);text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);transition:transform .2s;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:.5px;margin-bottom:.3rem;}
+.kpi-val{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;color:var(--navy);}
+.kpi-val.pos{color:#059669;}.kpi-val.neg{color:var(--red);}
+/* Breakdown tables */
+.bk-card{background:white;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;box-shadow:var(--shadow);}
+.bk-card-title{font-family:'Fraunces',serif;font-weight:700;font-size:.95rem;color:white;padding:.75rem 1.1rem;display:flex;align-items:center;gap:.5rem;}
+.bk-card-title.income{background:linear-gradient(135deg,#1B6B3A,#2E7D32);}
+.bk-card-title.expense{background:linear-gradient(135deg,#0C1F3F,#1A3C5E);}
+.bk-card-title.surplus{background:linear-gradient(135deg,#059669,#10B981);}
+.bk-card-title.gap{background:linear-gradient(135deg,#DC2626,var(--red));}
+.bk-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.bk-table th{text-align:left;padding:.5rem .85rem;background:#F7F8FC;color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);}
+.bk-table th.r{text-align:right;}
+.bk-table td{padding:.5rem .85rem;border-bottom:1px solid #F0F0F0;vertical-align:middle;}
+.bk-table td.r{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;}
+.bk-table td.g{color:#059669;}.bk-table td.rd{color:var(--red);}
+.bk-table tr.total td{background:#EEF3FA;font-weight:700;color:var(--navy);border-top:2px solid var(--border);}
+.bk-table tr.subtotal td{background:#F7F8FC;font-weight:600;color:var(--muted);font-size:.82rem;}
+.bk-table tr.strikeout td{color:#aaa;text-decoration:line-through;font-style:italic;}
+/* Buffer / Runway cards */
+.runway-card{background:white;border-radius:var(--radius);padding:1.25rem 1.5rem;border:2px solid var(--border);margin-bottom:1.25rem;box-shadow:var(--shadow);}
+.runway-card-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;}
+.runway-row{display:flex;justify-content:space-between;padding:.38rem 0;font-size:.88rem;border-bottom:1px solid var(--border);}
+.runway-row:last-of-type{border-bottom:none;}
+.runway-row-label{color:var(--muted);}.runway-row-val{font-weight:700;color:var(--text);}
+.runway-subtotal{background:#EEF3FA;margin:0 -.5rem;padding:.45rem .5rem;border-radius:4px;font-weight:700;border-bottom:none;}
+.runway-neg .runway-row-val{color:var(--red);}
+.runway-total{background:var(--navy);color:white;margin:.5rem -.5rem;padding:.55rem .5rem;border-radius:var(--radius-sm);font-weight:700;border-bottom:none;}
+.runway-total .runway-row-label{color:rgba(255,255,255,.8);}.runway-total .runway-row-val{color:white;}
+.runway-divider{border-top:2px solid var(--border);margin:.75rem 0;}
+.runway-stat{display:flex;justify-content:space-between;align-items:center;font-size:.88rem;margin-bottom:.35rem;}
+.runway-stat-label{color:var(--muted);flex:1;}.runway-stat-val{font-weight:700;color:var(--navy);}
+.runway-stat-val.pos{color:#059669;}.runway-stat-val.neg{color:var(--red);}
+.runway-split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+@media(max-width:600px){.runway-split{grid-template-columns:1fr;}}
+.runway-scenario{border-radius:var(--radius-sm);padding:1rem 1.1rem;border:1.5px solid var(--border);}
+.runway-scenario.worst{background:#FFF1F2;border-color:#FECDD3;}
+.runway-scenario.real{background:#E8F5EE;border-color:#A7D7B8;}
+.runway-scenario-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;}
+.runway-scenario.worst .runway-scenario-label{color:#9F1239;}
+.runway-scenario.real .runway-scenario-label{color:#065F46;}
+.runway-scenario-val{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;margin-bottom:.3rem;}
+.runway-scenario.worst .runway-scenario-val{color:#DC2626;}
+.runway-scenario.real .runway-scenario-val{color:#059669;}
+.runway-scenario-desc{font-size:.78rem;color:var(--muted);line-height:1.45;}
+.insight-card{background:linear-gradient(135deg,#EEF3FA 0%,#E8F5EE 100%);border:2px solid var(--navy);border-radius:var(--radius);padding:1.25rem;margin:1.25rem 0;box-shadow:0 4px 20px rgba(12,31,63,.1);}
+.insight-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem;}
+.insight-icon{font-size:1.4rem;}.insight-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:700;color:var(--navy);flex:1;}
+.score-badge{color:white;font-weight:700;font-size:.82rem;padding:4px 10px;border-radius:20px;}
+.pillars-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem;}
+.pillar-chip{background:white;border-radius:8px;padding:9px 11px;}
+.pillar-chip-name{font-size:.75rem;color:var(--muted);margin-bottom:3px;}
+.pillar-chip-val{font-size:.9rem;font-weight:700;color:var(--navy);}
+.insight-body{background:white;border-left:4px solid var(--navy);padding:10px 12px;border-radius:0 8px 8px 0;font-size:.87rem;line-height:1.6;}
+.collapsible-hdr{background:var(--bg);padding:.9rem 1.1rem;border-radius:var(--radius-sm);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--navy);user-select:none;border:1px solid var(--border);margin-bottom:4px;transition:background .2s;}
+.collapsible-hdr:hover{background:#EEF3FA;}
+.collapsible-body{max-height:0;overflow:hidden;transition:max-height .35s ease-out;}
+.collapsible-body.open{max-height:8000px;transition:max-height .5s ease-in;}
+.collapsible-inner{padding:1.25rem 0;}
+.chart-card{background:white;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;box-shadow:var(--shadow);}
+.chart-card-hdr{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;color:white;padding:.85rem 1.25rem;background:linear-gradient(135deg,var(--navy),var(--navy-mid));}
+.chart-card-sub{font-size:.8rem;color:var(--muted);padding:.5rem 1.25rem .75rem;background:#F7F8FC;border-bottom:1px solid var(--border);}
+.chart-canvas-wrap{position:relative;padding:.75rem 1.25rem 0;}
+.chart-legend-table{padding:.75rem 1.25rem 1.25rem;}
+.chart-legend-table table{width:100%;border-collapse:collapse;}
+.chart-legend-table td{padding:.35rem .5rem;font-size:.82rem;vertical-align:middle;border-bottom:1px solid #F0F4F8;}
+.chart-legend-table td.leg-swatch{width:14px;}
+.chart-legend-table td.leg-label{color:var(--text);font-weight:500;}
+.chart-legend-table td.leg-chf{text-align:right;font-weight:700;color:var(--navy);white-space:nowrap;}
+.chart-legend-table td.leg-pct{text-align:right;color:var(--muted);white-space:nowrap;width:48px;}
+.chart-legend-table tr:last-child td{border-bottom:none;}
+.chart-legend-table .leg-total td{background:#EEF3FA;font-weight:700;color:var(--navy);border-top:2px solid var(--border);}
+.chart-wrap{position:relative;height:540px;background:white;border-radius:var(--radius-sm);border:1px solid var(--border);padding:.85rem 1rem 1.5rem;margin-bottom:1rem;}
+.chart-wrap.bar{height:360px;}
+.chart-title{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);margin-bottom:.65rem;text-align:center;font-size:.95rem;}
+.disclaimer{background:var(--bg);border:1px solid var(--border);padding:.9rem 1rem;border-radius:var(--radius-sm);font-size:.78rem;color:var(--muted);margin-top:1.5rem;line-height:1.7;}
+/* Expense total collapsible */
+.exp-total-wrap{border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--accent-light,#EEF3FA);margin-top:1rem;}
+.exp-total-headline{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;border-bottom:2px solid var(--border);}
+.exp-total-headline strong{font-size:.92rem;color:var(--accent,var(--navy));}
+.exp-total-number{text-align:right;line-height:1.3;}
+.exp-total-number .big{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--accent,var(--navy));}
+.exp-total-number .small{font-size:.78rem;color:var(--muted);}
+.exp-verify-toggle{padding:.5rem 1rem;font-size:.8rem;font-weight:600;color:var(--accent,var(--navy));cursor:pointer;list-style:none;display:flex;align-items:center;gap:.5rem;user-select:none;}
+.exp-verify-toggle::marker{display:none;}
+.exp-verify-body{background:white;}
+.exp-verify-table{width:100%;border-collapse:collapse;}
+.exp-verify-table th{padding:.3rem .6rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#F7F8FC;border-bottom:1px solid var(--border);text-align:left;}
+.exp-verify-table th.r{text-align:right;}
+.exp-verify-table td{padding:.32rem .6rem;font-size:.82rem;border-bottom:1px solid #F5F5F5;}
+.exp-verify-table td.r{text-align:right;font-weight:600;color:var(--navy);white-space:nowrap;}
+.exp-verify-table td.m{color:var(--muted);}
+.exp-verify-table tr.section-hdr td{background:#F0F4F8;font-size:.7rem;font-weight:700;color:var(--accent,var(--navy));text-transform:uppercase;letter-spacing:.05em;padding:.3rem .6rem;border-top:1px solid var(--border);}
+.exp-verify-table tfoot td{background:#EEF3FA;font-weight:700;color:var(--accent,var(--navy));border-top:2px solid var(--border);padding:.42rem .6rem;}
+.exp-verify-table tfoot td.r{font-size:.9rem;}
+.exp-verify-note{padding:.4rem .75rem;font-size:.74rem;color:var(--muted);border-top:1px solid var(--border);}
+@media(max-width:600px){.wizard-body{padding:1.25rem .75rem 4rem;}.card-body{padding:1.25rem;}.stepper-bar{padding:0 .75rem;}.step-label{display:none;}.hero-inner{padding:2.5rem 1rem;}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo" onclick="goToHero()"><div class="cross"></div>SwissPillars</div>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="/articles/" style="color:rgba(255,255,255,.75);font-size:.82rem;font-weight:600;text-decoration:none;white-space:nowrap;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.75)'">📚 Articles</a>
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>DE</button>
+      <button class="lang-btn" style="opacity:.3;cursor:not-allowed;" title="Coming soon" disabled>FR</button>
+    </div>
+  </div>
+</header>
+
+<div id="heroSection">
+  <div class="hero-screen step-1">
+    <div class="hero-bg-img"></div>
+    <div class="hero-floater"></div><div class="hero-floater"></div><div class="hero-floater"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Free · Anonymous · Switzerland</div>
+      <h1 class="hero-title">What happens to your family<br>if you're <em>not here</em> tomorrow?</h1>
+      <p class="hero-sub">See exactly how Swiss Pillars 1, 2 &amp; 3 protect your family — income, expenses, gaps — based on real Swiss rules. Takes 5 minutes.</p>
+      <div class="hero-pills">
+        <div class="hero-pill">⚖️ Swiss <strong>AHV Scale 44</strong></div>
+        <div class="hero-pill">🏛️ All <strong>3 Pillars</strong></div>
+        <div class="hero-pill">💡 Insurance <strong>Recommendations</strong></div>
+        <div class="hero-pill">📊 5-Year <strong>Runway</strong></div>
+      </div>
+      <button class="hero-cta" onclick="startWizard()">Start the simulation <span class="hero-cta-arrow">→</span></button>
+      <div class="hero-trust">🔒 No data stored. No sign-up. No ads.</div>
+    </div>
+    <div class="hero-credit">📷 Jungfrau, Berner Oberland</div>
+
+  </div>
+</div>
+
+<div id="wizardSection" style="display:none;">
+  <div class="stepper-bar"><div class="stepper" id="stepperNav"></div></div>
+  <div class="wizard-body">
+
+    <!-- STEP 1 -->
+    <div class="screen step-1" id="screen1">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">🎯</div>
+          <div class="card-header-text"><h1>Scenario &amp; Family</h1><div class="sub">Pick a life event, select who's affected, then set up your family.</div></div>
+        </div>
+        <div class="card-body">
+          <h2 style="font-family:'Fraunces',serif;color:var(--accent);margin-bottom:1rem;font-size:1.1rem;">What do you want to plan for?</h2>
+          <div class="cards-grid" id="eventCards"></div>
+          <div id="whoAffectedBlock" style="display:none;margin-top:1.5rem;">
+            <h2 style="font-family:'Fraunces',serif;color:var(--accent);margin-bottom:1rem;font-size:1.1rem;" id="s1_whoTitle">Who passes away?</h2>
+            <div class="cards-grid" id="affectedCards"></div>
+          </div>
+          <div style="margin-top:1.5rem;">
+            <h2 style="font-family:'Fraunces',serif;color:var(--accent);margin-bottom:1rem;font-size:1.1rem;">Who is employed?</h2>
+            <div class="cards-grid" id="employmentCards"></div>
+          </div>
+          <div style="margin-top:1.5rem;">
+            <h2 style="font-family:'Fraunces',serif;color:var(--accent);margin-bottom:1rem;font-size:1.1rem;">How many children?</h2>
+            <div class="counter-row">
+              <button class="counter-btn" onclick="changeChildren(-1)">−</button>
+              <span class="counter-val" id="childrenCount">0</span>
+              <button class="counter-btn" onclick="changeChildren(1)">+</button>
+              <span id="childrenLabel" style="color:var(--muted);font-size:.92rem;margin-left:.25rem;">children</span>
+            </div>
+          </div>
+          <div id="s1Hint" style="margin-top:1.5rem;"></div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <span></span>
+        <button class="btn-primary" id="s1NextBtn" onclick="goTo(2)" disabled>Income →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="screen step-2" id="screen2">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">💰</div>
+          <div class="card-header-text"><h1>Income</h1><div class="sub">Enter the gross salary for each employed partner.</div></div>
+        </div>
+        <div class="card-body"><div id="incomePartners"></div></div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(1)">← Back</button>
+        <button class="btn-primary" onclick="goTo(3)">Expenses →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="screen step-3" id="screen3">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">🛒</div>
+          <div class="card-header-text">
+            <h1>FAMILY'S Monthly Expenses &amp; Premiums</h1>
+            <div class="sub">All household costs including insurance premiums. Term insurance premium is entered in Pillar 3b and shown here automatically.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="note">💡 <strong>Insurance premiums are household expenses</strong> — not liabilities. Liability step is for debts and obligations only (mortgage, alimony).</div>
+          <div class="expense-list" id="expensesList"></div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(2)">← Back</button>
+        <button class="btn-primary" onclick="goTo(4)">Assets →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="screen step-4" id="screen4">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">🏦</div>
+          <div class="card-header-text"><h1>Assets</h1><div class="sub">What your family owns. Find these on your latest tax return.</div></div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Cash &amp; savings (CHF)</label>
+            <input type="number" id="savings" value="0" onchange="updateState('savings',parseFloat(this.value)||0)">
+            <div class="help-text">Tax return line 400</div>
+          </div>
+          <div class="form-group">
+            <label>Property market value (CHF)</label>
+            <input type="number" id="property" value="0" onchange="updateState('property',parseFloat(this.value)||0)">
+            <div class="help-text">Tax return line 421</div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(3)">← Back</button>
+        <button class="btn-primary" onclick="goTo(5)">Liability →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="screen step-5" id="screen5">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">⚖️</div>
+          <div class="card-header-text">
+            <h1>Liability</h1>
+            <div class="sub">Financial obligations — mortgage, debts, and mandatory maintenance payments.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="note">📌 In Switzerland, <strong>health insurance</strong> and <strong>taxes</strong> are mandatory obligations — enter them in the Expenses step. This step is for debt obligations only.</div>
+          <div class="form-group">
+            <label>Outstanding mortgage (CHF)</label>
+            <input type="number" id="mortgage" value="0" onchange="updateState('mortgage',parseFloat(this.value)||0)">
+            <div class="help-text">Mortgage payoff is a key first step after death — eliminates interest permanently.</div>
+          </div>
+          <div class="form-group">
+            <label>Mortgage interest rate (%)</label>
+            <input type="number" id="mortgageRate" value="1.3" step="0.1" onchange="updateState('mortgageRate',parseFloat(this.value)||1.3)">
+          </div>
+          <div class="form-group">
+            <label>Other debts (CHF)</label>
+            <input type="number" id="otherDebts" value="0" onchange="updateState('otherDebts',parseFloat(this.value)||0)">
+          </div>
+          <div class="form-group">
+            <label>Monthly alimony / maintenance (CHF)</label>
+            <input type="number" id="alimonyMonthly" value="0" onchange="updateState('alimonyMonthly',parseFloat(this.value)||0)">
+            <div class="help-text">Regular payments to an ex-partner or children from a previous relationship.</div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(4)">← Back</button>
+        <button class="btn-primary" onclick="goTo(6)">Pillars →</button>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="screen step-6" id="screen6">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">🏛️</div>
+          <div class="card-header-text"><h1>The Three Pillars</h1><div class="sub">Enter your Swiss pension data. Select each pillar tab.</div></div>
+        </div>
+        <div class="card-body">
+          <div class="pillar-tabs">
+            <button class="pillar-tab active" onclick="switchPillar(1)">🏛️ Pillar 1 — AHV</button>
+            <button class="pillar-tab" onclick="switchPillar(2)">🏢 Pillar 2 — BVG</button>
+            <button class="pillar-tab" onclick="switchPillar(3)">🐷 Pillar 3a</button>
+            <button class="pillar-tab" onclick="switchPillar(4)">🛡️ Pillar 3b</button>
+          </div>
+          <div class="pillar-screen active" id="pillar1Screen">
+            <div class="note">The Swiss state automatically pays pensions in case of death. We estimate these from your salary, but you can override with your exact AHV Kontoauszug figures.</div>
+            <div id="pillar1Partners"></div>
+            <div style="margin-top:1rem;padding:.75rem;background:var(--accent-light,#EEF3FA);border-radius:var(--radius-sm);">
+              <a href="https://www.ahv-iv.ch" target="_blank" style="color:var(--accent,var(--navy));font-weight:700;text-decoration:none;">→ Request your free AHV statement at ahv-iv.ch</a>
+            </div>
+          </div>
+          <div class="pillar-screen" id="pillar2Screen">
+            <div class="note">Find these figures on your latest Pillar 2 certificate (Vorsorgeausweis / Certificat de prévoyance).</div>
+            <div id="pillar2Partners"></div>
+          </div>
+          <div class="pillar-screen" id="pillar3aScreen">
+            <div class="note">Pillar 3a grows tax-free. On death, the savings are paid out as a lump sum. The <strong>annual premium</strong> you enter here is automatically shown in your Expenses summary.</div>
+            <div id="pillar3aPartners"></div>
+          </div>
+          <div class="pillar-screen" id="pillar3bScreen">
+            <div class="note">Term insurance pays a lump sum on death. The <strong>annual premium</strong> you enter here is automatically reflected in your Expenses total — and correctly removed from post-death expenses.</div>
+            <div id="pillar3bPartners"></div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(5)">← Back</button>
+        <button class="btn-primary" onclick="goTo(7)">View Results →</button>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="screen step-7" id="screen7">
+      <div class="screen-card">
+        <div class="card-header">
+          <div class="card-header-icon">📊</div>
+          <div class="card-header-text"><h1>Your Financial Protection Analysis</h1><div class="sub">Based on Swiss AHV Scale 44 (2025/2026) and your inputs.</div></div>
+        </div>
+        <div class="card-body">
+          <div id="resultsContent"></div>
+          <div class="disclaimer" id="disclaimerText"></div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="goTo(6)">← Back to Pillars</button>
+        <button class="btn-text" onclick="goToHero()">↺ Start Over</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const state = {
+  scenario:null, affectedPartners:null, singleIncome:false, incomePartner:'p1',
+  p1Name:'Partner 1', p2Name:'Partner 2', numChildren:0,
+  p1GrossAnnual:0, p1NetMonthly:0, p2GrossAnnual:0, p2NetMonthly:0,
+  otherIncomeDividends:0, otherIncomeRental:0, otherIncomeOther:0,
+  otherIncomeModes:{dividends:'monthly',rental:'monthly',other:'monthly'},
+  expenseModes:{},
+  expenses:{
+    housingRent:1200, housingUtilities:250, housingUpkeep:0,
+    healthIns:350, taxes:1000, food:1250, transport:450,
+    children:0, communication:160, other:400,
+    insLiability:70, insLegal:40, insTravel:15, insRega:6, carInsurance:150, insOther:50,
+  },
+  savings:0, property:0, mortgage:0, mortgageRate:1.3, otherDebts:0, alimonyMonthly:0,
+  p1AhvOverride:false,p1AhvPartnerPension:0,p1AhvOrphanPension:0,p1IvPension:0,
+  p2AhvOverride:false,p2AhvPartnerPension:0,p2AhvOrphanPension:0,p2IvPension:0,
+  p1P2aCapital:0,p1P2aPartnerPension:0,p1P2aOrphanPension:0,p1P2aDisability:0,p1P2aChildrenDisability:0,p1P2aLapses:false,
+  p2P2aCapital:0,p2P2aPartnerPension:0,p2P2aOrphanPension:0,p2P2aDisability:0,p2P2aChildrenDisability:0,p2P2aLapses:false,
+  p1P3aType:'insurance',p1P3aDeathCapital:0,p1P3aDisPension:0,p1P3aAnnualPremium:0,p1P3aBalance:0,p1P3aAnnualContrib:7258,p1P3aReturn:4,
+  p2P3aType:'insurance',p2P3aDeathCapital:0,p2P3aDisPension:0,p2P3aAnnualPremium:0,p2P3aBalance:0,p2P3aAnnualContrib:7258,p2P3aReturn:4,
+  p1HasTermIns:false,p1TermDeathSum:0,p1TermAnnualPremium:0,
+  p2HasTermIns:false,p2TermDeathSum:0,p2TermAnnualPremium:0,
+};
+function updateState(k,v){state[k]=v;if(k==='numChildren'&&v>0&&state.expenses.children===0)state.expenses.children=500;}
+
+let currentStep=0;
+const STEP_LABELS=['','Scenario','Income','Expenses','Assets','Liability','Pillars','Results'];
+const STEP_ACCENTS=['','step-1','step-2','step-3','step-4','step-5','step-6','step-7'];
+function goToHero(){
+  track('start_over',{from_step:currentStep});
+  // Full hard reset — clear all state, all screen classes, all charts, all side state
+  // 1. Destroy any live charts
+  Object.keys(charts).forEach(k=>{if(charts[k]){charts[k].destroy();delete charts[k];}});
+  // 2. Remove .active from every wizard screen
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  // 3. Reset step counter and side state
+  currentStep=0;
+  netOverride={};
+  activePillar=1;
+  // 4. Reset ALL state keys to initial defaults
+  Object.assign(state,{
+    scenario:null,affectedPartners:null,singleIncome:false,incomePartner:'p1',
+    p1Name:'Partner 1',p2Name:'Partner 2',numChildren:0,
+    p1GrossAnnual:0,p1NetMonthly:0,p2GrossAnnual:0,p2NetMonthly:0,
+    otherIncomeDividends:0,otherIncomeRental:0,otherIncomeOther:0,
+    otherIncomeModes:{dividends:'monthly',rental:'monthly',other:'monthly'},
+    expenseModes:{},
+    expenses:{housingRent:1200,housingUtilities:250,housingUpkeep:0,
+      healthIns:350,taxes:1000,food:1250,transport:450,
+      children:0,communication:160,other:400,
+      insLiability:70,insLegal:40,insTravel:15,insRega:6,carInsurance:150,insOther:50},
+    savings:0,property:0,mortgage:0,mortgageRate:1.3,otherDebts:0,alimonyMonthly:0,
+    p1AhvOverride:false,p1AhvPartnerPension:0,p1AhvOrphanPension:0,p1IvPension:0,
+    p2AhvOverride:false,p2AhvPartnerPension:0,p2AhvOrphanPension:0,p2IvPension:0,
+    p1P2aCapital:0,p1P2aPartnerPension:0,p1P2aOrphanPension:0,p1P2aDisability:0,p1P2aChildrenDisability:0,p1P2aLapses:false,
+    p2P2aCapital:0,p2P2aPartnerPension:0,p2P2aOrphanPension:0,p2P2aDisability:0,p2P2aChildrenDisability:0,p2P2aLapses:false,
+    p1P3aType:'insurance',p1P3aDeathCapital:0,p1P3aDisPension:0,p1P3aAnnualPremium:0,p1P3aBalance:0,p1P3aAnnualContrib:7258,p1P3aReturn:4,
+    p2P3aType:'insurance',p2P3aDeathCapital:0,p2P3aDisPension:0,p2P3aAnnualPremium:0,p2P3aBalance:0,p2P3aAnnualContrib:7258,p2P3aReturn:4,
+    p1HasTermIns:false,p1TermDeathSum:0,p1TermAnnualPremium:0,
+    p2HasTermIns:false,p2TermDeathSum:0,p2TermAnnualPremium:0,
+  });
+  // 5. Re-render stepper (all unchecked) and step 1 (fresh)
+  renderStepper();
+  renderScreen1();
+  // 6. Show hero, hide wizard
+  document.getElementById('heroSection').style.display='';
+  document.getElementById('wizardSection').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function startWizard(){
+  track('calculator_started');
+  document.getElementById('heroSection').style.display='none';
+  document.getElementById('wizardSection').style.display='';
+  goTo(1);
+}
+function goTo(n){
+  if(n<1||n>7)return;
+  if(currentStep===1&&n>1&&(!state.scenario||!state.affectedPartners)){
+    const btn=document.getElementById('s1NextBtn');
+    if(btn){btn.style.animation='none';btn.offsetHeight;btn.style.animation='shake .4s ease';}
+    return;
+  }
+  // Track step completion when user advances forward
+  if(currentStep>=1&&n>currentStep){
+    track('step_completed',{
+      step_number:currentStep,
+      step_name:STEP_LABELS[currentStep]||'Step'+currentStep
+    });
+  }
+  if(currentStep>=1)document.getElementById('screen'+currentStep).classList.remove('active');
+  currentStep=n;
+  document.getElementById('screen'+currentStep).classList.add('active');
+  renderStepper();renderStep(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+const shakeStyle=document.createElement('style');
+shakeStyle.textContent='@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}';
+document.head.appendChild(shakeStyle);
+function renderStepper(){
+  document.getElementById('stepperNav').innerHTML=STEP_LABELS.slice(1).map((lbl,i)=>{
+    const n=i+1;
+    const cls=n===currentStep?'step-item active '+STEP_ACCENTS[n]:n<currentStep?'step-item done':'step-item';
+    return `<div class="${cls}" onclick="goTo(${n})"><div class="step-circle">${n<currentStep?'✓':n}</div><div class="step-label">${lbl}</div></div>`;
+  }).join('');
+}
+function renderStep(n){if(n===1)renderScreen1();else if(n===2)renderScreen2();else if(n===3)renderScreen3();else if(n===4)renderScreen4();else if(n===5)renderScreen5();else if(n===6)renderScreen6();else if(n===7)renderScreen7();}
+function setLang(l){document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');}
+
+// ── STEP 1 ──
+function renderScreen1(){
+  document.getElementById('eventCards').innerHTML=[
+    {id:'death',     icon:'💀', label:'Death'},
+    {id:'disability',icon:'♿', label:'Disability', comingSoon:true},
+    {id:'divorce',   icon:'💔', label:'Divorce',    comingSoon:true},
+    {id:'newbaby',   icon:'👶', label:'New Baby',   comingSoon:true},
+  ].map(e=>`<div class="choice-card ${state.scenario===e.id?'active':''} ${e.comingSoon?'disabled':''}" ${e.comingSoon?'':'onclick="selectEvent(\''+e.id+'\')"'}>
+    <span class="card-icon">${e.icon}</span><div class="card-title">${e.label}</div>
+    ${e.comingSoon?'<div class="card-label">Coming soon</div>':''}
+  </div>`).join('');
+  const wb=document.getElementById('whoAffectedBlock');
+  if(state.scenario){
+    wb.style.display='';
+    document.getElementById('s1_whoTitle').textContent='Who passes away?';
+    document.getElementById('affectedCards').innerHTML=[{id:'partner1',lbl:'Partner 1'},{id:'partner2',lbl:'Partner 2'}]
+      .map(p=>`<div class="choice-card ${state.affectedPartners===p.id?'active':''}" onclick="selectAffected('${p.id}')">
+        <span class="card-icon">${p.id==='partner1'?'🦅':'🐄'}</span><div class="card-title">${p.lbl}</div></div>`).join('');
+  } else { wb.style.display='none'; }
+  const em=state.singleIncome?state.incomePartner:'both';
+  document.getElementById('employmentCards').innerHTML=[
+    {id:'both',lbl:'Both work',icon:'🦅🐄'},{id:'p1',lbl:'Only Partner 1',icon:'🦅'},{id:'p2',lbl:'Only Partner 2',icon:'🐄'},
+  ].map(o=>`<div class="choice-card ${em===o.id?'active':''}" onclick="selectEmployment('${o.id}')">
+    <span class="card-icon" style="font-size:1.8rem;">${o.icon}</span><div class="card-title" style="font-size:.85rem;">${o.lbl}</div></div>`).join('');
+  document.getElementById('childrenCount').textContent=state.numChildren;
+  document.getElementById('childrenLabel').textContent=state.numChildren===1?'child':'children';
+  const ready=!!(state.scenario&&state.affectedPartners);
+  const btn=document.getElementById('s1NextBtn');if(btn)btn.disabled=!ready;
+  const hint=document.getElementById('s1Hint');
+  if(hint){
+    if(ready) hint.innerHTML=`<div class="s1-hint done">✅ Ready — <strong>Death scenario</strong> selected for <strong>${state.affectedPartners==='partner1'?'Partner 1 🦅':'Partner 2 🐄'}</strong>. You can proceed.</div>`;
+    else if(state.scenario&&!state.affectedPartners) hint.innerHTML=`<div class="s1-hint">☝️ Now select <strong>who passes away</strong> to continue.</div>`;
+    else hint.innerHTML=`<div class="s1-hint">☝️ Select a <strong>scenario</strong> above to get started.</div>`;
+  }
+}
+function selectEvent(id){
+  track('scenario_selected',{scenario:id});
+  state.scenario=id;state.affectedPartners=null;renderScreen1();
+}
+function selectAffected(id){state.affectedPartners=id;renderScreen1();}
+function selectEmployment(mode){if(mode==='both'){state.singleIncome=false;}else{state.singleIncome=true;state.incomePartner=mode;}renderScreen1();}
+function changeChildren(d){updateState('numChildren',Math.max(0,Math.min(6,state.numChildren+d)));renderScreen1();}
+
+// ── STEP 2 ──
+let netOverride={};
+function autoNet(p){state[p+'NetMonthly']=Math.round(state[p+'GrossAnnual']*0.84/12);}
+function getIncomePartners(){if(!state.singleIncome)return[{name:'p1',label:state.p1Name},{name:'p2',label:state.p2Name}];return[{name:state.incomePartner,label:state.incomePartner==='p1'?state.p1Name:state.p2Name}];}
+function getAffectedPartners(){if(state.affectedPartners==='partner1')return[{name:'p1',label:state.p1Name}];if(state.affectedPartners==='partner2')return[{name:'p2',label:state.p2Name}];return[{name:'p1',label:state.p1Name},{name:'p2',label:state.p2Name}];}
+function renderScreen2(){
+  const partners=getIncomePartners();partners.forEach(p=>{if(!netOverride[p.name])autoNet(p.name);});
+  let html=partners.map(p=>{
+    const net=state[p.name+'NetMonthly'],isOv=netOverride[p.name];
+    const netHtml=isOv
+      ?`<div class="form-group"><label>Net monthly (CHF) <span style="font-weight:400;color:var(--muted)">— manual</span></label><input type="number" value="${net}" onchange="updateState('${p.name}NetMonthly',parseFloat(this.value)||0);renderScreen2();"><span class="net-override-link" onclick="netOverride['${p.name}']=false;autoNet('${p.name}');renderScreen2();">↩ Reset to auto</span></div>`
+      :`<div class="form-group"><label>Net monthly take-home</label><div class="net-display"><span style="flex:1">CHF ${net.toLocaleString('de-CH')}<span style="font-size:.82rem;color:#555;">/month</span></span><span class="net-badge">Auto</span></div><span class="net-override-link" onclick="netOverride['${p.name}']=true;renderScreen2();">✎ Override</span></div>`;
+    return `<div class="partner-section"><h3>${p.label}</h3><div class="form-group"><label>Gross annual salary (CHF)</label><input type="number" value="${state[p.name+'GrossAnnual']}" placeholder="e.g. 100000" onchange="updateState('${p.name}GrossAnnual',parseFloat(this.value)||0);autoNet('${p.name}');renderScreen2();"><div class="help-text">Used for AHV estimates</div></div>${netHtml}</div>`;
+  }).join('');
+  const oiF=[{key:'dividends',sk:'otherIncomeDividends',lbl:'Dividends / investment income'},{key:'rental',sk:'otherIncomeRental',lbl:'Rental income'},{key:'other',sk:'otherIncomeOther',lbl:'Other income'}];
+  html+=`<div class="partner-section" style="margin-top:1.25rem;border-top:2px solid var(--border);padding-top:1.25rem;"><h3>Other Household Income (monthly)</h3><div class="help-text" style="margin-bottom:1rem;">Passive income that continues regardless of who passes away.</div>${oiF.map(f=>{const mo=state[f.sk]||0;const mode=state.otherIncomeModes[f.key]||'monthly';const isM=mode==='monthly';const disp=isM?Math.round(mo):Math.round(mo*12);const sec=isM?Math.round(mo*12)+'/yr':Math.round(mo)+'/mo';return `<div class="expense-item" style="margin-bottom:.75rem;"><div class="expense-label">${f.lbl}</div><div class="expense-input-group"><input type="number" class="expense-input" value="${disp}" onchange="state['${f.sk}']=${isM?'parseFloat(this.value)||0':'(parseFloat(this.value)||0)/12'};renderScreen2();"><div class="exp-mode-toggle"><button class="exp-mode-btn ${isM?'active':''}" onclick="state['${f.sk}']=0;state.otherIncomeModes['${f.key}']='monthly';renderScreen2();">M</button><button class="exp-mode-btn ${!isM?'active':''}" onclick="state['${f.sk}']=0;state.otherIncomeModes['${f.key}']='yearly';renderScreen2();">Y</button></div><div class="expense-secondary">= CHF ${sec}</div></div></div>`;}).join('')}</div>`;
+  document.getElementById('incomePartners').innerHTML=html;
+}
+
+// ── STEP 3 ──
+const EXP_CATS=[
+  {k:'__hdrHousing__',l:'🏠 Housing',isHeader:true},
+  {k:'housingRent',l:'Rent OR mortgage monthly payment (amortization)'},
+  {k:'housingUtilities',l:'Utilities — electricity, water, heating'},
+  {k:'housingUpkeep',l:'Property upkeep & maintenance'},
+  {k:'healthIns',l:'Health insurance (Krankenkasse) — mandatory'},
+  {k:'taxes',l:'Taxes (estimated monthly) — mandatory'},
+  {k:'food',l:'Food & groceries'},
+  {k:'transport',l:'Transport (SBB, fuel, public transport)'},
+  {k:'children',l:'Children & family (childcare, school, activities)'},
+  {k:'communication',l:'Communication (internet, phone, TV licence)'},
+  {k:'other',l:'Other (holidays, hobbies, clothing)'},
+  {k:'__hdr__',l:'Insurance Premiums',isHeader:true},
+  {k:'insLiability',l:'Liability insurance (Haftpflicht)'},
+  {k:'insLegal',l:'Legal protection (Rechtsschutz)'},
+  {k:'insTravel',l:'Travel insurance'},
+  {k:'insRega',l:'REGA / Air rescue membership'},
+  {k:'carInsurance',l:'Car insurance'},
+  {k:'insOther',l:'Other household insurances (contents, etc.)'},
+];
+function expRow(k,lbl){
+  const mo=state.expenses[k]||0;const mode=state.expenseModes[k]||'monthly';const isM=mode==='monthly';
+  const disp=isM?Math.round(mo):Math.round(mo*12);const sec=isM?Math.round(mo*12):Math.round(mo);const secU=isM?'/yr':'/mo';
+  const onChg=isM?`state.expenses['${k}']=parseFloat(this.value)||0;renderExpTotal();`:`state.expenses['${k}']=(parseFloat(this.value)||0)/12;renderExpTotal();`;
+  // Zero out the stored value on mode switch — user must re-enter in the new unit
+  const onMode=`m=>{state.expenses['${k}']=0;state.expenseModes['${k}']=m;renderExpensesList();}`;
+  return `<div class="expense-item"><div class="expense-label">${lbl}</div><div class="expense-input-group"><input type="number" class="expense-input" value="${disp}" onchange="${onChg}"><div class="exp-mode-toggle"><button class="exp-mode-btn ${isM?'active':''}" onclick="(${onMode})('monthly')">M</button><button class="exp-mode-btn ${!isM?'active':''}" onclick="(${onMode})('yearly')">Y</button></div><div class="expense-secondary">= CHF ${sec.toLocaleString('de-CH')} ${secU}</div></div></div>`;
+}
+function renderScreen3(){renderExpensesList();}
+function renderExpensesList(){
+  let html=EXP_CATS.map(c=>c.isHeader?`<div class="expense-group-header">${c.l}</div>`:expRow(c.k,c.l)).join('');
+  const p1P3aMo=state.p1P3aAnnualPremium/12,p2P3aMo=state.p2P3aAnnualPremium/12;
+  const p1TermMo=state.p1TermAnnualPremium/12,p2TermMo=state.p2TermAnnualPremium/12;
+  if(p1P3aMo>0||p2P3aMo>0||p1TermMo>0||p2TermMo>0){
+    html+=`<div class="expense-group-header">Pillar Premiums (from Pillars step — read only)</div>`;
+    if(p1P3aMo>0) html+=`<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.84rem;color:var(--muted);"><span>🐷 Partner 1 — Pillar 3a premium</span><span>CHF ${Math.round(p1P3aMo).toLocaleString('de-CH')}/mo</span></div>`;
+    if(p2P3aMo>0) html+=`<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.84rem;color:var(--muted);"><span>🐷 Partner 2 — Pillar 3a premium</span><span>CHF ${Math.round(p2P3aMo).toLocaleString('de-CH')}/mo</span></div>`;
+    if(p1TermMo>0) html+=`<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.84rem;color:var(--muted);"><span>🛡️ Partner 1 — Term insurance premium</span><span>CHF ${Math.round(p1TermMo).toLocaleString('de-CH')}/mo</span></div>`;
+    if(p2TermMo>0) html+=`<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.84rem;color:var(--muted);"><span>🛡️ Partner 2 — Term insurance premium</span><span>CHF ${Math.round(p2TermMo).toLocaleString('de-CH')}/mo</span></div>`;
+  }
+  document.getElementById('expensesList').innerHTML=html;
+  renderExpTotal();
+}
+
+function renderExpTotal(){
+  // ── Friendly labels for each expense key ──
+  const EXP_LABELS={
+    housingRent:'🏠 Rent / mortgage amortization',
+    housingUtilities:'💡 Utilities (electricity, water, heating)',
+    housingUpkeep:'🔧 Property upkeep & maintenance',
+    healthIns:'🏥 Health insurance (Krankenkasse)',
+    taxes:'🏛️ Taxes',
+    food:'🛒 Food & groceries',
+    transport:'🚆 Transport',
+    children:'👨‍👩‍👧 Children & family',
+    communication:'📱 Communication',
+    other:'💼 Other (holidays, hobbies, clothing)',
+    insLiability:'🛡️ Liability insurance (Haftpflicht)',
+    insLegal:'⚖️ Legal protection (Rechtsschutz)',
+    insTravel:'✈️ Travel insurance',
+    insRega:'🚁 REGA membership',
+    carInsurance:'🚗 Car insurance',
+    insOther:'🏡 Other household insurances',
+  };
+  const fmt=v=>'CHF '+Math.round(v).toLocaleString('de-CH');
+
+  // ── Compute accurate total (no premature rounding) ──
+  const base=Object.values(state.expenses).reduce((a,b)=>a+b,0);
+  const p1P3aMo=state.p1P3aAnnualPremium/12, p2P3aMo=state.p2P3aAnnualPremium/12;
+  const p1TermMo=state.p1TermAnnualPremium/12, p2TermMo=state.p2TermAnnualPremium/12;
+  const pillarsTotal=p1P3aMo+p2P3aMo+p1TermMo+p2TermMo;
+  const total=base+pillarsTotal;
+  const totalRnd=Math.round(total);
+  const totalYrRnd=Math.round(total*12);
+
+  // ── Build itemized rows (only non-zero items) ──
+  const tdR='text-align:right;white-space:nowrap;';
+  const makeRow=(lbl,mo)=>`<tr>
+    <td style="padding:.3rem .6rem;font-size:.82rem;">${lbl}</td>
+    <td class="r" style="padding:.3rem .6rem;${tdR}font-size:.82rem;font-weight:600;color:var(--navy);">${fmt(mo)}/mo</td>
+    <td class="r" style="padding:.3rem .6rem;${tdR}font-size:.82rem;color:var(--muted);">${fmt(mo*12)}/yr</td>
+  </tr>`;
+
+  // Household + insurance rows
+  const householdRows=Object.entries(EXP_LABELS).map(([k,lbl])=>{
+    const mo=state.expenses[k]||0;return mo>0?makeRow(lbl,mo):null;
+  }).filter(Boolean).join('');
+
+  // Pillar premium rows
+  const pillarRows=[
+    p1P3aMo>0?makeRow('🐷 Partner 1 — Pillar 3a premium',p1P3aMo):null,
+    p2P3aMo>0?makeRow('🐷 Partner 2 — Pillar 3a premium',p2P3aMo):null,
+    p1TermMo>0?makeRow('🛡️ Partner 1 — Term insurance premium',p1TermMo):null,
+    p2TermMo>0?makeRow('🛡️ Partner 2 — Term insurance premium',p2TermMo):null,
+  ].filter(Boolean).join('');
+
+  const pillarSection=pillarRows?`<tr class="section-hdr"><td colspan="3" style="padding:.3rem .6rem;font-size:.7rem;font-weight:700;color:var(--accent,var(--navy));text-transform:uppercase;letter-spacing:.05em;background:#F0F4F8;border-top:1px solid var(--border);">Pillar Premiums (entered in Step 6)</td></tr>${pillarRows}`:'';
+
+  // ── Find or create the total-expenses element ──
+  let el=document.querySelector('#expensesList .total-expenses');
+  if(!el){el=document.createElement('div');el.className='total-expenses';document.getElementById('expensesList').appendChild(el);}
+  el.style.cssText='background:none;border:none;padding:0;margin-top:1rem;text-align:left;';
+
+  el.innerHTML=`<div class="exp-total-wrap">
+    <!-- Headline -->
+    <div class="exp-total-headline">
+      <strong>Total monthly expenses</strong>
+      <div class="exp-total-number">
+        <div class="big">${fmt(totalRnd)}/month</div>
+        <div class="small">= ${fmt(totalYrRnd)}/year</div>
+      </div>
+    </div>
+    <!-- Collapsible itemized verification -->
+    <details>
+      <summary class="exp-verify-toggle">▶ Verify — click to see full itemized breakdown (monthly &amp; yearly)</summary>
+      <div class="exp-verify-body">
+        <table class="exp-verify-table">
+          <thead>
+            <tr>
+              <th>Expense item</th>
+              <th class="r">Monthly</th>
+              <th class="r">Yearly</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#F0F4F8;"><td colspan="3" style="padding:.3rem .6rem;font-size:.7rem;font-weight:700;color:var(--accent,var(--navy));text-transform:uppercase;letter-spacing:.05em;">Household &amp; Insurance</td></tr>
+            ${householdRows||'<tr><td colspan="3" style="padding:.5rem;color:var(--muted);font-style:italic;">No household items entered</td></tr>'}
+            ${pillarSection}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td style="padding:.42rem .6rem;font-size:.88rem;font-weight:700;color:var(--accent,var(--navy));">✅ TOTAL — all items above</td>
+              <td class="r" style="padding:.42rem .6rem;font-size:.9rem;font-weight:700;color:var(--accent,var(--navy));text-align:right;white-space:nowrap;">${fmt(totalRnd)}/mo</td>
+              <td class="r" style="padding:.42rem .6rem;font-size:.9rem;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap;">${fmt(totalYrRnd)}/yr</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="exp-verify-note">ℹ️ Only non-zero items shown. Pillar 3a &amp; term insurance premiums are entered in Step 6 and included here automatically — no double counting.</div>
+      </div>
+    </details>
+  </div>`;
+}
+
+function renderScreen4(){document.getElementById('savings').value=state.savings;document.getElementById('property').value=state.property;}
+function renderScreen5(){document.getElementById('mortgage').value=state.mortgage;document.getElementById('mortgageRate').value=state.mortgageRate;document.getElementById('otherDebts').value=state.otherDebts;document.getElementById('alimonyMonthly').value=state.alimonyMonthly;}
+
+// ── STEP 6 ──
+let activePillar=1;
+function switchPillar(n){
+  track('pillar_tab_viewed',{pillar_number:n,pillar_name:['AHV','BVG','3a','3b'][n-1]||'unknown'});
+  activePillar=n;
+  document.querySelectorAll('.pillar-tab').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+  document.querySelectorAll('.pillar-screen').forEach((s,i)=>s.classList.toggle('active',i===n-1));
+}
+function ahvPension(g){const mn=1260,mx=2520,mnI=15120,mxI=90720;if(g<=mnI)return mn;if(g>=mxI)return mx;return Math.round(mn+(g-mnI)/(mxI-mnI)*(mx-mn));}
+function ahvWid(g){return Math.min(Math.round(ahvPension(g)*0.8),2016);}
+function ahvOrph(g){return Math.round(ahvPension(g)*0.4);}
+function ivPen(g,d=100){const f=ahvPension(g);if(d>=70)return f;if(d>=50)return Math.round(f*.75);if(d>=40)return Math.round(f*.5);if(d>=25)return Math.round(f*.25);return 0;}
+function renderScreen6(){renderPillar1();renderPillar2();renderPillar3a();renderPillar3b();}
+function renderPillar1(){
+  if(!state.affectedPartners){document.getElementById('pillar1Partners').innerHTML='<div class="note">⬆️ Select scenario and who is affected in Step 1 first.</div>';return;}
+  document.getElementById('pillar1Partners').innerHTML=getAffectedPartners().map(p=>{
+    const g=state[p.name+'GrossAnnual'],ov=state[p.name+'AhvOverride'],estW=ahvWid(g),estO=ahvOrph(g);
+    return `<div class="partner-section"><h3>${p.label}</h3>
+      <div class="info-block"><div class="info-block-title">Estimated AHV pension on death</div>
+        <div class="info-block-text">Based on CHF ${g.toLocaleString('de-CH')} salary: widow/widower ≈ <strong>CHF ${estW.toLocaleString('de-CH')}/month</strong>${state.numChildren>0?`<br>👶 orphan pensions ≈ CHF ${(estO*state.numChildren).toLocaleString('de-CH')}/month total`:''}</div></div>
+      <div class="checkbox-wrapper"><input type="checkbox" id="${p.name}AhvOv" ${ov?'checked':''} onchange="updateState('${p.name}AhvOverride',this.checked);renderPillar1();"><label for="${p.name}AhvOv" style="margin:0;">I have my exact AHV figures</label></div>
+      ${ov?`<div class="form-group"><label>Partner pension on death (CHF/month)</label><input type="number" value="${state[p.name+'AhvPartnerPension']}" onchange="updateState('${p.name}AhvPartnerPension',parseFloat(this.value)||0);"></div>
+        <div class="form-group"><label>Orphan pension per child on death (CHF/month)</label><input type="number" value="${state[p.name+'AhvOrphanPension']}" onchange="updateState('${p.name}AhvOrphanPension',parseFloat(this.value)||0);"></div>`:''}
+    </div>`;
+  }).join('');
+}
+function renderPillar2(){
+  if(!state.affectedPartners){document.getElementById('pillar2Partners').innerHTML='<div class="note">⬆️ Select scenario and who is affected in Step 1 first.</div>';return;}
+  document.getElementById('pillar2Partners').innerHTML=getAffectedPartners().map(p=>`
+    <div class="partner-section"><h3>${p.label}</h3>
+      <div class="form-group"><label>Current capital / retirement savings (CHF)</label><input type="number" value="${state[p.name+'P2aCapital']}" onchange="updateState('${p.name}P2aCapital',parseFloat(this.value)||0);"></div>
+      <div class="form-group"><label>On DEATH: Partner pension (CHF/year from certificate)</label><input type="number" value="${state[p.name+'P2aPartnerPension']}" onchange="updateState('${p.name}P2aPartnerPension',parseFloat(this.value)||0);"></div>
+      <div class="form-group"><label>On DEATH: Orphan pension per child (CHF/year)</label><input type="number" value="${state[p.name+'P2aOrphanPension']}" onchange="updateState('${p.name}P2aOrphanPension',parseFloat(this.value)||0);"></div>
+    </div>`).join('');
+}
+function renderPillar3a(){
+  if(!state.affectedPartners){document.getElementById('pillar3aPartners').innerHTML='<div class="note">⬆️ Select scenario and who is affected in Step 1 first.</div>';return;}
+  document.getElementById('pillar3aPartners').innerHTML=getAffectedPartners().map(p=>{
+    const isIns=state[p.name+'P3aType']==='insurance';
+    return `<div class="partner-section"><h3>${p.label}</h3>
+      <div class="toggle-group">
+        <button class="toggle-btn ${isIns?'active':''}" onclick="updateState('${p.name}P3aType','insurance');renderPillar3a();">Insurance policy</button>
+        <button class="toggle-btn ${!isIns?'active':''}" onclick="updateState('${p.name}P3aType','bank');renderPillar3a();">Bank account (VIAC, finpension)</button>
+      </div>
+      ${isIns?`<div class="form-group"><label>Death capital payout (CHF)</label><input type="number" value="${state[p.name+'P3aDeathCapital']}" onchange="updateState('${p.name}P3aDeathCapital',parseFloat(this.value)||0);"></div>
+        <div class="form-group"><label>Annual premium (CHF/year) — <span style="font-weight:400;color:var(--muted)">shown in Expenses</span></label><input type="number" value="${state[p.name+'P3aAnnualPremium']}" onchange="updateState('${p.name}P3aAnnualPremium',parseFloat(this.value)||0);renderExpensesList&&renderExpensesList();"></div>`:
+        `<div class="form-group"><label>Current account balance (CHF)</label><input type="number" value="${state[p.name+'P3aBalance']}" onchange="updateState('${p.name}P3aBalance',parseFloat(this.value)||0);"></div>
+        <div class="form-group"><label>Annual contribution (CHF/year)</label><input type="number" value="${state[p.name+'P3aAnnualContrib']}" onchange="updateState('${p.name}P3aAnnualContrib',parseFloat(this.value)||0);"></div>
+        <div class="form-group"><label>Expected annual return (%)</label><input type="number" value="${state[p.name+'P3aReturn']}" step="0.1" onchange="updateState('${p.name}P3aReturn',parseFloat(this.value)||4);"></div>
+        <div class="note">Bank Pillar 3a: no disability pension. On death, full balance is paid out.</div>`}
+    </div>`;
+  }).join('');
+}
+function renderPillar3b(){
+  if(!state.affectedPartners){document.getElementById('pillar3bPartners').innerHTML='<div class="note">⬆️ Select scenario and who is affected in Step 1 first.</div>';return;}
+  document.getElementById('pillar3bPartners').innerHTML=getAffectedPartners().map(p=>{
+    const has=state[p.name+'HasTermIns'];
+    return `<div class="partner-section"><h3>${p.label}</h3>
+      <div class="toggle-group">
+        <button class="toggle-btn ${!has?'active':''}" onclick="updateState('${p.name}HasTermIns',false);renderPillar3b();">No</button>
+        <button class="toggle-btn ${has?'active':''}" onclick="updateState('${p.name}HasTermIns',true);renderPillar3b();">Yes</button>
+      </div>
+      ${has?`<div class="form-group"><label>Death sum insured (CHF)</label><input type="number" value="${state[p.name+'TermDeathSum']}" onchange="updateState('${p.name}TermDeathSum',parseFloat(this.value)||0);"></div>
+        <div class="form-group"><label>Annual premium (CHF/year) — <span style="font-weight:400;color:var(--muted)">shown in Expenses</span></label><input type="number" value="${state[p.name+'TermAnnualPremium']}" onchange="updateState('${p.name}TermAnnualPremium',parseFloat(this.value)||0);renderExpensesList&&renderExpensesList();"></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── STEP 7 — RESULTS ──
+let charts={};
+const chf=v=>'CHF '+Math.round(v).toLocaleString('de-CH');
+const pct=(v,t)=>t>0?Math.round(v/t*100)+'%':'0%';
+
+function totalMonthlyExp(){
+  return Object.values(state.expenses).reduce((a,b)=>a+b,0)
+    +(state.p1P3aAnnualPremium/12)+(state.p2P3aAnnualPremium/12)
+    +(state.p1TermAnnualPremium/12)+(state.p2TermAnnualPremium/12);
+}
+function getDeceased(){if(state.affectedPartners==='partner1')return{name:'p1',label:state.p1Name};if(state.affectedPartners==='partner2')return{name:'p2',label:state.p2Name};return null;}
+function getSurvivor(){if(state.affectedPartners==='partner1')return{name:'p2',label:state.p2Name};if(state.affectedPartners==='partner2')return{name:'p1',label:state.p1Name};return null;}
+
+function renderScreen7(){
+  document.getElementById('disclaimerText').textContent='This tool provides estimates for planning purposes only. It is not financial advice. Figures are based on Swiss AHV Scale 44 (2025/2026) and your inputs. Consult a certified financial advisor for personal advice.';
+  if(!state.scenario||!state.affectedPartners){document.getElementById('resultsContent').innerHTML='<div class="note">Please go back to Step 1 and complete the scenario setup.</div>';return;}
+  document.getElementById('resultsContent').innerHTML=buildDeathResults();
+  setTimeout(renderDeathCharts,120);
+}
+
+function buildDeathResults(){
+  const dec=getDeceased(),sur=getSurvivor();
+  const dg=state[dec.name+'GrossAnnual'];
+  const savings=state.savings;
+  const p3aPayout=state[dec.name+'P3aType']==='insurance'?state[dec.name+'P3aDeathCapital']:state[dec.name+'P3aBalance'];
+  const termPayout=state[dec.name+'HasTermIns']?state[dec.name+'TermDeathSum']:0;
+  const lump=savings+p3aPayout+termPayout;
+  const buf=lump-state.mortgage;
+
+  const ahvW = state[dec.name+'AhvOverride']?state[dec.name+'AhvPartnerPension']:ahvWid(dg);
+  const ahvOper = state[dec.name+'AhvOverride']?state[dec.name+'AhvOrphanPension']:ahvOrph(dg);
+  const ahvO = ahvOper*state.numChildren;
+  const p2Part = state[dec.name+'P2aPartnerPension']/12;
+  const p2Orph = (state[dec.name+'P2aOrphanPension']/12)*state.numChildren;
+  const surSalary = sur?state[sur.name+'NetMonthly']:0;
+  const divInc = state.otherIncomeDividends||0;
+  const rentalInc = state.otherIncomeRental||0;
+  const otherInc = state.otherIncomeOther||0;
+  const totalInc = ahvW+ahvO+p2Part+p2Orph+surSalary+divInc+rentalInc+otherInc;
+
+  const allExpToday = totalMonthlyExp();
+  const hasMortgage = state.mortgage > 0;
+  // If mortgage is paid off from lump sum: amortization AND interest both stop
+  const mortInt = hasMortgage ? 0 : (state.mortgageRate/100)*state.mortgage/12;
+  const housingRentSaving = hasMortgage ? (state.expenses.housingRent||0) : 0;
+  const decP3aMo = state[dec.name+'P3aAnnualPremium']/12;
+  const decTermMo = state[dec.name+'TermAnnualPremium']/12;
+  const numAdults = !state.singleIncome?2:1;
+  const decHealthMo = numAdults>1?Math.round(state.expenses.healthIns*0.4):0;
+  // Communication: deceased's personal mobile/phone share ~40% of household comms
+  const decCommMo = numAdults>1?Math.round(state.expenses.communication*0.4):0;
+  const personalMo = Math.round(state[dec.name+'NetMonthly']*0.02)+100;
+  const childcareInc = (sur&&state.numChildren>0&&state[sur.name+'NetMonthly']>0)?1500*Math.min(2,state.numChildren):0;
+
+  let adjExp = allExpToday+state.alimonyMonthly-decP3aMo-decTermMo-decHealthMo-decCommMo-personalMo-housingRentSaving+childcareInc;
+  adjExp=Math.max(0,adjExp);
+
+  const surp=totalInc-adjExp;
+  const gap=surp<0?Math.abs(surp):0;
+
+  // ── Track results event with key outcome data ──
+  track('results_viewed',{
+    scenario: state.scenario,
+    deceased_partner: dec.label,
+    outcome: gap>0?'gap':'surplus',
+    gap_bracket: gap<=0?'surplus':gap<500?'small':gap<2000?'medium':'large',
+    gap_amount: Math.round(gap),
+    surplus_amount: Math.round(Math.max(0,surp)),
+    has_mortgage: hasMortgage?'yes':'no',
+    has_term_insurance: state[dec.name+'HasTermIns']?'yes':'no',
+    has_p3a: (state[dec.name+'P3aDeathCapital']>0||state[dec.name+'P3aBalance']>0)?'yes':'no',
+    children_count: state.numChildren,
+    score: gap<=0?100:Math.max(0,Math.round(100-(gap/adjExp)*100))
+  });
+
+  const bfM=adjExp>0?Math.floor(buf/adjExp):0,bfY=Math.floor(bfM/12),bfRm=bfM%12;
+  // Cap runway display at 1200 months (100 years) — beyond that show "Indefinitely"
+  const realRunwayMRaw=gap>0?(buf>0?Math.floor(buf/gap):0):999999;
+  const realRunwayM=realRunwayMRaw>1200?999999:realRunwayMRaw;
+  const realRunwayY=Math.floor(realRunwayM/12),realRunwayRm=realRunwayM%12;
+  // Also cap worst-case runway display at 100 years
+  const bfMDisplay=bfM>1200?999999:bfM;
+  const bfYd=bfMDisplay===999999?999999:Math.floor(bfMDisplay/12);
+  const bfRmd=bfMDisplay===999999?0:bfMDisplay%12;
+
+  const tc=gap>1000?'red':gap>0?'amber':'green';
+  const verdict=tc==='green'?'Your family is financially protected ✓':tc==='amber'?'Minor monthly gap — manageable':'Significant gap — action needed';
+  const cov=gap<=0?100:Math.max(0,Math.round(100-(gap/adjExp)*100));
+  const sc=cov>=75?'#059669':cov>=40?'#D97706':'#C8102E';
+  const tN=gap>0?Math.max(0,Math.ceil(((gap*12/0.02)-buf)/50000)*50000):0;
+  const tL=Math.round(tN*0.001/12),tH=Math.round(tN*0.002/12);
+  const decLbl=dec.label,surLbl=sur?sur.label:'your family';
+  const worstCaseTxt=buf<=0?'No buffer':bfMDisplay===999999?'Indefinitely ✓':bfYd>0?`${bfYd}y ${bfRmd>0?bfRmd+'m':''}`:`${bfRmd} months`;
+  const realTxt=gap<=0?'Indefinitely ✓ (surplus every month)':realRunwayM>=999999?'Indefinitely ✓':realRunwayY>0?`${realRunwayY}y ${realRunwayRm>0?realRunwayRm+'m':''}`:`${realRunwayRm} months`;
+
+  const incRows=[
+    {src:'🏛️ <strong>Pillar 1 AHV</strong> — widow/widower pension',amt:ahvW,note:'Paid for life (AHVG Art. 23)',show:ahvW>0},
+    {src:`🏛️ <strong>Pillar 1 AHV</strong> — orphan pension (${state.numChildren} child${state.numChildren!==1?'ren':''})`,amt:ahvO,note:`CHF ${Math.round(ahvOper).toLocaleString('de-CH')}/child × ${state.numChildren} · Until age 18; extended to 25 if in education/apprenticeship (AHVG Art. 25)`,show:ahvO>0},
+    {src:'🏢 <strong>Pillar 2 BVG</strong> — partner pension',amt:p2Part,note:'Paid for life (BVG Art. 19) — see your certificate',show:p2Part>0},
+    {src:`🏢 <strong>Pillar 2 BVG</strong> — orphan pension (${state.numChildren})`,amt:p2Orph,note:'Until age 18; extended to 25 if in education/apprenticeship (BVG Art. 20) — see your certificate',show:p2Orph>0},
+    {src:`💼 ${surLbl}'s salary`,amt:surSalary,note:'Continuing employment income ✅',show:surSalary>0},
+    {src:'📈 Dividends / investment',amt:divInc,note:'Passive — continues regardless',show:divInc>0},
+    {src:'🏠 Rental income',amt:rentalInc,note:'Passive — continues regardless',show:rentalInc>0},
+    {src:'💵 Other income',amt:otherInc,note:'Passive — continues regardless',show:otherInc>0},
+  ].filter(r=>r.show);
+
+  const incTableRows=incRows.map(r=>`<tr>
+    <td>${r.src}</td>
+    <td class="r">${chf(r.amt)}/mo</td>
+    <td class="r">${pct(r.amt,totalInc)}</td>
+    <td style="color:var(--muted);font-size:.78rem;">${r.note}</td>
+  </tr>`).join('');
+
+  const expMap={
+    housingRent:state.expenses.housingRent, housingUtilities:state.expenses.housingUtilities,
+    housingUpkeep:state.expenses.housingUpkeep,
+    healthIns:state.expenses.healthIns, taxes:state.expenses.taxes,
+    food:state.expenses.food, transport:state.expenses.transport, children:state.expenses.children,
+    communication:state.expenses.communication, other:state.expenses.other,
+    insLiability:state.expenses.insLiability, insLegal:state.expenses.insLegal, insTravel:state.expenses.insTravel,
+    insRega:state.expenses.insRega, carInsurance:state.expenses.carInsurance, insOther:state.expenses.insOther,
+    'Pillar 3a (dec)':decP3aMo,'Term ins (dec)':decTermMo,'Alimony':state.alimonyMonthly,
+    ...(childcareInc>0?{'Childcare increase':childcareInc}:{}),
+  };
+  const expLabels={
+    housingRent:'🏠 Rent / mortgage amortization',
+    housingUtilities:'💡 Utilities (electricity, water, heating)',
+    housingUpkeep:'🔧 Property upkeep & maintenance',
+    healthIns:'Health insurance',taxes:'Taxes',food:'Food & groceries',
+    transport:'Transport',children:'Children & family',communication:'Communication (internet, phone, TV)',other:'Other (holidays, hobbies, clothing)',
+    insLiability:'Liability insurance',insLegal:'Legal protection',insTravel:'Travel insurance',
+    insRega:'REGA membership',carInsurance:'Car insurance',insOther:'Other household insurance',
+    'Pillar 3a (dec)':`${decLbl}'s Pillar 3a premium`,
+    'Term ins (dec)':`${decLbl}'s term insurance premium`,
+    'Alimony':'Alimony / maintenance',
+    'Childcare increase':'👶 Extra childcare (new cost)',
+  };
+  const surP3aMo=sur?(state[sur.name+'P3aAnnualPremium']/12):0;
+  const surTermMo=sur?(state[sur.name+'TermAnnualPremium']/12):0;
+
+  const expRows=Object.entries(expMap).map(([k,today])=>{
+    if(today===0&&k!=='Mort interest'&&k!=='Alimony')return null;
+    let after=today;let note='';let rowCls='';
+    if(k==='housingRent'&&hasMortgage){after=0;note=`Mortgage paid off from lump sum — amortisation payments stop ✓`;rowCls='strikeout';}
+    else if(k==='housingUtilities'){after=today;note='Continues — electricity, water, heating still needed ✓';}
+    else if(k==='housingUpkeep'){after=today;note='Property upkeep continues ✓';}
+    else if(k==='healthIns'){after=today-decHealthMo;note=`${decLbl}'s share −CHF ${Math.round(decHealthMo).toLocaleString('de-CH')} removed`;rowCls='';}
+    else if(k==='communication'&&decCommMo>0){after=today-decCommMo;note=`${decLbl}'s mobile/phone −CHF ${Math.round(decCommMo).toLocaleString('de-CH')} (internet+TV continue)`;}
+    else if(k==='Pillar 3a (dec)'){after=0;note='Stops — policy was on the deceased';rowCls='strikeout';}
+    else if(k==='Term ins (dec)'){after=0;note='Stops — policy was on the deceased';rowCls='strikeout';}
+    else if(k==='Alimony'){after=today;note='Legal obligation — continues';}
+    // children stays at today value — childcare is shown as a separate new row below
+    else if(k==='Childcare increase'){after=childcareInc;note=`NEW cost: survivor continues working, needs extra care for ${state.numChildren>1?state.numChildren+' children':'1 child'} · CHF 1’500/child/mo`;}
+    else note='Continues unchanged ✓';
+    if(today===0&&after===0)return null;
+    const delta=after-today;
+    return `<tr class="${rowCls}">
+      <td>${expLabels[k]||k}</td>
+      <td class="r">${today>0?chf(today)+'/mo':'—'}</td>
+      <td class="r ${delta<0?'g':delta>0?'rd':''}">${after>0?chf(after)+'/mo':'—'}</td>
+      <td style="color:var(--muted);font-size:.78rem;">${note}</td>
+    </tr>`;
+  }).filter(Boolean).join('');
+
+  const surPremNote=[];
+  if(surP3aMo>0)surPremNote.push(`Pillar 3a: CHF ${Math.round(surP3aMo).toLocaleString('de-CH')}/mo`);
+  if(surTermMo>0)surPremNote.push(`Term ins: CHF ${Math.round(surTermMo).toLocaleString('de-CH')}/mo`);
+
+  const aiPts=gap>0?[
+    `If <strong>${decLbl}</strong> were to pass away today, <strong>${surLbl}</strong> would face a monthly shortfall of <strong>${chf(gap)}</strong>. With the CHF ${Math.round(buf).toLocaleString('de-CH')} cash buffer covering this gap, it would last <strong>${realTxt}</strong>.`,
+    `<strong>Recommended action for ${decLbl}:</strong> Take out a term life insurance of approx. <strong>${chf(tN)}</strong>. At typical Swiss rates for a healthy non-smoker aged 30–40, this costs roughly <strong>CHF ${tL.toLocaleString('de-CH')}–${tH.toLocaleString('de-CH')}/month</strong>. Premiums increase significantly with age — compare quotes at Comparis or moneyland.ch for your exact age and health profile.`
+  ]:[
+    `If <strong>${decLbl}</strong> were to pass away today, <strong>${surLbl}</strong> would have a monthly <strong>surplus of ${chf(Math.abs(surp))}</strong>. The family is well protected — the CHF ${Math.round(buf).toLocaleString('de-CH')} cash buffer is a bonus safety net on top.`,
+    `Review this analysis whenever circumstances change (larger mortgage, salary change, new children, new property). The Disability scenario is also worth running once available.`
+  ];
+
+  return `
+  <div class="scenario-banner"><div class="scenario-banner-icon">💀</div>
+    <div><div class="scenario-banner-label">Scenario Analysis — Death</div>
+    <div class="scenario-banner-title">If <strong>${decLbl}</strong> passes away — what ${surLbl} will face</div></div></div>
+
+  <div class="verdict">
+    <div class="traffic-ring ${tc}">${tc==='green'?'✓':tc==='amber'?'⚠️':'✗'}</div>
+    <div class="verdict-title">${verdict}</div>
+  </div>
+
+  <div class="kpi-grid" style="margin-bottom:1.5rem;">
+    <div class="kpi"><div class="kpi-label">Monthly income</div><div class="kpi-val">${chf(totalInc)}</div></div>
+    <div class="kpi"><div class="kpi-label">Post-death expenses</div><div class="kpi-val">${chf(adjExp)}</div></div>
+    <div class="kpi"><div class="kpi-label">${surp>=0?'Monthly surplus ✅':'Monthly gap ⚠️'}</div><div class="kpi-val ${surp>=0?'pos':'neg'}">${surp>=0?'+':'-'}${chf(Math.abs(surp))}</div></div>
+  </div>
+
+  <!-- ── Income Dependency Analysis ── -->
+  ${(()=>{
+    if(state.singleIncome)return '';
+    const p1Net=state.p1NetMonthly||0;
+    const p2Net=state.p2NetMonthly||0;
+    const combined=p1Net+p2Net;
+    if(combined<100)return '';
+    const p1Pct=Math.round(p1Net/combined*100);
+    const p2Pct=100-p1Pct;
+    const diff=Math.abs(p1Net-p2Net);
+    const p1Higher=p1Net>=p2Net;
+    const higherLbl=p1Higher?state.p1Name:state.p2Name;
+    const lowerLbl=p1Higher?state.p2Name:state.p1Name;
+    const higherNet=p1Higher?p1Net:p2Net;
+    const lowerNet=p1Higher?p2Net:p1Net;
+    const higherPct=p1Higher?p1Pct:p2Pct;
+    const lowerPct=p1Higher?p2Pct:p1Pct;
+    const isDecHigher=dec.label===higherLbl;
+    const isEqual=diff<150;
+
+    let msg,icon,accentCol;
+    if(isEqual){
+      icon='🎯';
+      accentCol='#059669';
+      msg=`Both <strong>${state.p1Name}</strong> and <strong>${state.p2Name}</strong> contribute broadly equally to the household — CHF ${p1Net.toLocaleString('de-CH')}/mo and CHF ${p2Net.toLocaleString('de-CH')}/mo respectively. This balanced structure means either scenario carries similar financial weight, which reflects a well-shared household income.`;
+    } else if(isDecHigher){
+      icon='⚠️';
+      accentCol='#D97706';
+      msg=`<strong>${decLbl}</strong> contributes <strong>${higherPct}% of the combined household salary</strong> — CHF ${higherNet.toLocaleString('de-CH')}/mo compared to CHF ${lowerNet.toLocaleString('de-CH')}/mo for ${surLbl}. This means the current scenario involves a more significant income transition than the reverse would. The Swiss pillar system replaces a meaningful portion, but the CHF ${diff.toLocaleString('de-CH')}/mo salary difference is worth planning around — which is precisely what the analysis above reflects.`;
+    } else {
+      icon='💪';
+      accentCol='#1B6B3A';
+      msg=`<strong>${surLbl}</strong> is the household\u2019s primary earner at <strong>${higherPct}% of combined salary</strong> — CHF ${higherNet.toLocaleString('de-CH')}/mo — and continues working after this event. <strong>${decLbl}</strong>, contributing ${lowerPct}% (CHF ${lowerNet.toLocaleString('de-CH')}/mo), leaves a CHF ${diff.toLocaleString('de-CH')}/mo salary gap that is partially replaced by the AHV and BVG pension system. The larger income stream remains intact, which contributes to the relatively stable picture in the analysis above.`;
+    }
+
+    const p1Bar=Math.max(6,p1Pct);
+    const p2Bar=Math.max(6,p2Pct);
+    const p1Deceased=state.affectedPartners==='partner1';
+
+    return `<div style="background:white;border:1.5px solid ${accentCol};border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);">
+
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:.9rem;">${icon} Household Income Dependency</div>
+
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:.4rem;">
+          <span>${state.p1Name}${p1Deceased?' ☠️ this scenario':''}</span>
+          <span>Combined net: CHF ${combined.toLocaleString('de-CH')}/mo</span>
+          <span>${!p1Deceased?' ☠️ this scenario':''}</span>
+        </div>
+        <div style="display:flex;height:32px;border-radius:8px;overflow:hidden;border:1px solid var(--border);gap:2px;">
+          <div style="width:${p1Bar}%;background:${p1Deceased?'#C8102E':'#0C1F3F'};display:flex;align-items:center;justify-content:center;transition:width .4s;">
+            <span style="color:white;font-size:.76rem;font-weight:700;padding:0 6px;white-space:nowrap;overflow:hidden;">${p1Pct}%  CHF ${p1Net.toLocaleString('de-CH')}</span>
+          </div>
+          <div style="width:${p2Bar}%;background:${!p1Deceased?'#C8102E':'#4338CA'};display:flex;align-items:center;justify-content:center;transition:width .4s;">
+            <span style="color:white;font-size:.76rem;font-weight:700;padding:0 6px;white-space:nowrap;overflow:hidden;">${p2Pct}%  CHF ${p2Net.toLocaleString('de-CH')}</span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:.3rem;font-size:.72rem;color:var(--muted);">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#C8102E;margin-right:3px;vertical-align:middle;"></span>Scenario partner (deceased)</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#4338CA;margin-right:3px;vertical-align:middle;"></span>Surviving partner</span>
+        </div>
+      </div>
+
+      <div style="font-size:.87rem;line-height:1.75;color:var(--text);border-left:3px solid ${accentCol};padding-left:.9rem;">${msg}</div>
+
+      ${!isEqual?`<div style="margin-top:.9rem;padding:.6rem .9rem;background:#F7F8FC;border-radius:var(--radius-sm);font-size:.79rem;color:var(--muted);border:1px solid var(--border);">💡 <strong>Want to compare?</strong> Click “Back to Pillars”, then “Start Over” and re-run selecting <strong>${isDecHigher?surLbl:decLbl}</strong> instead to see the reverse scenario.</div>`:''}
+
+    </div>`;
+  })()}
+
+  <div class="bk-card">
+    <div class="bk-card-title income">💰 Monthly Income Breakdown — what ${surLbl} receives after ${decLbl} passes away</div>
+    <table class="bk-table">
+      <thead><tr><th>Income Source</th><th class="r">CHF/month</th><th class="r">% of total</th><th>Notes</th></tr></thead>
+      <tbody>
+        ${incTableRows}
+        ${incRows.length===0?`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1rem;">No income sources configured — go back to Steps 2 & 6</td></tr>`:''}
+      </tbody>
+      <tfoot><tr class="total"><td>TOTAL MONTHLY INCOME</td><td class="r">${chf(totalInc)}/mo</td><td class="r">100%</td><td style="font-size:.78rem;color:var(--muted);">Continues every month ✅</td></tr></tfoot>
+    </table>
+    <div style="padding:.6rem .85rem;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);">
+      ✅ ${surLbl}'s salary income is included. ✅ AHV (Pillar 1) & BVG (Pillar 2) pensions are included. ✅ All passive income is included.
+    </div>
+  </div>
+
+  <!-- Survivor's Pillar premiums card: recalculates live -->
+  ${sur?`<div class="bk-card" style="border:2px solid #7C3AED;margin-bottom:1.25rem;">
+    <div class="bk-card-title" style="background:linear-gradient(135deg,#7C3AED,#9333EA);">🐷🛡️ ${surLbl}'s Ongoing Pillar Premiums — fill in if applicable (recalculates instantly)</div>
+    <div style="padding:.85rem 1rem;">
+      <div class="note" style="margin-bottom:1rem;">Step 6 only covered <strong>${decLbl}</strong>'s pillars. If <strong>${surLbl}</strong> pays for their own Pillar 3a insurance or term life insurance, enter amounts here — all figures update automatically.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group" style="margin:0;">
+          <label>🐷 ${surLbl}'s Pillar 3a annual premium (CHF/year)</label>
+          <input type="number" value="${state[sur.name+'P3aAnnualPremium']||0}" placeholder="0 = not applicable"
+            onchange="updateState('${sur.name}P3aAnnualPremium',parseFloat(this.value)||0);renderScreen7();">
+          <div class="help-text">${(state[sur.name+'P3aAnnualPremium']||0)>0?'= CHF '+Math.round((state[sur.name+'P3aAnnualPremium'])/12).toLocaleString('de-CH')+'/month ongoing cost':'Enter 0 if not applicable'}</div>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>🛡️ ${surLbl}'s term insurance annual premium (CHF/year)</label>
+          <input type="number" value="${state[sur.name+'TermAnnualPremium']||0}" placeholder="0 = not applicable"
+            onchange="updateState('${sur.name}TermAnnualPremium',parseFloat(this.value)||0);renderScreen7();">
+          <div class="help-text">${(state[sur.name+'TermAnnualPremium']||0)>0?'= CHF '+Math.round((state[sur.name+'TermAnnualPremium'])/12).toLocaleString('de-CH')+'/month ongoing cost':'Enter 0 if not applicable'}</div>
+        </div>
+      </div>
+    </div>
+  </div>`:''}
+
+  <div class="bk-card">
+    <div class="bk-card-title expense">🧾 Expense Comparison — your Step 3 input vs post-death adjusted</div>
+    <div style="padding:.5rem .85rem .4rem;font-size:.8rem;color:var(--muted);border-bottom:1px solid var(--border);background:#F7F8FC;">
+      <strong>Step 3 (today)</strong> = exactly what you entered. <strong>Post-death</strong> = what ${surLbl} will actually spend. Reductions in green, increases in red.
+    </div>
+    <table class="bk-table">
+      <thead><tr><th>Expense item</th><th class="r">📋 Step 3 input</th><th class="r">⚰️ Post-death</th><th>What changes &amp; why</th></tr></thead>
+      <tbody>
+        ${expRows}
+        ${surP3aMo>0||surTermMo>0?`<tr><td>${surLbl}'s premiums</td><td class="r">${chf(surP3aMo+surTermMo)}/mo</td><td class="r">${chf(surP3aMo+surTermMo)}/mo</td><td style="color:#059669;font-size:.78rem;">${surPremNote.join(' + ')} — continues ✅</td></tr>`:''}
+      </tbody>
+      <tfoot>
+        <tr class="subtotal"><td>Today's total</td><td class="r">${chf(allExpToday+state.alimonyMonthly)}/mo</td><td></td><td></td></tr>
+        <tr class="total"><td>POST-DEATH TOTAL</td><td></td><td class="r">${chf(adjExp)}/mo</td><td style="font-size:.78rem;color:var(--muted);">${adjExp<allExpToday?`↓ CHF ${Math.round(allExpToday-adjExp).toLocaleString('de-CH')}/mo saved`:`↑ CHF ${Math.round(adjExp-allExpToday).toLocaleString('de-CH')}/mo more`}</td></tr>
+      </tfoot>
+    </table>
+    <div style="padding:.6rem .85rem;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);">
+      ✅ Utilities & property upkeep continue. ✅ Car, liability, legal, travel & REGA insurance continue. ✅ ${surLbl}'s health insurance continues.${hasMortgage?' ✅ Mortgage fully paid off — amortisation stops.':''}
+    </div>
+  </div>
+
+  <div class="bk-card">
+    <div class="bk-card-title ${surp>=0?'surplus':'gap'}">${surp>=0?'✅ Monthly Surplus':'⚠️ Monthly Gap'} — ${chf(Math.abs(surp))}/month</div>
+    <div style="padding:.85rem 1rem;font-size:.88rem;line-height:1.6;">
+      ${surp>=0
+        ?`<strong>What this means:</strong> After ${decLbl} passes away, ${surLbl} will receive <strong>${chf(totalInc)}/month</strong> in combined income (salary + pensions) and only needs to spend <strong>${chf(adjExp)}/month</strong>. The <strong>${chf(surp)} monthly surplus</strong> means no savings need to be touched — in fact, savings can continue to grow.`
+        :`<strong>What this means:</strong> After ${decLbl} passes away, ${surLbl} will receive <strong>${chf(totalInc)}/month</strong> in combined income but needs <strong>${chf(adjExp)}/month</strong> to cover all expenses. The <strong>${chf(gap)} monthly gap</strong> must be covered either from savings or additional insurance.`
+      }
+    </div>
+  </div>
+
+  <div class="runway-card">
+    <div class="runway-card-title">💰 Net Cash Buffer — what happens to lump sums on death</div>
+    <div class="runway-row"><span class="runway-row-label">Cash & savings (from Step 4)</span><span class="runway-row-val">${chf(savings)}</span></div>
+    <div class="runway-row"><span class="runway-row-label">Pillar 3a payout (from Step 6)</span><span class="runway-row-val">+ ${chf(p3aPayout)}</span></div>
+    <div class="runway-row"><span class="runway-row-label">Term insurance payout (from Step 6)</span><span class="runway-row-val">+ ${chf(termPayout)}</span></div>
+    <div class="runway-row runway-subtotal"><span class="runway-row-label">Total lump sums</span><span class="runway-row-val">${chf(lump)}</span></div>
+    <div class="runway-row ${buf<0?'runway-neg':''}"><span class="runway-row-label">Less: Mortgage payoff (eliminates interest permanently)</span><span class="runway-row-val">− ${chf(state.mortgage)}</span></div>
+    <div class="runway-row runway-total"><span class="runway-row-label">Net cash buffer remaining</span><span class="runway-row-val">${chf(buf)}</span></div>
+  </div>
+
+  <div style="margin-bottom:1.25rem;">
+    <div style="font-family:'Fraunces',serif;font-weight:700;color:var(--navy);font-size:.95rem;margin-bottom:.75rem;">📅 How long does this buffer last? — Two scenarios explained</div>
+    <div class="runway-split">
+      <div class="runway-scenario worst">
+        <div class="runway-scenario-label">📦 Worst-case (no income at all)</div>
+        <div class="runway-scenario-val">${worstCaseTxt}</div>
+        <div class="runway-scenario-desc">If <em>zero income</em> arrived after death, the ${chf(buf)} buffer alone covering ${chf(adjExp)}/month expenses would last ${worstCaseTxt}. This is a theoretical worst-case — in reality income continues.</div>
+      </div>
+      <div class="runway-scenario real">
+        <div class="runway-scenario-label">✅ Real scenario (income continues)</div>
+        <div class="runway-scenario-val">${realTxt}</div>
+        <div class="runway-scenario-desc">
+          ${surp>=0
+            ?`In reality, ${surLbl} receives <strong>${chf(totalInc)}/mo</strong> including salary, AHV & BVG pensions. There's a <strong>${chf(surp)}/mo surplus</strong> — the buffer is never needed and can stay intact indefinitely.`
+            :`In reality, ${surLbl} receives <strong>${chf(totalInc)}/mo</strong> but needs ${chf(adjExp)}/mo. The <strong>${chf(gap)}/mo gap</strong> is drawn from the buffer. At this rate, the buffer lasts ${realTxt}.`
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-header"><span class="insight-icon">💡</span>
+      <span class="insight-title">SwissPillars Smart Income Insight — for ${surLbl}</span>
+      <span class="score-badge" style="background:${sc};">${cov}/100</span>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-chip"><div class="pillar-chip-name">🏛️ Pillar 1 (AHV)</div><div class="pillar-chip-val">${chf(ahvW+ahvO)}/mo</div></div>
+      <div class="pillar-chip"><div class="pillar-chip-name">🏢 Pillar 2 (BVG)</div><div class="pillar-chip-val">${chf(p2Part+p2Orph)}/mo</div></div>
+      <div class="pillar-chip"><div class="pillar-chip-name">💼 Survivor salary</div><div class="pillar-chip-val">${chf(surSalary)}/mo</div></div>
+      <div class="pillar-chip"><div class="pillar-chip-name">🐷 Pillar 3a (lump)</div><div class="pillar-chip-val">${chf(p3aPayout)}</div></div>
+      ${termPayout>0?`<div class="pillar-chip"><div class="pillar-chip-name">🛡️ Pillar 3b — Term ins. (lump)</div><div class="pillar-chip-val">${chf(termPayout)}</div></div>`:''}
+    </div>
+    <div class="insight-body">${aiPts.map((pt,i)=>`<div style="padding:7px 0;${i<aiPts.length-1?'border-bottom:1px solid #e0e0e0;':''}">${i+1}. ${pt}</div>`).join('')}</div>
+  </div>
+
+  <div class="charts-section">
+    <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;padding-top:.5rem;">📈 Visual Analysis</div>
+
+    <div class="chart-card">
+      <div class="chart-card-hdr">💰 Monthly Income — after ${decLbl} passes away</div>
+      <div class="chart-card-sub">Every CHF/month ${surLbl} will receive from all sources. Legend shows exact amount and share.</div>
+      <div class="chart-canvas-wrap" style="height:480px;"><canvas id="incBrChart"></canvas></div>
+      <div class="chart-legend-table" id="incLegendEl"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-hdr">🧾 Post-Death Monthly Expenses</div>
+      <div class="chart-card-sub">Adjusted household costs after mortgage payoff and all changes.</div>
+      <div class="chart-canvas-wrap" style="height:480px;"><canvas id="expBrChart"></canvas></div>
+      <div class="chart-legend-table" id="expLegendEl"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-hdr">⚖️ Full Income vs Expenses — Every Line Item</div>
+      <div class="chart-card-sub">🟢 Green bars = income sources &nbsp;|&nbsp; 🔴 Red bars = post-death expenses. CHF value shown on each bar.</div>
+      <div class="chart-canvas-wrap"><div id="cfChartWrap" style="position:relative;min-height:400px;"><canvas id="cfChart"></canvas></div></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-hdr">🏦 Lump Sum Waterfall on Death</div>
+      <div class="chart-card-sub">How one-time payouts accumulate into the net cash buffer available to ${surLbl}.</div>
+      <div class="chart-canvas-wrap" style="height:440px;"><canvas id="lumpChart"></canvas></div>
+    </div>
+  </div>`;
+}
+
+function renderDeathCharts(){
+  const dec=getDeceased(),sur=getSurvivor();if(!dec)return;
+  const dg=state[dec.name+'GrossAnnual'];
+  const savings=state.savings;
+  const p3aPayout=state[dec.name+'P3aType']==='insurance'?state[dec.name+'P3aDeathCapital']:state[dec.name+'P3aBalance'];
+  const termPayout=state[dec.name+'HasTermIns']?state[dec.name+'TermDeathSum']:0;
+  const lump=savings+p3aPayout+termPayout,buf=lump-state.mortgage;
+  const ahvW=state[dec.name+'AhvOverride']?state[dec.name+'AhvPartnerPension']:ahvWid(dg);
+  const ahvO=(state[dec.name+'AhvOverride']?state[dec.name+'AhvOrphanPension']:ahvOrph(dg))*state.numChildren;
+  const p2Part=state[dec.name+'P2aPartnerPension']/12,p2Orph=(state[dec.name+'P2aOrphanPension']/12)*state.numChildren;
+  const surSalary=sur?state[sur.name+'NetMonthly']:0;
+  const oth=(state.otherIncomeDividends||0)+(state.otherIncomeRental||0)+(state.otherIncomeOther||0);
+  const totalInc=ahvW+ahvO+p2Part+p2Orph+surSalary+oth;
+  const allExpToday=totalMonthlyExp();
+  const hasMortgage=state.mortgage>0;
+  const housingRentSaving=hasMortgage?(state.expenses.housingRent||0):0;
+  const decP3aMo=state[dec.name+'P3aAnnualPremium']/12,decTermMo=state[dec.name+'TermAnnualPremium']/12;
+  const numAdults=!state.singleIncome?2:1;
+  const decHealthMo=numAdults>1?Math.round(state.expenses.healthIns*0.4):0;
+  const decCommMo=numAdults>1?Math.round(state.expenses.communication*0.4):0;
+  const personalMo=Math.round(state[dec.name+'NetMonthly']*0.02)+100;
+  const childcareInc=(sur&&state.numChildren>0&&state[sur.name+'NetMonthly']>0)?1500*Math.min(2,state.numChildren):0;
+  let adjExp=allExpToday+state.alimonyMonthly-decP3aMo-decTermMo-decHealthMo-decCommMo-personalMo-housingRentSaving+childcareInc;
+  adjExp=Math.max(0,adjExp);
+
+  const kill=id=>{if(charts[id]){charts[id].destroy();delete charts[id];}};
+
+  // Friendly names for expense state keys
+  const expFriendly={
+    housingRent:'Rent / mortgage amortization',housingUtilities:'Utilities (elec, water, heat)',
+    housingUpkeep:'Property upkeep',healthIns:'Health insurance',taxes:'Taxes',
+    food:'Food & groceries',transport:'Transport',children:'Children & family',
+    communication:'Communication',other:'Other (holidays, hobbies)',
+    insLiability:'Liability insurance',insLegal:'Legal protection',
+    insTravel:'Travel insurance',insRega:'REGA membership',
+    carInsurance:'Car insurance',insOther:'Other insurances',
+  };
+
+  // ── Plugin: % label on doughnut slices (large, white, centered) ──
+  const sliceLabelPlugin={
+    id:'sliceLabel',
+    afterDatasetDraw(chart){
+      const{ctx,data}=chart;
+      const meta=chart.getDatasetMeta(0);
+      const total=data.datasets[0].data.reduce((a,b)=>a+b,0);
+      if(!total)return;
+      meta.data.forEach((arc,i)=>{
+        const val=data.datasets[0].data[i];
+        if(!val)return;
+        const pct=Math.round(val/total*100);
+        if(pct<5)return;
+        const{x,y}=arc.tooltipPosition();
+        ctx.save();
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.shadowColor='rgba(0,0,0,.75)';ctx.shadowBlur=8;
+        ctx.fillStyle='white';
+        ctx.font='bold 15px Sora,sans-serif';
+        ctx.fillText(pct+'%',x,y);
+        ctx.restore();
+      });
+    }
+  };
+
+  // ── Plugin: CHF value label at end of horizontal bars ──
+  const hBarLabelPlugin={
+    id:'hBarLabel',
+    afterDatasetsDraw(chart){
+      const{ctx,scales}=chart;
+      chart.data.datasets.forEach((ds,di)=>{
+        const meta=chart.getDatasetMeta(di);
+        meta.data.forEach((bar,i)=>{
+          const val=ds.data[i];
+          if(!val||val<=0)return;
+          const xPos=bar.x+6;
+          const yPos=bar.y;
+          ctx.save();
+          ctx.textAlign='left';ctx.textBaseline='middle';
+          ctx.fillStyle='#333';
+          ctx.font='600 11px Sora,sans-serif';
+          ctx.fillText('CHF '+Math.round(val).toLocaleString('de-CH')+'/mo',xPos,yPos);
+          ctx.restore();
+        });
+      });
+    }
+  };
+
+  // ── Helper: inject HTML legend below the doughnut canvas ──
+  function renderHtmlLegend(elId, items, total){
+    const el=document.getElementById(elId);
+    if(!el)return;
+    const rows=items.map(item=>{
+      const pct=total>0?Math.round(item.v/total*100):0;
+      return `<tr>
+        <td class="leg-swatch"><span style="display:inline-block;width:13px;height:13px;border-radius:3px;background:${item.c};vertical-align:middle;"></span></td>
+        <td class="leg-label">${item.l}</td>
+        <td class="leg-chf">CHF ${Math.round(item.v).toLocaleString('de-CH')}/mo</td>
+        <td class="leg-pct">${pct}%</td>
+      </tr>`;
+    }).join('');
+    const totalRow=`<tr class="leg-total">
+      <td class="leg-swatch"></td>
+      <td class="leg-label">TOTAL</td>
+      <td class="leg-chf">CHF ${Math.round(total).toLocaleString('de-CH')}/mo</td>
+      <td class="leg-pct">100%</td>
+    </tr>`;
+    el.innerHTML=`<table>${rows}${totalRow}</table>`;
+  }
+
+  // ── CHART 1: Income doughnut ──
+  const ic=document.getElementById('incBrChart');
+  if(ic){kill('incBr');
+    const items=[];
+    if(ahvW>0)items.push({l:'Pillar 1 AHV — Widow/widower',v:ahvW,c:'#1565C0'});
+    if(ahvO>0)items.push({l:'Pillar 1 AHV — Orphan pension',v:ahvO,c:'#42A5F5'});
+    if(p2Part>0)items.push({l:'Pillar 2 BVG — Partner pension',v:p2Part,c:'#1B6B3A'});
+    if(p2Orph>0)items.push({l:'Pillar 2 BVG — Orphan pension',v:p2Orph,c:'#66BB6A'});
+    if(surSalary>0)items.push({l:(sur?sur.label:'Survivor')+' — Salary',v:surSalary,c:'#0C1F3F'});
+    if((state.otherIncomeDividends||0)>0)items.push({l:'Dividends / investment',v:state.otherIncomeDividends,c:'#7C3AED'});
+    if((state.otherIncomeRental||0)>0)items.push({l:'Rental income',v:state.otherIncomeRental,c:'#0D9488'});
+    if((state.otherIncomeOther||0)>0)items.push({l:'Other income',v:state.otherIncomeOther,c:'#D97706'});
+    if(items.length){
+      charts.incBr=new Chart(ic,{
+        type:'doughnut',
+        data:{labels:items.map(i=>i.l),datasets:[{data:items.map(i=>Math.round(i.v)),backgroundColor:items.map(i=>i.c),borderWidth:3,borderColor:'#fff',hoverOffset:14}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'50%',layout:{padding:20},
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:ctx=>`CHF ${ctx.parsed.toLocaleString('de-CH')}/mo (${Math.round(ctx.parsed/totalInc*100)}%)`}}}},
+        plugins:[sliceLabelPlugin]
+      });
+      renderHtmlLegend('incLegendEl',items,totalInc);
+    }
+  }
+
+  // ── CHART 2: Expenses doughnut (post-death adjusted) ──
+  const ec=document.getElementById('expBrChart');
+  if(ec){kill('expBr');
+    const expObj={...state.expenses};
+    if(hasMortgage)expObj.housingRent=0;
+    if(decHealthMo>0)expObj.healthIns=Math.max(0,expObj.healthIns-decHealthMo);
+    if(decCommMo>0)expObj.communication=Math.max(0,expObj.communication-decCommMo);
+    const PALETTE=['#0C1F3F','#C8102E','#D97706','#1B6B3A','#4338CA','#7C3AED','#0D9488','#DC2626','#16A34A','#9333EA','#0891B2','#B45309','#EF6C00','#37474F','#5D4037','#546E7A','#FF7043','#26A69A'];
+    const expEntries=[];
+    let ci=0;
+    Object.entries(expObj).forEach(([k,v])=>{if(v>0)expEntries.push({l:expFriendly[k]||k,v,c:PALETTE[ci++%PALETTE.length]});});
+    const surP3a_c=sur?(state[sur.name+'P3aAnnualPremium']||0)/12:0;
+    const surTerm_c=sur?(state[sur.name+'TermAnnualPremium']||0)/12:0;
+    if(surP3a_c>0)expEntries.push({l:(sur?sur.label:'Survivor')+' — Pillar 3a premium',v:surP3a_c,c:PALETTE[ci++%PALETTE.length]});
+    if(surTerm_c>0)expEntries.push({l:(sur?sur.label:'Survivor')+' — Term ins. premium',v:surTerm_c,c:PALETTE[ci++%PALETTE.length]});
+    if(state.alimonyMonthly>0)expEntries.push({l:'Alimony / maintenance',v:state.alimonyMonthly,c:'#546E7A'});
+    if(childcareInc>0)expEntries.push({l:'Extra childcare',v:childcareInc,c:'#37474F'});
+    const totalExpChart=expEntries.reduce((a,e)=>a+e.v,0);
+    if(expEntries.length){
+      charts.expBr=new Chart(ec,{
+        type:'doughnut',
+        data:{labels:expEntries.map(e=>e.l),datasets:[{data:expEntries.map(e=>Math.round(e.v)),backgroundColor:expEntries.map(e=>e.c),borderWidth:3,borderColor:'#fff',hoverOffset:14}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'50%',layout:{padding:20},
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:ctx=>`CHF ${ctx.parsed.toLocaleString('de-CH')}/mo (${Math.round(ctx.parsed/totalExpChart*100)}%)`}}}},
+        plugins:[sliceLabelPlugin]
+      });
+      renderHtmlLegend('expLegendEl',expEntries,totalExpChart);
+    }
+  }
+
+  // ── CHART 3: Full horizontal bar — every income & expense line item ──
+  const cf=document.getElementById('cfChart');
+  if(cf){kill('cf');
+    const expObj2={...state.expenses};
+    if(hasMortgage)expObj2.housingRent=0;
+    if(decHealthMo>0)expObj2.healthIns=Math.max(0,expObj2.healthIns-decHealthMo);
+    if(decCommMo>0)expObj2.communication=Math.max(0,expObj2.communication-decCommMo);
+
+    // Build income rows
+    const incRows=[];
+    if(ahvW>0)incRows.push(['P1 AHV — Widow/widower pension',ahvW]);
+    if(ahvO>0)incRows.push(['P1 AHV — Orphan pension',ahvO]);
+    if(p2Part>0)incRows.push(['P2 BVG — Partner pension',p2Part]);
+    if(p2Orph>0)incRows.push(['P2 BVG — Orphan pension',p2Orph]);
+    if(surSalary>0)incRows.push([(sur?sur.label:'Survivor')+' — Salary',surSalary]);
+    if((state.otherIncomeDividends||0)>0)incRows.push(['Dividends / investment',state.otherIncomeDividends]);
+    if((state.otherIncomeRental||0)>0)incRows.push(['Rental income',state.otherIncomeRental]);
+    if((state.otherIncomeOther||0)>0)incRows.push(['Other income',state.otherIncomeOther]);
+
+    // Build expense rows
+    const expRows2=[];
+    Object.entries(expObj2).forEach(([k,v])=>{if(v>0)expRows2.push([expFriendly[k]||k,v]);});
+    const surP3a_b=sur?(state[sur.name+'P3aAnnualPremium']||0)/12:0;
+    const surTerm_b=sur?(state[sur.name+'TermAnnualPremium']||0)/12:0;
+    if(surP3a_b>0)expRows2.push([(sur?sur.label:'Survivor')+' — P3a premium',surP3a_b]);
+    if(surTerm_b>0)expRows2.push([(sur?sur.label:'Survivor')+' — Term premium',surTerm_b]);
+    if(state.alimonyMonthly>0)expRows2.push(['Alimony / maintenance',state.alimonyMonthly]);
+    if(childcareInc>0)expRows2.push(['Extra childcare',childcareInc]);
+
+    // Combine into single chart with spacer row
+    const allLabels=[
+      ...incRows.map(([l])=>'🟢 '+l),
+      ' ', // spacer
+      ...expRows2.map(([l])=>'🔴 '+l)
+    ];
+    const incData=[...incRows.map(([,v])=>Math.round(v)),0,...expRows2.map(()=>0)];
+    const expData=[...incRows.map(()=>0),0,...expRows2.map(([,v])=>Math.round(v))];
+
+    // Dynamically set canvas height
+    const rowH=44;
+    const cfH=Math.max(420,allLabels.length*rowH+100);
+    const cfWrap=document.getElementById('cfChartWrap');
+    if(cfWrap)cfWrap.style.height=cfH+'px';
+
+    charts.cf=new Chart(cf,{
+      type:'bar',
+      data:{
+        labels:allLabels,
+        datasets:[
+          {label:'Monthly Income (post-death)',data:incData,backgroundColor:'rgba(27,107,58,.85)',borderRadius:5,barPercentage:.65},
+          {label:'Monthly Expenses (post-death)',data:expData,backgroundColor:'rgba(200,16,46,.8)',borderRadius:5,barPercentage:.65}
+        ]
+      },
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        layout:{padding:{right:200}},
+        plugins:{
+          legend:{position:'top',labels:{font:{size:13},padding:20,boxWidth:16}},
+          tooltip:{callbacks:{
+            label:ctx=>ctx.raw>0?'CHF '+ctx.raw.toLocaleString('de-CH')+'/mo':null,
+            filter:ctx=>ctx.raw>0
+          }}
+        },
+        scales:{
+          x:{beginAtZero:true,
+            ticks:{callback:v=>'CHF '+Math.round(v).toLocaleString('de-CH'),font:{size:11}},
+            grid:{color:'rgba(0,0,0,.06)'}},
+          y:{ticks:{
+            font:{size:11},
+            color(ctx){
+              const lbl=allLabels[ctx.index]||'';
+              return lbl.startsWith('🟢')?'#1B6B3A':lbl.startsWith('🔴')?'#C8102E':'rgba(0,0,0,0)';
+            }
+          },grid:{display:false}}
+        }
+      },
+      plugins:[hBarLabelPlugin]
+    });
+  }
+
+  // ── CHART 4: Lump sum waterfall ──
+  const lc=document.getElementById('lumpChart');
+  if(lc){kill('lump');
+    const s1=savings,s2=s1+p3aPayout,s3=s2+termPayout,s4=s3-state.mortgage;
+    const wfData=[[0,s1],[s1,s2],[s2,s3],[Math.min(s3,s4),Math.max(s3,s4)],[0,s4]];
+    const wfValues=[s1,p3aPayout,termPayout,state.mortgage,s4];
+    const wfLabels=['Cash &\nSavings','+ Pillar 3a\npayout','+ Term ins.\npayout','− Mortgage\npayoff','= Net\nBuffer'];
+    const wfColors=['#1B6B3A','#4338CA','#0D9488','#C8102E',s4>=0?'#0C1F3F':'#C8102E'];
+
+    const waterfallLabelPlugin={
+      id:'wfLabel',
+      afterDatasetsDraw(chart){
+        const{ctx,scales}=chart;
+        chart.getDatasetMeta(0).data.forEach((bar,i)=>{
+          const val=wfValues[i];
+          if(!val&&val!==0)return;
+          const absVal=Math.abs(Math.round(val));
+          const[lo,hi]=wfData[i];
+          const yPx=Math.min(scales.y.getPixelForValue(hi),scales.y.getPixelForValue(lo))-10;
+          ctx.save();
+          ctx.textAlign='center';
+          ctx.font='bold 12px Sora,sans-serif';
+          ctx.fillStyle=i===3?'#C8102E':(s4<0&&i===4)?'#C8102E':'#0C1F3F';
+          const prefix=i===0?'':i===3?'− ':i===4?(s4>=0?'= ':'− '):'+ ';
+          ctx.fillText(prefix+'CHF '+absVal.toLocaleString('de-CH'),bar.x,yPx);
+          ctx.restore();
+        });
+      }
+    };
+
+    charts.lump=new Chart(lc,{
+      type:'bar',
+      data:{labels:wfLabels,datasets:[{data:wfData,backgroundColor:wfColors,borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        layout:{padding:{top:36}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>{const[lo,hi]=ctx.raw;return 'CHF '+Math.abs(Math.round(hi-lo)).toLocaleString('de-CH');}}}},
+        scales:{
+          y:{ticks:{callback:v=>'CHF '+Math.round(v).toLocaleString('de-CH'),font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},
+          x:{ticks:{font:{size:12},maxRotation:0}}
+        }},
+      plugins:[waterfallLabelPlugin]
+    });
+  }
+}
+
+renderStepper();
+renderScreen1();
+</script>
+
+<!-- Site footer -->
+<footer style="background:#0C1F3F;color:rgba(255,255,255,.55);text-align:center;padding:1.75rem 1rem;font-size:.8rem;margin-top:2rem;">
+  <div style="max-width:760px;margin:0 auto;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:1.25rem;margin-bottom:.85rem;">
+      <a href="/articles/" style="color:rgba(255,255,255,.75);text-decoration:none;font-weight:600;">📚 Pillar Guides & Articles</a>
+      <a href="/articles/swiss-three-pillar-system.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Three-Pillar System</a>
+      <a href="/articles/pillar-1-ahv-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 1 AHV</a>
+      <a href="/articles/pillar-2-bvg-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 2 BVG</a>
+      <a href="/articles/pillar-3a-guide.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Pillar 3a</a>
+      <a href="/articles/pillar-3b-term-life.html" style="color:rgba(255,255,255,.6);text-decoration:none;">Term Life Insurance</a>
+      <a href="/privacy-policy.html" style="color:rgba(255,255,255,.5);text-decoration:none;">Privacy Policy</a>
+    </div>
+    <p>&copy; 2026 SwissPillars.ch &nbsp;&middot;&nbsp; Free &middot; Anonymous &middot; No sign-up</p>
+    <p style="margin-top:.35rem;font-size:.72rem;opacity:.6;">Educational tool only. Not financial advice. Figures based on Swiss AHV Scale 44 (2025/2026).</p>
+  </div>
+</footer>
+
+</body>
+</html>
