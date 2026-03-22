@@ -334,8 +334,8 @@ input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--
     <div class="hero-floater"></div><div class="hero-floater"></div><div class="hero-floater"></div>
     <div class="hero-inner">
       <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Free · Anonymous · Switzerland</div>
-      <h1 class="hero-title">What happens to your family<br>if you're <em>not here</em> tomorrow?</h1>
-      <p class="hero-sub">See exactly how Swiss Pillars 1, 2 &amp; 3 protect your family — income, expenses, gaps — based on real Swiss rules. Takes 5 minutes.</p>
+      <h1 class="hero-title">What happens to your family<br>when you can't be <em>there</em> for them?</h1>
+      <p class="hero-sub">See exactly what your family receives from Swiss Pillars 1, 2 &amp; 3 in the scenarios that matter most — income, expenses, gaps — based on real Swiss law. Takes 5 minutes.</p>
       <div class="hero-pills">
         <div class="hero-pill">⚖️ Swiss <strong>AHV Scale 44</strong></div>
         <div class="hero-pill">🏛️ All <strong>3 Pillars</strong></div>
@@ -671,7 +671,7 @@ function renderScreen1(){
     {id:'death',     icon:'💀', label:'Death'},
     {id:'disability',icon:'♿', label:'Disability', comingSoon:true},
     {id:'divorce',   icon:'💔', label:'Divorce',    comingSoon:true},
-    {id:'newbaby',   icon:'👶', label:'New Baby',   comingSoon:true},
+
   ].map(e=>`<div class="choice-card ${state.scenario===e.id?'active':''} ${e.comingSoon?'disabled':''}" ${e.comingSoon?'':'onclick="selectEvent(\''+e.id+'\')"'}>
     <span class="card-icon">${e.icon}</span><div class="card-title">${e.label}</div>
     ${e.comingSoon?'<div class="card-label">Coming soon</div>':''}
